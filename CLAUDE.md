@@ -53,7 +53,8 @@ qa-checker runs these.
 ```bash
 npm install            # install dependencies (runs `wxt prepare` via postinstall; run
                        # `npx wxt prepare` yourself after `npm install <pkg>`, which skips it)
-npm run dev            # start Firefox with the extension loaded and hot reload
+npm run dev            # start Firefox with the extension loaded and hot reload. If Firefox is already
+                       # open, the git-ignored web-ext.config.ts needs firefoxArgs: ["-new-instance"]
 npm run build          # production build for Firefox into .output/
 npm run zip            # package the build (and source zip) for addons.mozilla.org
 npm run typecheck      # tsc --noEmit
@@ -73,7 +74,9 @@ Before every commit: `lint`, `typecheck`, `format:check`, `test` and `build` mus
   live in `~/.claude/agents/`.
 - **Feature flow:** plan → design-advisor (new visual patterns or `DESIGN.md` deviations only) →
   implement → code-reviewer + qa-checker in parallel → fix → manual YouTube check → commit.
-- **Manual YouTube check** after every feature that touches the page, in Firefox via `npm run dev`:
+- **Manual YouTube check** after every feature that touches the page, in Firefox via `npm run dev`
+  (refresh the YouTube tab after each content-script change: WXT's reload doesn't update pages that
+  are already open):
   - the clip button appears on a watch page;
   - it still works after moving to another video without a page reload (YouTube is a single-page app);
   - light and dark YouTube themes;
