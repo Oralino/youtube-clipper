@@ -17,7 +17,7 @@ the one way a clip leaves the extension.
 
 **Save video (owner decision, 2026-09-24):** the owner wants clips viewable on mobile and chose a saved
 video file over a hosted clip page, accepting that it goes against YouTube's terms of service, that the
-Chrome Web Store bans YouTube downloaders (see the Chrome phase in `TASKS.md`), and that protected (DRM)
+Chrome Web Store bans YouTube downloaders (so Chrome ships from GitHub; see Deployment), and that protected (DRM)
 videos can't be saved. It records the playing `<video>` in the browser with `MediaRecorder` while it
 plays start→end (so saving takes as long as the clip). It never fetches YouTube's streams directly.
 **Format (owner decisions, 2026-09-24):** the saved file is MP4 at the recording's own size (no
@@ -38,7 +38,7 @@ of MediaRecorder's low default. On YouTube's "Auto" quality the resolution can c
 an upload API: Streamable's API is read-only; Medal's only records local gameplay), a backend, accounts
 and a hosted player page.
 
-**Status:** In development (Firefox first, then Chrome). Current work is tracked in `TASKS.md`.
+**Status:** Working in Firefox and Chrome; preparing the first release. Current work is tracked in `TASKS.md`.
 
 ## Source-of-truth documents
 | File | Owns | Maintained by |
@@ -53,8 +53,8 @@ Don't duplicate information across these files; link to the owning file instead.
 
 ## Tech stack
 - **Extension framework:** [WXT](https://wxt.dev) (Vite-based), targeting Firefox with Manifest V3.
-  A Chrome version follows once the Firefox version works (owner decision, 2026-09-24; see the Chrome
-  phase in `TASKS.md`), so code stays cross-browser from the start (see Guidelines).
+  Also builds for Chrome (`-b chrome`; distributed from GitHub releases, see Deployment), so code stays
+  cross-browser (see Guidelines).
 - **Language:** TypeScript, strict mode.
 - **UI:** React 19. The in-page panel uses WXT's shadow-root UI (`createShadowRootUi`), so YouTube's
   CSS and ours can't leak into each other.
