@@ -23,6 +23,13 @@ describe("parseTime", () => {
   );
 });
 
+describe("parseTime overflow", () => {
+  it("rejects numbers too big to be exact seconds", () => {
+    expect(parseTime("9".repeat(400))).toBeNull();
+    expect(parseTime("9007199254740993")).toBeNull();
+  });
+});
+
 describe("formatTime", () => {
   it.each([
     [0, "0:00"],
@@ -33,6 +40,8 @@ describe("formatTime", () => {
     [36000, "10:00:00"],
     [83.9, "1:23"],
     [-4, "0:00"],
+    [NaN, "0:00"],
+    [Infinity, "0:00"],
   ])("formats %d as %j", (seconds, expected) => {
     expect(formatTime(seconds)).toBe(expected);
   });
@@ -58,7 +67,7 @@ describe("parseYouTubeTime", () => {
     expect(parseYouTubeTime(value)).toBe(expected);
   });
 
-  it.each(["", "s", "abc", "1:23", "-5", "5x", "1s2m"])("rejects %j", (value) => {
+  it.each(["", "s", "abc", "1:23", "-5", "5x", "1s2m", "9".repeat(400)])("rejects %j", (value) => {
     expect(parseYouTubeTime(value)).toBeNull();
   });
 });

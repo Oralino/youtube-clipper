@@ -6,12 +6,12 @@ export function parseTime(input: string): number | null {
   const values = parts.map(Number);
   // Minutes and seconds after the first part must be real clock values.
   if (values.slice(1).some((value) => value > 59)) return null;
-  return values.reduce((total, value) => total * 60 + value, 0);
+  return safeSeconds(values.reduce((total, value) => total * 60 + value, 0));
 }
 
-/** Formats whole seconds as "1:23" or "1:02:03". */
+/** Formats whole seconds as "1:23" or "1:02:03". NaN and Infinity (e.g. an unloaded video) show 0:00. */
 export function formatTime(seconds: number): string {
-  const total = Math.max(0, Math.floor(seconds));
+  const total = Number.isFinite(seconds) ? Math.max(0, Math.floor(seconds)) : 0;
   const h = Math.floor(total / 3600);
   const m = Math.floor((total % 3600) / 60);
   const s = String(total % 60).padStart(2, "0");
@@ -23,5 +23,10 @@ export function parseYouTubeTime(value: string): number | null {
   const match = /^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s?)?$/.exec(value);
   if (!match || value === "") return null;
   const [, h = "0", m = "0", s = "0"] = match;
-  return Number(h) * 3600 + Number(m) * 60 + Number(s);
+  return safeSeconds(Number(h) * 3600 + Number(m) * 60 + Number(s));
+}
+
+/** Rejects digit strings so long they lose precision or overflow to Infinity. */
+export function safeSeconds(value: number): number | null {
+  return Number.isSafeInteger(value) ? value : null;
 }
