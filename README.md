@@ -16,6 +16,8 @@ No accounts and no servers: everything happens in your browser.
 
 ## Install
 
+<img src="assets/screenshots/addons-card.png" alt="Clipper for YouTube in Firefox's add-ons manager: the icon, the name and the description Clip part of a YouTube video and save it as an MP4, switched on" width="414">
+
 ### Firefox
 Either way works:
 
