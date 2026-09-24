@@ -65,4 +65,4 @@ The build goes to `.output/`. To try it in your normal Firefox, open `about:debu
   repository and from npm.
 
 ## License
-**TODO (owner)**: Choose a license before the repo goes public. Until then, all rights reserved.
+[MIT](LICENSE). Mediabunny, bundled unmodified, stays under its own licence (see Credits).
