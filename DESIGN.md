@@ -1,7 +1,7 @@
 # DESIGN.md
 
 Visual source of truth, maintained by design-advisor. **Status: Approved by the owner (2026-09-24).** Open TODO (owner) items below are tracked in `TASKS.md`.
-*Revised 2026-09-24:* the clip button sections (Layout, Components, its contrast note) were updated to match YouTube's current player (`ytp-delhi-modern-icons`), `--clip-active-bar` now matches YouTube's CC underline, and Popup states treats live streams as watch pages.
+*Revised 2026-09-24:* the clip button sections (Layout, Components, its contrast note) were updated to match YouTube's current player (`ytp-delhi-modern-icons`), `--clip-active-bar` now matches YouTube's CC underline (positioned relative to the icon centre so it clears the brackets), and Popup states treats live streams as watch pages.
 
 ## Constraints (decided)
 
@@ -181,7 +181,7 @@ Shared states for every button and input:
 - Icon: a play triangle centred between two range brackets `[ ▶ ]`. 24×24 SVG, `fill="currentColor"`, path `M4 4h4v2H6v12h2v2H4zM20 4h-4v2h2v12h-2v2h4zM10 8l6 4-6 4z`. No drop-shadow `<use>`; current native icons have none.
 - Default: colour inherited from `.ytp-button` (`#eee`). Hover: YouTube's native control hover. Focus-visible: inherits YouTube's `.ytp-button` focus ring. Don't restyle any of it.
 - Tooltip: YouTube's `.ytp-tooltip` doesn't attach to injected buttons, so we render our own that matches it: plain text, no background box, `#eee`, `13px / 15px`, weight 500, `text-shadow: 0 0 2px #000`, font `"YouTube Noto", Roboto, Arial, sans-serif`. Centred on the button, about 20px above its top edge, clamped inside the player, `z-index: 1003`. Shows on hover and on keyboard focus.
-- Active (panel open): `aria-expanded="true"`, plus a `::after` underline, 18×3px, radius 3px, `--clip-active-bar`, `bottom: 9px`, centred with `left: 50%; transform: translateX(-50%)`, the same as the CC button's "on" state.
+- Active (panel open): `aria-expanded="true"`, plus a `::after` underline, 18×3px, radius 3px, `--clip-active-bar`, `bottom: calc(50% - 14px)`, centred with `left: 50%; transform: translateX(-50%)`. Size, radius and colour copy the CC button's "on" state. The position differs from CC's `bottom: 9px` because our brackets reach 8px below the icon centre and would touch the line; this keeps a 3px gap under them at any button height (6px from the bottom at 40px, 2px at 32px).
 - Disabled: not shown. Remove the button rather than showing a dead control (for example on a video that isn't ready yet).
 
 ### Clip panel
