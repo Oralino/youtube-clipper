@@ -29,8 +29,8 @@ audio where available, otherwise the Opus copied into the MP4 (Firefox has no AA
 conversion fails, the WebM is saved instead and the panel says so. Encoding the live stream with
 Mediabunny was tried first and failed in Firefox; converting the file avoids that code path. ffmpeg.wasm
 was considered and rejected (GPL, ~31 MB, slow). Known limit: the WebM and the MP4 are both held in
-memory during conversion (~50 MB per minute at 1080p30 each), so very long clips can run out of memory. **Quality matches what's playing** (owner
-requirement): the recording uses the video's current resolution and frame rate, with the video bitrate
+memory during conversion (~50 MB per minute at 1080p30 each), so very long clips can run out of
+memory. **Quality matches what's playing** (owner requirement): the recording uses the video's current resolution and frame rate, with the video bitrate
 scaled to them (about 0.1 bits per pixel per frame, so ~6 Mbps at 1080p30) and 192 kbps audio, instead
 of MediaRecorder's low default. On YouTube's "Auto" quality the resolution can change mid-clip.
 
