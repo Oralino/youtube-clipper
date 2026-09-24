@@ -34,8 +34,9 @@ MP4 that plays on a phone.
 - [ ] Run the manual YouTube check in Chrome: clip button, panel, preview, Save video, popup
 - [ ] Fix any Chrome differences found (manifest keys, shadow-root styles, event isolation)
 - [ ] README: add Chrome install and build steps
-- [ ] **(owner)** Decide how Save video fits Chrome: the Chrome Web Store bans YouTube downloaders, so
-      either leave Save video out of the store build or distribute the Chrome version outside the store
+- [ ] **(owner)** Decide how to ship on Chrome: the Chrome Web Store bans YouTube downloaders, and with
+      links gone a store build without Save video could only preview. So the Chrome version most
+      likely has to be distributed outside the store (for example as a .zip to load unpacked)
 - [ ] **(owner)** Create a Chrome Web Store developer account (one-time registration fee) and decide
       listed vs unlisted
 - [ ] Submit the `zip:chrome` build to the Chrome Web Store

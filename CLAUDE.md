@@ -54,7 +54,7 @@ Don't duplicate information across these files; link to the owning file instead.
 - **Styling:** plain CSS with custom properties; tokens are defined in `DESIGN.md`. No Tailwind, no UI
   library.
 - **Lint / format:** ESLint + Prettier. Semicolons, double quotes. Markdown is excluded from Prettier.
-- **Testing:** Vitest unit tests for the logic: timestamp parsing and formatting, building and reading
+- **Testing:** Vitest unit tests for the logic: timestamp parsing and formatting, video IDs,
   start/end validation, recording format, bitrate and file names. UI on live YouTube is checked
   manually (see Workflow).
 - **Runtime:** Node 24 + npm.
@@ -128,9 +128,9 @@ wxt.config.ts          manifest settings (MV3, Firefox gecko settings, host perm
   that lands in YouTube's page uses the `clip-ext-` prefix.
 - **Playback control** goes through the page's `<video>` element (seek, `timeupdate` to pause at the end).
   Don't depend on fragile YouTube internals when a DOM or media API will do.
-- **Permissions:** request only what's needed (content script on `*://*.youtube.com/*`, `clipboardWrite`
-  if required). No broad host permissions.
-- Relative imports include the file extension (`./clipLink.ts`). One component per file,
+- **Permissions:** request only what's needed (content scripts on `www.youtube.com` and
+  `m.youtube.com`; no others so far). No broad host permissions.
+- Relative imports include the file extension (`./time.ts`). One component per file,
   default-exported and named after the file. Comment only what isn't obvious.
 - UI strings live in `lib/strings.ts`, mirrored from `CONTENT.md`, never hard-coded in JSX or DOM code.
 - Add a dependency only with a clear reason.
@@ -158,8 +158,8 @@ wxt.config.ts          manifest settings (MV3, Firefox gecko settings, host perm
 
 ## Guidelines
 - Accessibility: WCAG AA, keyboard navigable, visible focus, respects `prefers-reduced-motion`.
-- Themes: the in-page UI follows YouTube's light/dark theme; the popup follows the system setting. No
-  flash on load. Details in `DESIGN.md`.
+- Themes: the in-page panel is always dark (it sits on the video); the popup follows the system
+  setting. No flash on load. Details in `DESIGN.md`.
 - Cross-browser: a Chrome version follows the Firefox one. Use WXT's `browser` for extension APIs, keep
   Firefox-only manifest keys under `browser_specific_settings`, and don't rely on Firefox-only
   behaviour without a Chrome fallback. Note anything Firefox-specific in the code.
