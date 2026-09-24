@@ -30,24 +30,36 @@ export function convertToMp4(
   let cancelled = false;
 
   const result = (async () => {
-    const aac = await canEncodeAudio("aac", { bitrate: AUDIO_BPS });
-    const target = new BufferTarget();
-    conversion = await Conversion.init({
-      input: new Input({ source: new BlobSource(webm), formats: [WEBM] }),
-      output: new Output({ format: new Mp4OutputFormat({ fastStart: "in-memory" }), target }),
-      // No width or height, so the video keeps the recording's size.
-      video: { codec: "avc", bitrate: videoBitrate },
-      audio: aac ? { codec: "aac", bitrate: AUDIO_BPS } : { codec: "opus" },
+    // YouTube audio is 48 kHz stereo.
+    const aac = await canEncodeAudio("aac", {
+      numberOfChannels: 2,
+      sampleRate: 48000,
+      bitrate: AUDIO_BPS,
     });
-    if (cancelled) throw new Error("cancelled");
-    if (!conversion.isValid) {
-      const reasons = conversion.discardedTracks.map((track) => track.reason).join(", ");
-      throw new Error(`can't convert this recording (${reasons})`);
+    const target = new BufferTarget();
+    const input = new Input({ source: new BlobSource(webm), formats: [WEBM] });
+    try {
+      conversion = await Conversion.init({
+        input,
+        output: new Output({ format: new Mp4OutputFormat({ fastStart: "in-memory" }), target }),
+        // No width or height, so the video keeps the recording's size. `fit` locks the output to the
+        // first frame's size: if YouTube's "Auto" quality changes resolution mid-clip, later frames are
+        // fitted into it instead of breaking the encoder. It also rounds odd sizes to even for H.264.
+        video: { codec: "avc", bitrate: videoBitrate, fit: "contain" },
+        audio: aac ? { codec: "aac", bitrate: AUDIO_BPS } : { codec: "opus" },
+      });
+      if (cancelled) throw new Error("cancelled");
+      if (!conversion.isValid) {
+        const reasons = conversion.discardedTracks.map((track) => track.reason).join(", ");
+        throw new Error(`can't convert this recording (${reasons})`);
+      }
+      conversion.onProgress = onProgress;
+      await conversion.execute();
+      if (!target.buffer) throw new Error("the conversion produced no file");
+      return new Blob([target.buffer], { type: "video/mp4" });
+    } finally {
+      input.dispose();
     }
-    conversion.onProgress = onProgress;
-    await conversion.execute();
-    if (!target.buffer) throw new Error("the conversion produced no file");
-    return new Blob([target.buffer], { type: "video/mp4" });
   })();
 
   return {
