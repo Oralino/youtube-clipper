@@ -3,8 +3,8 @@
 This file guides Claude Code when working in this repository.
 
 ## Project overview
-A Firefox extension that lets you clip part of a YouTube video and save it as a video file (WebM in
-Firefox, MP4 in Chrome), so it can be watched and shared outside YouTube. YouTube has no one-click way to do this; this is
+A Firefox extension that lets you clip part of a YouTube video and save it as an MP4, so it can be
+watched and shared outside YouTube. YouTube has no one-click way to do this; this is
 for people who want to clip and share YouTube moments. Personal project, solo.
 
 **First version:** clip button in the player; set start/end; preview; **Save video**.
@@ -20,10 +20,15 @@ video file over a hosted clip page, accepting that it goes against YouTube's ter
 Chrome Web Store bans YouTube downloaders (see the Chrome phase in `TASKS.md`), and that protected (DRM)
 videos can't be saved. It records the playing `<video>` in the browser with `MediaRecorder` while it
 plays start→end (so saving takes as long as the clip). It never fetches YouTube's streams directly.
-**Format (owner decision, 2026-09-24):** each browser saves in its recorder's default. Chromium
-records MP4 (H.264/AAC); Firefox's MediaRecorder can only write WebM, so Firefox saves WebM (VP8/Opus).
-Converting Firefox's recording to MP4 in the browser (Mediabunny + WebCodecs) was tried and dropped
-after it failed in the owner's Firefox. WebM may not play on iPhones. **Quality matches what's playing** (owner
+**Format (owner decisions, 2026-09-24):** the saved file is MP4 at the recording's own size (no
+scaling). Chromium's MediaRecorder writes MP4 (H.264/AAC) directly. Firefox's can only write WebM
+(VP8/Opus), so after recording, the background page (`entrypoints/background.ts`, since it failed in
+the content script) runs `media/convertToMp4.ts` to convert the finished file with
+[Mediabunny](https://mediabunny.dev) (MPL-2.0) and Firefox's own WebCodecs encoders: H.264 video, AAC
+audio where available, otherwise the Opus copied into the MP4 (Firefox has no AAC encoder). If the
+conversion fails, the WebM is saved instead and the panel says so. Encoding the live stream with
+Mediabunny was tried first and failed in Firefox; converting the file avoids that code path. ffmpeg.wasm
+was considered and rejected (GPL, ~31 MB, slow). **Quality matches what's playing** (owner
 requirement): the recording uses the video's current resolution and frame rate, with the video bitrate
 scaled to them (about 0.1 bits per pixel per frame, so ~6 Mbps at 1080p30) and 192 kbps audio, instead
 of MediaRecorder's low default. On YouTube's "Auto" quality the resolution can change mid-clip.
@@ -59,6 +64,7 @@ Don't duplicate information across these files; link to the owning file instead.
   start/end validation, recording format, bitrate and file names. UI on live YouTube is checked
   manually (see Workflow).
 - **Runtime:** Node 24 + npm.
+- **Media:** [Mediabunny](https://mediabunny.dev) (MPL-2.0) converts Firefox's WebM recording to MP4.
 - **Backend / database:** none.
 
 ## Commands
@@ -69,6 +75,9 @@ npm install            # install dependencies (runs `wxt prepare` via postinstal
                        # `npx wxt prepare` yourself after `npm install <pkg>`, which skips it)
 npm run dev            # start Firefox with the extension loaded and hot reload. If Firefox is already
                        # open, the git-ignored web-ext.config.ts needs firefoxArgs: ["-new-instance"]
+                       # On Windows, stopping `npm run dev` can leave WXT's node process running;
+                       # several servers then overwrite each other's builds. Before starting another,
+                       # stop every `node …wxt\bin\wxt.mjs` process (check ports 3000+).
 npm run build          # production build for Firefox into .output/
 npm run zip            # package the build (and source zip) for addons.mozilla.org
 npm run typecheck      # tsc --noEmit
@@ -98,7 +107,7 @@ Before every commit: `lint`, `typecheck`, `format:check`, `test` and `build` mus
   - it still works after moving to another video without a page reload (YouTube is a single-page app);
   - light and dark YouTube themes;
   - default, theater and fullscreen player modes;
-  - Save video produces a file (WebM in Firefox) of start→end with sound, at the selected quality.
+  - Save video produces an MP4 of start→end with sound, at the selected quality and original size.
 - Don't spawn agents for small tasks. Reviewer and QA only report. Never two agents writing the same file.
 - **Git:** commit straight to `main` at every verified milestone without being asked, with plain
   imperative commit messages. Push only when asked.
@@ -109,9 +118,11 @@ WXT's file-based entrypoints. Create a folder only when its first real file exis
 ```
 entrypoints/
   youtube.content/     content script on youtube.com: clip button and clip panel
+  background.ts        background page: converts Firefox's WebM recordings to MP4
   popup/               toolbar popup (shortcut to the panel on the active tab)
 components/            shared React components
 lib/                   pure logic: video IDs, time parsing, form checks, recording (unit tested)
+media/                 browser media work that can't be unit tested (WebM → MP4 conversion)
 public/icon/           extension icons
 wxt.config.ts          manifest settings (MV3, Firefox gecko settings, host permissions)
 ```
