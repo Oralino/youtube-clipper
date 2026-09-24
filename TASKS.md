@@ -5,10 +5,11 @@ Development tracker. Newest completed items go on top. Owner-only items are mark
 First milestone: on any YouTube video, click the clip button, set start/end and copy a link. Opening
 that link with the extension plays just start→end.
 
-- [ ] **Link-format test (do first).** Check that an end-time parameter on a watch URL survives: a direct
-      open, `youtu.be` redirects, pasting into Discord and other chat apps, and YouTube's own URL
-      rewriting after load. Check the hash as well as the query string. Record the chosen format in
-      `CLAUDE.md` (Architecture) before building UI.
+- [ ] **(owner)** Paste a test link into Discord (and any other chat app you use), click it, and check
+      that the URL that opens still ends in `#clip_end=12`:
+      `https://www.youtube.com/watch?v=jNQXAC9IVRw&t=5#clip_end=12`
+- [ ] Check what happens when a clip link is clicked *inside* YouTube (a comment or description). YouTube
+      handles those clicks without a page load and may drop the hash before the content script sees it
 - [ ] Scaffold WXT (Firefox, MV3, React, TypeScript strict), ESLint + Prettier, Vitest and the npm
       scripts listed in `CLAUDE.md`
 - [ ] `lib/` clip link build/parse and time parsing/formatting, with unit tests
@@ -16,7 +17,6 @@ that link with the extension plays just start→end.
 - [ ] Clip panel: start/end, use current time, preview, copy link, copy embed link, validation
 - [ ] Clip playback: open a clip link, play start→end, pause at the end, replay, watch full video
 - [ ] Toolbar popup: opens the panel on the active YouTube tab
-- [ ] **(owner)** Review and approve `DESIGN.md` (no UI is built before this)
 - [ ] **(owner)** Review the draft UI copy in `CONTENT.md`
 - [ ] **(owner)** Confirm the fullscreen panel overlay is always dark, even in YouTube light mode (`DESIGN.md`)
 - [ ] **(owner)** Decide whether to mark the clip range on YouTube's progress bar (recommended: skip for v1)
@@ -40,4 +40,9 @@ that link with the extension plays just start→end.
 - [ ] Verify an installed (non-temporary) build: a clip link opened in a fresh tab plays start→end
 
 ## Done
+- [x] Link-format test (2026-09-24): chose `watch?v=ID&t=START#clip_end=END`. YouTube strips the extra
+      part from the address bar after load, but it reaches the page intact on direct opens, `youtu.be`
+      redirects and `m.youtube.com` redirects, so a `document_start` content script can read it
+      (details in `CLAUDE.md`, Architecture)
+- [x] **(owner)** Approved `DESIGN.md` (2026-09-24)
 - [x] Project kickoff: CLAUDE.md, DESIGN.md, CONTENT.md, README.md and TASKS.md created

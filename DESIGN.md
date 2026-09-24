@@ -1,6 +1,6 @@
 # DESIGN.md
 
-Visual source of truth, maintained by design-advisor. **Status: Draft, awaiting owner approval.**
+Visual source of truth, maintained by design-advisor. **Status: Approved by the owner (2026-09-24).** Open TODO (owner) items below are tracked in `TASKS.md`.
 
 ## Constraints (decided)
 

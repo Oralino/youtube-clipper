@@ -93,8 +93,16 @@ public/icon/           extension icons
 wxt.config.ts          manifest settings (MV3, Firefox gecko settings, host permissions)
 ```
 
-- **Clip link logic** lives in `lib/` as pure functions with tests next to them (`*.test.ts`). The end
-  parameter's name and position (query vs hash) are settled by the link-format test in `TASKS.md`.
+- **Clip link format:** `https://www.youtube.com/watch?v=ID&t=START#clip_end=END`, with START and END in
+  whole seconds. `t` is YouTube's own start parameter, so viewers without the extension still start in
+  the right place. The end time goes in the hash because the hash is never sent to YouTube's servers and
+  query-string cleaners are less likely to strip it.
+- **Reading the link:** YouTube's page script removes unknown query parameters and the hash from the
+  address bar right after load (tested 2026-09-24). The server does not remove them: they survive direct
+  opens, `youtu.be` redirects and the `m.youtube.com` redirect. So the content script runs at
+  `document_start` and reads `location.href` before YouTube rewrites it, falling back to
+  `performance.getEntriesByType("navigation")[0].name`, which keeps the originally requested URL.
+- **Clip link logic** lives in `lib/` as pure functions with tests next to them (`*.test.ts`).
 - **YouTube navigation:** YouTube changes videos without reloading. Re-inject and reset state on WXT's
   `wxt:locationchange` (or YouTube's `yt-navigate-finish`), and clean up through the content script
   `ctx`.
