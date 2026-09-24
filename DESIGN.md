@@ -9,14 +9,15 @@ Visual source of truth, maintained by design-advisor. **Status: Approved by the 
 *Revised 2026-09-24 (Save video review):* accepted the throttled (~4 Hz) progress updates and the `:read-only` locked style. Save video status (progress, error) now sits above the button so the button never moves in the bottom-anchored panel, and the 4px saving-note gap is removed. The saving note and quality note must wrap to the same number of lines. The manual link field and time-field error lines now say that the content above them moves up, which the main session accepted.
 *Revised 2026-09-24 (links removed):* owner decision (see `CLAUDE.md`, "No links"). Removed the copy buttons, the embed-link note, the manual link field and the clip playback bar, with their icons (link, code, Replay), type roles, theme rule, screenshot and progress-bar TODO. The action stack is now Preview, then Save video. **Save video is now the panel's primary (Subscribe-style) button**; Preview stays tonal; Stop saving is tonal; unavailable uses the shared outlined disabled style, so the "disabled primary" contrast pair is dropped. `--clip-primary-*` tokens stay (Save video and the popup). Focus order updated.
 *Revised 2026-09-24 (MP4 converting):* owner decision (see `CLAUDE.md`, Format). Added the Firefox-only Converting state to Save video: the tonal "Stop saving" button stays (it cancels, no file), the progress line and 4px bar show conversion percent, the converting note replaces the saving note, the fields and Preview stay locked, and "Converting to MP4" is announced once. The MP4-conversion failure (WebM saved instead) joins the Failed reasons. All three notes now reserve 2 lines (`min-height: 36px`) so the button stays put when the shorter converting note appears, and a 30s progress announcement in the clip's last 5s is skipped.
+*Revised 2026-09-24 (no popup, name, icon):* owner decisions. The toolbar popup is removed: its Layout section, Popup states, the popup font stack and type rows, the `:root` / `prefers-color-scheme` token wording, the popup's close path in Save video and the popup screenshot. Nothing still uses the light token set or `--clip-page` (see Color). The name is **Clipper for YouTube**, which resolves the icon TODO. The extension icon is now fully specified (a 128 master and a pixel-snapped 32-grid small variant, with a lighter tile rim for dark backgrounds). The toolbar and `theme_icons` requirements are dropped because there is no toolbar button.
 
 ## Constraints (decided)
 
 - Plain CSS with custom properties, React 19 + TypeScript. No Tailwind, no UI library.
 - Feel: quick, unobtrusive, native, as if YouTube had built it. Match YouTube's control sizing, spacing and type. No web fonts loaded into youtube.com.
-- Themes (D11): the clip panel is always dark (it's an in-player overlay, like YouTube's player menus). The clip button has no theme; it inherits YouTube's player control styling. The popup follows `prefers-color-scheme`. No flash on load. Theme swaps are instant.
-- Accessibility (D10): WCAG AA contrast for every text/background pair in both themes, full keyboard use, visible focus, `prefers-reduced-motion` respected, no opacity on text for hierarchy.
-- Surfaces must work in the default, theater and fullscreen player modes and in narrow windows. The popup has a fixed small width.
+- Themes (D11): the clip panel is always dark (it's an in-player overlay, like YouTube's player menus), whatever YouTube's or the system's theme. The clip button has no theme; it inherits YouTube's player control styling. There is no toolbar popup and no other extension page, so nothing follows `prefers-color-scheme`. No flash on load.
+- Accessibility (D10): WCAG AA contrast for every text/background pair, full keyboard use, visible focus, `prefers-reduced-motion` respected, no opacity on text for hierarchy.
+- Surfaces must work in the default, theater and fullscreen player modes and in narrow windows.
 - Nothing personal in the UI, docs or screenshots.
 
 ## Avoid
@@ -29,7 +30,7 @@ Visual source of truth, maintained by design-advisor. **Status: Approved by the 
 
 ## Personality / direction
 
-A YouTube control, not an app. The panel looks like YouTube's own in-player menus: a flat, opaque dark rounded block over the video, with Roboto, pill buttons and the black/white "Subscribe" style for the one primary action per surface (Save video in the panel, "Open clip panel" in the popup). Numbers (times) are the content, so they get tabular figures and the clearest type. Silent when idle, with one small button in the player. It shows feedback only where the user is looking: the label on the button they just pressed.
+A YouTube control, not an app. The panel looks like YouTube's own in-player menus: a flat, opaque dark rounded block over the video, with Roboto, pill buttons and the black/white "Subscribe" style for the one primary action (Save video). Numbers (times) are the content, so they get tabular figures and the clearest type. Silent when idle, with one small button in the player. It shows feedback only where the user is looking: the label on the button they just pressed.
 
 ## Layout
 
@@ -55,25 +56,17 @@ Internal layout: a single column (the panel never gets wide enough for more). Ea
 Focus order: Close → Start → Use current time (start) → End → Use current time (end) → Preview → Save video (matches the visual order). When the panel opens, focus goes to Start. `Esc` closes the panel and returns focus to the clip button.
 *Main session:* keydown events inside the panel must not reach YouTube's shortcuts. Otherwise typing "1:23" seeks the video, because number keys jump to 10%, 20% and so on.
 
-### Toolbar popup
-- Fixed `width: 320px`, height fits the content, padding `16px`, no internal scrolling.
-- Header row: 16px extension icon + extension name. Below it: one line of body text and at most one action.
-
 ## Typography
 
-Font stacks (no loading):
-- In-page: `"Roboto", "Arial", sans-serif` (YouTube's own stack).
-- Popup: `"Roboto", "Segoe UI", system-ui, sans-serif`.
+Font stack (no loading): `"Roboto", "Arial", sans-serif` (YouTube's own stack).
 
 Use `font-variant-numeric: tabular-nums` on every time value.
 
 | Role | Size / line height | Weight |
 |---|---|---|
 | Panel title | 16px / 22px | 500 |
-| Popup extension name | 14px / 20px | 500 |
 | Field label ("Start", "End") | 12px / 16px | 500 |
 | Time input value | 14px / 20px | 400, tabular |
-| Body text (popup) | 14px / 20px | 400 |
 | Clip-length readout (panel header) | 14px / 20px | 400, tabular, `--clip-text-secondary` |
 | Button label | 14px / 20px (36px control height) | 500 |
 | Note, helper, error text | 12px / 18px | 400 |
@@ -83,13 +76,15 @@ Minimum size is 12px. Hierarchy comes from size, weight and the secondary colour
 
 ## Color
 
-Tokens use YouTube's own neutrals so the UI blends in. They are prefixed `--clip-` so they stay neutral until the name is decided. The in-page UI defines them on `:host` inside the shadow root. The popup defines them on `:root`.
+Tokens use YouTube's own neutrals so the UI blends in. They keep the short `--clip-` prefix (it fits the name, Clipper for YouTube) and are defined on `:host` inside the shadow root.
+
+**Only the dark set is in use.** With the popup gone, no surface renders the light set: the panel is always dark and the clip button inherits YouTube's styling. `--clip-page` (the popup background) is also unused in both sets; the time field uses `--clip-field`. *Main session:* confirm nothing in the build reads the light values or `--clip-page`. If so, the light block, `--clip-page`, the `data-theme` switch and the table's Light column can go; say the word and design-advisor will collapse this section to one set.
 
 ```css
-/* Light (default) */
-:host, :root {
+/* Light: UNUSED since the popup was removed (2026-09-24) */
+:host {
   color-scheme: light;
-  --clip-page: #ffffff;          /* popup background */
+  --clip-page: #ffffff;          /* unused (was the popup background) */
   --clip-surface: #f2f2f2;       /* panel background (matches YouTube's description box) */
   --clip-field: #ffffff;         /* time input background */
   --clip-tonal: #e5e5e5;         /* secondary button */
@@ -105,8 +100,8 @@ Tokens use YouTube's own neutrals so the UI blends in. They are prefixed `--clip
   --clip-error: #cc0000;
 }
 
-/* Dark: in-page uses :host([data-theme="dark"]), popup uses @media (prefers-color-scheme: dark) { :root { … } } */
-{
+/* Dark: the only set in use, on :host([data-theme="dark"]) */
+:host([data-theme="dark"]) {
   color-scheme: dark;
   --clip-page: #0f0f0f;
   --clip-surface: #272727;
@@ -130,6 +125,8 @@ Tokens use YouTube's own neutrals so the UI blends in. They are prefixed `--clip
 **The accent (blue) is used only for:** focus rings and the pressed Preview state. It is never used for fills on large areas and never for the primary button.
 
 ### Contrast (WCAG 2.x ratios, AA: text 4.5:1, non-text 3:1)
+
+The Light column and the "on page" rows are kept only until the light set is removed (see above). The Dark column is the one that ships.
 
 | Pair | Light | Dark |
 |---|---|---|
@@ -170,7 +167,7 @@ Shared states for every button and input:
 - **Disabled:** loses its fill and changes to secondary text. It is never faded with opacity. `cursor: default`. Uses `aria-disabled` or `disabled`. One disabled look for every button, tonal or primary: `--clip-surface` background, 1px `--clip-tonal-hover` border, `--clip-text-secondary` text.
 
 ### Icons
-- UI icons (panel, popup) are simple line icons drawn for the project: 24×24 grid, `fill="none"`, `stroke="currentColor"`, stroke width 2, round caps and joins, `aria-hidden="true"`. They take the text colour of their control, including pressed and disabled.
+- UI icons (panel) are simple line icons drawn for the project: 24×24 grid, `fill="none"`, `stroke="currentColor"`, stroke width 2, round caps and joins, `aria-hidden="true"`. They take the text colour of their control, including pressed and disabled.
 - Sizes: `20px` in pill buttons (8px gap to the label, centred with the label), `16px` in notes (1px top offset so it centres on the 18px line), `24px` in the close icon button.
 - Set: close (X), loop (Preview), check (Saved), info (quality note, saving note), download (Save video) `M12 4v11M7 10l5 5 5-5M5 20h14` (same 4–20 footprint as the range glyph), stop (Stop saving) `M8 6h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z` (a 12px rounded square, same 6–18 footprint as close, so it can't be read as the panel's close).
 - Exception: the range glyph `[ ▶ ]` stays filled everywhere it appears (clip button, extension icon). It is the product mark and a player control, drawn like YouTube's player icons.
@@ -222,39 +219,56 @@ The panel's **primary** action (Subscribe style). One button that changes in pla
 - Stop saving: discards the recording (no partial file), pauses the video where it is, removes the progress block, and restores Idle and the fields. Focus stays on the button. During Converting it cancels the conversion the same way: no MP4 and no WebM is saved.
 - Finished: the video pauses at the clip's end, the file downloads, the button shows Saved. Focus stays on the button.
 - Failed reasons (wording in CONTENT.md): protected (DRM) video, an ad started, the video was paused, the video was skipped (seeked), the browser can't record, the MP4 conversion failed, and a generic fallback. The conversion case is the one Failed state where a file does download: the WebM is saved instead, and the error line says so (accepted as an error-coloured line because the user asked for MP4 and didn't get it). Check the protected and can't-record cases before playback starts, so those fail instantly without seeking. The error stays until the next Save press, a change to the times, or the panel closing. The ad case appears when the panel returns after the ad (it's hidden during ads).
-- Closing stops saving: Close, `Esc`, the clip button, the popup's "Close clip panel" and moving to another video all stop and discard, with no confirmation, and focus returns to the clip button as usual. Saving never traps `Esc`. The saving note tells the user this before it can happen.
+- Closing stops saving: Close, `Esc`, the clip button and moving to another video all stop and discard, with no confirmation, and focus returns to the clip button as usual. Saving never traps `Esc`. The saving note tells the user this before it can happen.
 - Announcements go through the panel's existing polite status region, never per second or per percent: once at start (with the clip length), every 30s of recorded time for longer clips, once when Converting starts (Firefox, no percentage), then once on Saved, stop or failure (the error text itself). Clips under 30s get only the start, converting (Firefox) and end messages. The progress line and bar are not live. Skip a 30s progress announcement that falls within the last 5s of the clip, so "Converting to MP4" (or "Video saved") doesn't cut it off.
 - Dark-only surface, so no light-theme variant is needed. Motion: none; the progress block and error line appear and disappear instantly.
-
-### Popup states
-| State | Content |
-|---|---|
-| YouTube watch page, panel closed | Body "Clip a section of this video." Full-width primary button "Open clip panel". |
-| YouTube watch page, panel open | Full-width tonal button "Close clip panel". |
-| Any other page (non-YouTube, YouTube home or search, and for now Shorts) | Secondary body text "Open a YouTube video to clip it." No button. |
-| Page not reachable (tab opened before install, or the content script is missing) | Body "Reload this tab to use the extension." Tonal button "Reload tab". |
-
-Live streams count as watch pages until the Shorts/live TODO is decided, so the popup agrees with the in-player button.
-Button states follow the shared rules. Focus goes to the button (if there is one) when the popup opens.
 
 ## Motion
 
 - Panel open: `opacity 0→1` plus `translateY(4px→0)`, `150ms cubic-bezier(0.2, 0, 0, 1)`. Close: `100ms` opacity only.
-- Everything else is instant: hover, pressed, the Save video label and style swaps, and theme changes. **No `transition` on colour or background properties**, so a theme swap can never animate.
+- Everything else is instant: hover, pressed, and the Save video label and style swaps. **No `transition` on colour or background properties.**
 - `prefers-reduced-motion: reduce`: no transforms and no fades. Everything appears and disappears instantly.
 - Preview looping and saving are video playback, not UI motion. Nothing in the UI pulses or animates while they run.
 
 ## Imagery
 
-### Extension icon (to design)
-- Glyph: the same `[ ▶ ]` range mark as the clip button. It must not use YouTube's red rounded-rectangle play logo or scissors, and must not suggest it is an official YouTube product.
-- Needed: an SVG master, toolbar 16 and 32px, and add-on 48, 96 and 128px (for the AMO listing).
-- Toolbar: a single-colour glyph with light and dark variants (Firefox `theme_icons`), readable at 16px. Test it on light, dark and system toolbar themes.
-- Add-on icon: the glyph on a neutral `#0f0f0f` rounded tile.
-- **TODO (owner)**: the final colour and whether the tile keeps the glyph alone. This depends on the final name, which is still open. Note that "YouTube" in the name may conflict with AMO naming policy and with YouTube's own "Clips" feature.
+### Extension icon
+For **Clipper for YouTube** (decided 2026-09-24). There is no toolbar button, so the icon only appears in about:addons, Firefox's extensions menu, install and permission prompts, and the AMO listing. No `theme_icons`, no light/dark toolbar variants, no single-colour version.
+- Glyph: the clip button's `[ ▶ ]` range mark, glyph only (no letters, no second element). Never YouTube's red, never a red rounded-rectangle play logo, never scissors, nothing that suggests an official YouTube product.
+- Colours: tile `#0f0f0f`, glyph `#ffffff` (19.2:1), tile rim `#4d4d4d` (the dark `--clip-tonal-hover`). No gradient, shadow or gloss.
+- Rim, and why: `#0f0f0f` against Firefox's dark about:addons page and cards (about `#1c1b22` / `#2b2a33`; verify) is only 1.1 / 1.3:1, so the tile's outline disappears and the glyph floats. The rim is a lighter edge band 1/32 of the tile wide, inside the tile edge. It raises the edge to about 2.0 / 1.7:1 on those backgrounds. That is enough to show the tile's shape. It doesn't need 3:1, because the glyph carries the meaning and is 19.2:1 on any background. On light backgrounds the rim reads as a faint inner edge.
+- Tile: full bleed (no transparent padding, so the glyph gets every pixel at 32px). Corner radius 18.75% of the tile side (24 on 128, 6 on 32). The rim's inner corner is concentric (radius minus rim width).
+- Two SVG files. The main session rasterises each PNG straight from its SVG at the exact size. Never downscale a larger PNG.
+
+| PNG size | Source | Glyph share of tile | Glyph stroke |
+|---|---|---|---|
+| 16, 32 | Small variant (32 grid, pixel-snapped) | 75% | 2px at 16, 4px at 32 |
+| 48, 96, 128 | Master (128 grid) | 62.5% | 3.75px at 48, 7.5 at 96, 10 at 128 |
+
+**Master** (48, 96, 128): the clip-button glyph scaled ×5 and centred (`X = 5u + 4` from the 24 grid, glyph box 24–104). The triangle's centroid sits on the tile centre, as in the original.
+
+```svg
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <rect width="128" height="128" rx="24" fill="#4d4d4d"/>
+  <rect x="4" y="4" width="120" height="120" rx="20" fill="#0f0f0f"/>
+  <path fill="#ffffff" d="M24 24h20v10H34v60h10v10H24zM104 24H84v10h10v60H84v10h20zM54 44l30 20-30 20z"/>
+</svg>
+```
+
+**Small variant** (16, 32): the same tile and rim on a 32 grid. The glyph is redrawn so every glyph edge falls on an even unit, which is a whole pixel at both 16 and 32. At 16px the master's strokes and gaps would be 1.25px and blur into grey. Here, at 16px: brackets are 2px thick with 2px arm tips, 2px from the bracket to the triangle's flat side, 1px from each arm to the triangle's corner, and 1px from the triangle's tip to the right bracket. The triangle is 5×6px. Compared with the master: the glyph fills more of the tile, the strokes are heavier (1/6 of the glyph width instead of 1/8) and the triangle is slightly squatter (10×12 instead of 6×8 proportions). The rim is 1 unit wide, so at 16px it is half a pixel and renders as a softened edge. That is intended.
+
+```svg
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="6" fill="#4d4d4d"/>
+  <rect x="1" y="1" width="30" height="30" rx="5" fill="#0f0f0f"/>
+  <path fill="#ffffff" d="M4 4h8v4H8v16h4v4H4zM28 4h-8v4h4v16h-4v4h8zM12 10l10 6-10 6z"/>
+</svg>
+```
+
+- Acceptance check (main session, owner approves): view the 16 and 32 PNGs at 100% on `#ffffff` and on `#1c1b22`. The black gaps between the arms and the triangle must be visible at 16, and the triangle must read as a play symbol, not a blob. The 48 and 96 PNGs are antialiased, not pixel-snapped, which is fine at those sizes.
 
 ### Screenshots (README and AMO)
-- Three shots: clip panel idle, clip panel while saving (both always dark), popup (either theme). 1280×800, browser content only, with no bookmarks bar and no other tabs visible.
+- Two shots: clip panel idle and clip panel while saving (both always dark). 1280×800, browser content only, with no bookmarks bar and no other tabs visible.
 - Use a clean Firefox profile, signed out of YouTube. No avatar, history, subscriptions, notifications or personalised recommendations visible. Crop or blur recommendations if needed.
 - **TODO (owner)**: choose the demo video. It should be one you have the right to show (your own upload, Creative Commons or public domain).
 - The owner approves every screenshot before it is committed.
