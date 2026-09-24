@@ -64,7 +64,8 @@ metrics or results. Only link public repos. **TODO (owner)** items need the owne
 - None exist yet. Capture the clip panel (idle and while saving), on a video with no personal details
   visible.
 - The owner approves every screenshot before it goes into the README.
-- The extension icon still needs designing (sizes and style are in `DESIGN.md`).
+- Extension icon: `assets/icon/icon.svg` (48–128px) and `icon-small.svg` (16–32px), rendered to
+  `public/icon/`; owner approved 2026-09-24. Spec in `DESIGN.md`.
 
 ## Store listing
 Written when the extension goes to addons.mozilla.org (summary, description, screenshots), after the

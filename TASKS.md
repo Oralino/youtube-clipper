@@ -12,7 +12,6 @@ MP4 with sound, at the selected quality and original size.
 
 ## Next
 - [ ] Accessibility pass: keyboard-only use, focus order, contrast in both themes, reduced motion
-- [ ] Extension icon (sizes in `DESIGN.md`); **(owner)** final colour and tile, after the name is settled
 - [ ] **(owner)** Choose a demo video you have the right to show (your own upload, Creative Commons or
       public domain)
 - [ ] README screenshots of the clip panel, idle and while saving **(owner approves)**
@@ -39,6 +38,8 @@ MP4 with sound, at the selected quality and original size.
 - [ ] Submit the `zip:chrome` build to the Chrome Web Store
 
 ## Done
+- [x] Extension icon: `[ ▶ ]` on a dark tile with a grey rim, pixel-snapped 16/32px variant; designed
+      by design-advisor, owner approved (2026-09-24)
 - [x] **(owner)** Name: Clipper for YouTube; no toolbar popup, the clip button and panel are enough
       (2026-09-24)
 - [x] **First milestone reached (2026-09-24):** clip button → start/end → Save video gives an MP4 with

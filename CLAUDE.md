@@ -123,7 +123,8 @@ entrypoints/
 components/            shared React components
 lib/                   pure logic: video IDs, time parsing, form checks, recording (unit tested)
 media/                 browser media work that can't be unit tested (WebM → MP4 conversion)
-public/icon/           extension icons
+public/icon/           extension icon PNGs (16–128), rendered from assets/icon/*.svg
+assets/icon/           icon SVG sources: icon.svg (48–128px), icon-small.svg (16–32px, pixel-snapped)
 wxt.config.ts          manifest settings (MV3, Firefox gecko settings, host permissions)
 ```
 
