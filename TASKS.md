@@ -2,14 +2,13 @@
 Development tracker. Newest completed items go on top. Owner-only items are marked **(owner)**.
 
 ## Current
-First milestone: on any YouTube video, click the clip button, set start/end and save the clip as an
-MP4 that plays on a phone.
+First milestone: on any YouTube video, click the clip button, set start/end and save the clip as a
+video file (WebM in Firefox) with sound, at the selected quality.
 
-- [ ] Save video: record the clip start→end to an MP4 (WebM fallback) and download it, with progress,
+- [ ] Save video: record the clip start→end (WebM in Firefox, MP4 in Chrome) and download it, with progress,
       cancel and errors (protected video, ad, navigation); same quality as the selected one (bitrate
       scaled to resolution and frame rate); check audio and quality in Firefox
-- [ ] MP4 in Firefox: convert Firefox's WebM recording to MP4 in the browser (WebCodecs), depending on
-      which encoders the owner's Firefox has
+- [ ] **(owner)** Check a saved WebM plays where you share clips (PC, phone, Discord)
 - [ ] Toolbar popup: opens the panel on the active YouTube tab
 
 ## Next
@@ -27,7 +26,7 @@ MP4 that plays on a phone.
 - [ ] **(owner)** Make the repo public
 - [ ] **(owner)** Decide on addons.mozilla.org listed vs unlisted; create the Mozilla account; submit
       `npm run zip` output
-- [ ] Verify an installed (non-temporary) build: Save video produces a working MP4
+- [ ] Verify an installed (non-temporary) build: Save video produces a working file
 
 ## Chrome (after the Firefox version works)
 - [ ] Add Chrome scripts (`dev:chrome`, `build:chrome`, `zip:chrome`) using WXT's `-b chrome`
@@ -42,6 +41,8 @@ MP4 that plays on a phone.
 - [ ] Submit the `zip:chrome` build to the Chrome Web Store
 
 ## Done
+- [x] **(owner)** Firefox saves WebM, its recorder's default; the in-browser MP4 conversion
+      (Mediabunny) was tried and dropped after it failed in Firefox (2026-09-24)
 - [x] **(owner)** Dropped clip links and embed links (YouTube's player can't stop at an end time;
       embeds fail with Error 153 outside an embedding page). Save video to MP4 is the way clips are
       shared (2026-09-24)

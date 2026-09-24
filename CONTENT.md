@@ -11,7 +11,7 @@ metrics or results. Only link public repos. **TODO (owner)** items need the owne
   **TODO (owner)**: Settle the final name before any addons.mozilla.org listing. Mozilla's policy
   doesn't allow names that suggest an official connection with another brand; "Clipper for YouTube"
   follows the accepted pattern and matches the repo name `youtube-clipper`.
-- **One-liner:** Clip part of a YouTube video and save it as an MP4 to share anywhere.
+- **One-liner:** Clip part of a YouTube video and save it as a video file to share.
 - **Tone:** short, plain and native to YouTube. Labels are verbs, with no exclamation marks or emoji.
 - **Personal info shown:** none.
 

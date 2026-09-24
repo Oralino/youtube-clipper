@@ -3,11 +3,11 @@
 This file guides Claude Code when working in this repository.
 
 ## Project overview
-A Firefox extension that lets you clip part of a YouTube video and save it as an MP4 file, so it can
-be watched and shared anywhere, including on phones. YouTube has no one-click way to do this; this is
+A Firefox extension that lets you clip part of a YouTube video and save it as a video file (WebM in
+Firefox, MP4 in Chrome), so it can be watched and shared outside YouTube. YouTube has no one-click way to do this; this is
 for people who want to clip and share YouTube moments. Personal project, solo.
 
-**First version:** clip button in the player; set start/end; preview; **Save video** to an MP4.
+**First version:** clip button in the player; set start/end; preview; **Save video**.
 
 **No links (owner decision, 2026-09-24):** an earlier version copied a clip link (a watch URL with an
 end time the extension would enforce) and an embed link. The owner dropped both: YouTube's own player
@@ -20,9 +20,10 @@ video file over a hosted clip page, accepting that it goes against YouTube's ter
 Chrome Web Store bans YouTube downloaders (see the Chrome phase in `TASKS.md`), and that protected (DRM)
 videos can't be saved. It records the playing `<video>` in the browser with `MediaRecorder` while it
 plays start→end (so saving takes as long as the clip). It never fetches YouTube's streams directly.
-**The saved file is always MP4** (owner requirement): Chromium records MP4 (H.264/AAC) directly;
-Firefox's MediaRecorder can only record WebM, so there the recording is converted to MP4 in the browser
-before it's saved (approach in `TASKS.md`). **Quality matches what's playing** (owner
+**Format (owner decision, 2026-09-24):** each browser saves in its recorder's default. Chromium
+records MP4 (H.264/AAC); Firefox's MediaRecorder can only write WebM, so Firefox saves WebM (VP8/Opus).
+Converting Firefox's recording to MP4 in the browser (Mediabunny + WebCodecs) was tried and dropped
+after it failed in the owner's Firefox. WebM may not play on iPhones. **Quality matches what's playing** (owner
 requirement): the recording uses the video's current resolution and frame rate, with the video bitrate
 scaled to them (about 0.1 bits per pixel per frame, so ~6 Mbps at 1080p30) and 192 kbps audio, instead
 of MediaRecorder's low default. On YouTube's "Auto" quality the resolution can change mid-clip.
@@ -97,7 +98,7 @@ Before every commit: `lint`, `typecheck`, `format:check`, `test` and `build` mus
   - it still works after moving to another video without a page reload (YouTube is a single-page app);
   - light and dark YouTube themes;
   - default, theater and fullscreen player modes;
-  - Save video produces an MP4 of start→end with sound, at the selected quality.
+  - Save video produces a file (WebM in Firefox) of start→end with sound, at the selected quality.
 - Don't spawn agents for small tasks. Reviewer and QA only report. Never two agents writing the same file.
 - **Git:** commit straight to `main` at every verified milestone without being asked, with plain
   imperative commit messages. Push only when asked.
