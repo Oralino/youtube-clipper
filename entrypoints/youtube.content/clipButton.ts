@@ -52,9 +52,10 @@ export function createClipButton(
     tooltip.remove();
     onClick();
   });
-  // Keep Space and Enter from also reaching YouTube's shortcuts (Space would pause the video).
+  // Enter activates the button without also reaching YouTube's shortcuts. Space never gets here:
+  // YouTube takes it first for play/pause, and the owner is fine with that (tested 2026-09-24).
   button.addEventListener("keydown", (event) => {
-    if (event.key === " " || event.key === "Enter") event.stopPropagation();
+    if (event.key === "Enter") event.stopPropagation();
   });
   button.addEventListener("mouseenter", () => showTooltip(button, tooltip));
   button.addEventListener("focus", () => {
