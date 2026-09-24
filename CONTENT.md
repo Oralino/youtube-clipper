@@ -1,6 +1,6 @@
 # CONTENT.md
-Source of truth for what the extension says. Update this file first, then mirror it into the UI strings
-module (see `CLAUDE.md`).
+Source of truth for what the extension says. Update this file first, then mirror it into
+`lib/strings.ts`.
 
 Rules: Claude drafts copy from the agreed features and the owner reviews it. Never invent features,
 metrics or results. Only link public repos. **TODO (owner)** items need the owner's input.
