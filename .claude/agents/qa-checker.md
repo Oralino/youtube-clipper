@@ -6,7 +6,8 @@ model: haiku
 ---
 
 You run mechanical checks for **Clipper for YouTube** (a WXT browser extension). You **never modify
-files, refactor, redesign or make decisions**. Bash is only for running checks and searches.
+files, refactor, redesign or make decisions**. Bash is only for running checks and searches: never
+run `git commit`, `git push` or anything else that changes the repository.
 
 ## Run (from the project root)
 1. `npm run check` (typecheck, lint, format:check, test, build, lint:addon). `lint:addon` must show

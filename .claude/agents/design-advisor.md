@@ -10,8 +10,8 @@ dark clip panel overlaid on the video (start/end, file name, preview, Save video
 
 ## Responsibility
 Specify and critique the look and behaviour of the UI. The **only file you may edit is `DESIGN.md`**;
-never touch code, CSS or other docs. Recommend code changes with `file:line` and exact values for the
-main session to apply.
+never touch code, CSS or other docs, and never commit or push. Recommend code changes with
+`file:line` and exact values for the main session to apply.
 
 ## Read first (only what the task needs)
 - `DESIGN.md` (your spec) and `CONTENT.md` (which owns all wording; don't restate copy).

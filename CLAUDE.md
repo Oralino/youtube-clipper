@@ -82,8 +82,12 @@ design-advisor runs only for new visual patterns. After page-affecting changes, 
   Never use the owner's real name or personal email.
 
 ## Git and releases
-- Commit straight to `main` at every verified step, in small commits split by purpose, with plain
-  imperative messages. Push only when asked.
+- Commit to `main` after each completed task, once its tier's checks have passed (`npm run check`,
+  plus reviewer and/or QA per the tier table), not before. Only the main session commits; agents never
+  commit or push.
+- One logical change per commit (a task can end in several commits), with plain imperative messages.
+- Never commit secrets or credentials. If the working tree has unrelated changes, ask before committing.
+- Never push or force-push without asking first.
 - Repo: github.com/Oralino/youtube-clipper (public, MIT).
 - Release: bump `version` in `package.json`, then `npm run check`, `npm run zip` and
   `npm run zip:chrome`. Upload the Firefox zip and source zip to addons.mozilla.org, and create a
