@@ -1,6 +1,7 @@
 # DESIGN.md
 
 Visual source of truth, maintained by design-advisor. **Status: Approved by the owner (2026-09-24).** Open TODO (owner) items below are tracked in `TASKS.md`.
+*Revised 2026-09-24:* the clip button sections (Layout, Components, its contrast note) were updated to match YouTube's current player (`ytp-delhi-modern-icons`), `--clip-active-bar` now matches YouTube's CC underline, and Popup states treats live streams as watch pages.
 
 ## Constraints (decided)
 
@@ -26,9 +27,10 @@ A YouTube control, not an app. The panel looks like YouTube's own description bo
 ## Layout
 
 ### Clip button (in the player)
-- Inserted as the **first item of `.ytp-right-controls`**, so it doesn't move the settings, theater and fullscreen buttons people are used to.
-- Takes its size from YouTube's `.ytp-button` class (width, height and padding) rather than hard-coded px, so it scales in fullscreen the same way the native buttons do. Icon on a 24×24 grid, filled `#fff`, with the same SVG drop shadow YouTube puts on its control icons.
-- Hidden on pages where the extension doesn't run. **TODO (owner)**: decide on Shorts and live streams. Until then, show it on regular watch pages only.
+- Visually the **first item of the right controls**, so it doesn't move the settings, theater and fullscreen buttons people are used to. Current player: first child of `.ytp-right-controls-left` (the pill with expand, autoplay, CC, settings), so it sits inside that group's dark translucent pill. Older players with a flat `.ytp-right-controls`: its first child.
+- Takes its size from YouTube's `.ytp-button` class rather than hard-coded px (about 48×40 today, 32×32 at the smallest widths), so it scales with the native buttons. `.ytp-button` clips overflow, so nothing may draw outside the button box.
+- No `data-priority`, so like settings it stays visible in narrow players when YouTube collapses prioritised buttons behind its expand button.
+- Shown on every `/watch` page, including live streams for now (live detection is unverified). Hidden elsewhere. **TODO (owner)**: decide on Shorts and live streams; hiding it on live stays part of that TODO.
 
 ### Clip panel
 One component with two placements.
@@ -107,7 +109,7 @@ Tokens use YouTube's own neutrals so the UI blends in. They are prefixed `--clip
   --clip-accent: #065fd4;        /* YouTube's link blue */
   --clip-accent-subtle: #def1ff;
   --clip-error: #cc0000;
-  --clip-active-bar: #ff0000;    /* clip button active underline only */
+  --clip-active-bar: #e1002d;    /* clip button active underline only (YouTube's CC underline) */
 }
 
 /* Dark: in-page uses :host([data-theme="dark"]), popup uses @media (prefers-color-scheme: dark) { :root { … } } */
@@ -127,7 +129,7 @@ Tokens use YouTube's own neutrals so the UI blends in. They are prefixed `--clip
   --clip-accent: #3ea6ff;
   --clip-accent-subtle: #263850;
   --clip-error: #ff4e45;
-  --clip-active-bar: #ff0000;
+  --clip-active-bar: #e1002d;
 }
 ```
 
@@ -158,7 +160,7 @@ Tokens use YouTube's own neutrals so the UI blends in. They are prefixed `--clip
 | border vs surface (non-text) | 4.1 | 3.1 |
 | focus ring (accent) vs surface (non-text) | 5.2 | 5.8 |
 
-The dark pairs at 4.5 to 4.6 pass with little margin. Don't lighten those backgrounds or darken those texts without re-checking. The clip button's white icon on video relies on YouTube's own control gradient and icon shadow, the same as the native buttons.
+The dark pairs at 4.5 to 4.6 pass with little margin. Don't lighten those backgrounds or darken those texts without re-checking. The clip button's `#eee` icon relies on YouTube's dark translucent control pill (older players: the bottom gradient), the same as the native buttons. Its tooltip has no box and relies on the native `text-shadow: 0 0 2px #000` over video. This is an accepted exception to the text/background rule, for parity with YouTube's own tooltip.
 
 ## Spacing, radius, elevation
 
@@ -175,9 +177,11 @@ Shared states for every button and input:
 - **Disabled:** loses its fill or changes to secondary text. It is never faded with opacity. `cursor: default`. Uses `aria-disabled` or `disabled`.
 
 ### Clip button
-- Icon: a play triangle between two range brackets `[ ▶ ]`. Tooltip and `aria-label`: "Clip". Uses YouTube's native player tooltip if that is achievable, otherwise matches it visually.
-- Default: white icon. Hover: YouTube's native control hover. Focus-visible: inherits YouTube's `.ytp-button` focus ring. Don't restyle it.
-- Active (panel open): `aria-expanded="true"`, plus a `3px` × `20px` `--clip-active-bar` underline with a `2px` radius, centred under the icon, the same as the CC button's "on" state.
+- Markup: `<button class="ytp-button clip-ext-button" aria-label="Clip" aria-expanded="false">`. No `title` attribute (it would add a second, browser tooltip).
+- Icon: a play triangle centred between two range brackets `[ ▶ ]`. 24×24 SVG, `fill="currentColor"`, path `M4 4h4v2H6v12h2v2H4zM20 4h-4v2h2v12h-2v2h4zM10 8l6 4-6 4z`. No drop-shadow `<use>`; current native icons have none.
+- Default: colour inherited from `.ytp-button` (`#eee`). Hover: YouTube's native control hover. Focus-visible: inherits YouTube's `.ytp-button` focus ring. Don't restyle any of it.
+- Tooltip: YouTube's `.ytp-tooltip` doesn't attach to injected buttons, so we render our own that matches it: plain text, no background box, `#eee`, `13px / 15px`, weight 500, `text-shadow: 0 0 2px #000`, font `"YouTube Noto", Roboto, Arial, sans-serif`. Centred on the button, about 20px above its top edge, clamped inside the player, `z-index: 1003`. Shows on hover and on keyboard focus.
+- Active (panel open): `aria-expanded="true"`, plus a `::after` underline, 18×3px, radius 3px, `--clip-active-bar`, `bottom: 9px`, centred with `left: 50%; transform: translateX(-50%)`, the same as the CC button's "on" state.
 - Disabled: not shown. Remove the button rather than showing a dead control (for example on a video that isn't ready yet).
 
 ### Clip panel
@@ -211,9 +215,10 @@ Shared states for every button and input:
 |---|---|
 | YouTube watch page, panel closed | Body "Clip a section of this video." Full-width primary button "Open clip panel". |
 | YouTube watch page, panel open | Full-width tonal button "Close clip panel". |
-| Any other page (non-YouTube, YouTube home or search, and for now Shorts and live) | Secondary body text "Open a YouTube video to clip it." No button. |
+| Any other page (non-YouTube, YouTube home or search, and for now Shorts) | Secondary body text "Open a YouTube video to clip it." No button. |
 | Page not reachable (tab opened before install, or the content script is missing) | Body "Reload this tab to use the extension." Tonal button "Reload tab". |
 
+Live streams count as watch pages until the Shorts/live TODO is decided, so the popup agrees with the in-player button.
 Button states follow the shared rules. Focus goes to the button (if there is one) when the popup opens.
 
 ### Clip playback bar
