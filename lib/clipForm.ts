@@ -1,4 +1,3 @@
-import type { Clip } from "./clipLink.ts";
 import { parseTime } from "./time.ts";
 
 export type FieldError = "unreadable-time" | "end-before-start" | "outside-video";
@@ -7,7 +6,7 @@ export interface ClipFormResult {
   startError: FieldError | null;
   endError: FieldError | null;
   /** Set only when both fields hold a valid range. */
-  range: Pick<Clip, "start" | "end"> | null;
+  range: { start: number; end: number } | null;
 }
 
 /**

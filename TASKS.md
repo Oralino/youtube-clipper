@@ -2,20 +2,15 @@
 Development tracker. Newest completed items go on top. Owner-only items are marked **(owner)**.
 
 ## Current
-First milestone: on any YouTube video, click the clip button, set start/end and copy a link. Opening
-that link with the extension plays just start→end.
+First milestone: on any YouTube video, click the clip button, set start/end and save the clip as an
+MP4 that plays on a phone.
 
-- [ ] **(owner)** Paste a test link into Discord (and any other chat app you use), click it, and check
-      that the URL that opens still ends in `#clip_end=12`:
-      `https://www.youtube.com/watch?v=jNQXAC9IVRw&t=5#clip_end=12`
-- [ ] Check what happens when a clip link is clicked *inside* YouTube (a comment or description). YouTube
-      handles those clicks without a page load and may drop the hash before the content script sees it
 - [ ] Save video: record the clip start→end to an MP4 (WebM fallback) and download it, with progress,
       cancel and errors (protected video, ad, navigation); same quality as the selected one (bitrate
-      scaled to resolution and frame rate); check MP4 support, audio and quality in Firefox
-- [ ] Clip playback: open a clip link, play start→end, pause at the end, replay, watch full video
+      scaled to resolution and frame rate); check audio and quality in Firefox
+- [ ] MP4 in Firefox: convert Firefox's WebM recording to MP4 in the browser (WebCodecs), depending on
+      which encoders the owner's Firefox has
 - [ ] Toolbar popup: opens the panel on the active YouTube tab
-- [ ] **(owner)** Decide whether to mark the clip range on YouTube's progress bar (recommended: skip for v1)
 
 ## Next
 - [ ] Accessibility pass: keyboard-only use, focus order, contrast in both themes, reduced motion
@@ -32,11 +27,11 @@ that link with the extension plays just start→end.
 - [ ] **(owner)** Make the repo public
 - [ ] **(owner)** Decide on addons.mozilla.org listed vs unlisted; create the Mozilla account; submit
       `npm run zip` output
-- [ ] Verify an installed (non-temporary) build: a clip link opened in a fresh tab plays start→end
+- [ ] Verify an installed (non-temporary) build: Save video produces a working MP4
 
 ## Chrome (after the Firefox version works)
 - [ ] Add Chrome scripts (`dev:chrome`, `build:chrome`, `zip:chrome`) using WXT's `-b chrome`
-- [ ] Run the manual YouTube check in Chrome: clip button, panel, clip links, playback, popup
+- [ ] Run the manual YouTube check in Chrome: clip button, panel, preview, Save video, popup
 - [ ] Fix any Chrome differences found (manifest keys, shadow-root styles, event isolation)
 - [ ] README: add Chrome install and build steps
 - [ ] **(owner)** Decide how Save video fits Chrome: the Chrome Web Store bans YouTube downloaders, so
@@ -46,6 +41,9 @@ that link with the extension plays just start→end.
 - [ ] Submit the `zip:chrome` build to the Chrome Web Store
 
 ## Done
+- [x] **(owner)** Dropped clip links and embed links (YouTube's player can't stop at an end time;
+      embeds fail with Error 153 outside an embedding page). Save video to MP4 is the way clips are
+      shared (2026-09-24)
 - [x] Clip panel: in-player overlay (owner's choice), start/end with use current time and
       validation, preview loop, copy link, copy embed link (plays in desktop Discord; Error 153 in a
       browser or Discord mobile is expected), hidden during ads; reviewed by all three agents; owner tested copy and preview

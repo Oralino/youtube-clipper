@@ -3,35 +3,33 @@
 This file guides Claude Code when working in this repository.
 
 ## Project overview
-A Firefox extension that lets you make clips straight from a YouTube video and share them as a link.
-YouTube has no one-click way to clip a moment and send it to a friend; this is for people who want to
-clip and share YouTube moments. Personal project, solo.
+A Firefox extension that lets you clip part of a YouTube video and save it as an MP4 file, so it can
+be watched and shared anywhere, including on phones. YouTube has no one-click way to do this; this is
+for people who want to clip and share YouTube moments. Personal project, solo.
 
-**How a clip works:** the user picks a start and end on a YouTube watch page and copies a link. The
-link is a normal YouTube watch URL with `t=START` plus an end-time parameter. When someone with the
-extension opens it, the extension plays START→END as a clip. Without the extension, YouTube ignores the
-extra parameter and plays from START. An optional embed link (`youtube.com/embed/ID?start=…&end=…`)
-covers friends without the extension where a site embeds it inline (works in desktop Discord; Discord's
-mobile app opens it like a browser and fails, tested 2026-09-24).
-Opened directly in a browser it fails with YouTube's Error 153, because embeds must be requested by a
-page that sends a Referer; that's expected, not a bug. It also fails on videos that block embedding.
+**First version:** clip button in the player; set start/end; preview; **Save video** to an MP4.
 
-**First version:** clip button in the player, set start/end, preview, copy link, copy embed link, and
-**Save video**, which records the clip to a file so it can be watched on phones.
+**No links (owner decision, 2026-09-24):** an earlier version copied a clip link (a watch URL with an
+end time the extension would enforce) and an embed link. The owner dropped both: YouTube's own player
+has no way to stop at an end time, so links only worked with the extension installed, and embed links
+fail with YouTube's Error 153 when opened directly (in a browser or Discord mobile). The saved MP4 is
+the one way a clip leaves the extension.
 
 **Save video (owner decision, 2026-09-24):** the owner wants clips viewable on mobile and chose a saved
 video file over a hosted clip page, accepting that it goes against YouTube's terms of service, that the
 Chrome Web Store bans YouTube downloaders (see the Chrome phase in `TASKS.md`), and that protected (DRM)
 videos can't be saved. It records the playing `<video>` in the browser with `MediaRecorder` while it
-plays start→end (so saving takes as long as the clip), preferring MP4 (H.264/AAC) and falling back to
-WebM. It never fetches YouTube's streams directly. **Quality matches what's playing** (owner
+plays start→end (so saving takes as long as the clip). It never fetches YouTube's streams directly.
+**The saved file is always MP4** (owner requirement): Chromium records MP4 (H.264/AAC) directly;
+Firefox's MediaRecorder can only record WebM, so there the recording is converted to MP4 in the browser
+before it's saved (approach in `TASKS.md`). **Quality matches what's playing** (owner
 requirement): the recording uses the video's current resolution and frame rate, with the video bitrate
 scaled to them (about 0.1 bits per pixel per frame, so ~6 Mbps at 1080p30) and 192 kbps audio, instead
 of MediaRecorder's low default. On YouTube's "Auto" quality the resolution can change mid-clip.
 
-**Out of scope:** re-hosting on Streamable/Medal (neither has an upload API: Streamable's API is
-read-only; Medal's only records local gameplay), a backend, accounts and a hosted player page. Clip
-data lives in the link.
+**Out of scope:** clip links and embed links (see above), re-hosting on Streamable/Medal (neither has
+an upload API: Streamable's API is read-only; Medal's only records local gameplay), a backend, accounts
+and a hosted player page.
 
 **Status:** In development (Firefox first, then Chrome). Current work is tracked in `TASKS.md`.
 
@@ -57,7 +55,8 @@ Don't duplicate information across these files; link to the owning file instead.
   library.
 - **Lint / format:** ESLint + Prettier. Semicolons, double quotes. Markdown is excluded from Prettier.
 - **Testing:** Vitest unit tests for the logic: timestamp parsing and formatting, building and reading
-  clip links, start/end validation. UI on live YouTube is checked manually (see Workflow).
+  start/end validation, recording format, bitrate and file names. UI on live YouTube is checked
+  manually (see Workflow).
 - **Runtime:** Node 24 + npm.
 - **Backend / database:** none.
 
@@ -98,7 +97,7 @@ Before every commit: `lint`, `typecheck`, `format:check`, `test` and `build` mus
   - it still works after moving to another video without a page reload (YouTube is a single-page app);
   - light and dark YouTube themes;
   - default, theater and fullscreen player modes;
-  - a clip link opened in a fresh tab plays start→end and pauses at the end.
+  - Save video produces an MP4 of start→end with sound, at the selected quality.
 - Don't spawn agents for small tasks. Reviewer and QA only report. Never two agents writing the same file.
 - **Git:** commit straight to `main` at every verified milestone without being asked, with plain
   imperative commit messages. Push only when asked.
@@ -108,24 +107,15 @@ WXT's file-based entrypoints. Create a folder only when its first real file exis
 
 ```
 entrypoints/
-  youtube.content/     content script on youtube.com: clip button, panel, clip playback
+  youtube.content/     content script on youtube.com: clip button and clip panel
   popup/               toolbar popup (shortcut to the panel on the active tab)
 components/            shared React components
-lib/                   pure logic: clip link build/parse, time parsing/formatting (unit tested)
+lib/                   pure logic: video IDs, time parsing, form checks, recording (unit tested)
 public/icon/           extension icons
 wxt.config.ts          manifest settings (MV3, Firefox gecko settings, host permissions)
 ```
 
-- **Clip link format:** `https://www.youtube.com/watch?v=ID&t=START#clip_end=END`, with START and END in
-  whole seconds. `t` is YouTube's own start parameter, so viewers without the extension still start in
-  the right place. The end time goes in the hash because the hash is never sent to YouTube's servers and
-  query-string cleaners are less likely to strip it.
-- **Reading the link:** YouTube's page script removes unknown query parameters and the hash from the
-  address bar right after load (tested 2026-09-24). The server does not remove them: they survive direct
-  opens, `youtu.be` redirects and the `m.youtube.com` redirect. So the content script runs at
-  `document_start` and reads `location.href` before YouTube rewrites it, falling back to
-  `performance.getEntriesByType("navigation")[0].name`, which keeps the originally requested URL.
-- **Clip link logic** lives in `lib/` as pure functions with tests next to them (`*.test.ts`).
+- **Pure logic** lives in `lib/` as functions with tests next to them (`*.test.ts`).
 - **YouTube navigation:** YouTube changes videos without reloading. Re-inject and reset state on WXT's
   `wxt:locationchange` (or YouTube's `yt-navigate-finish`), and clean up through the content script
   `ctx`.

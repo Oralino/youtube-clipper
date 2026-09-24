@@ -1,12 +1,10 @@
-import { getVideoId } from "../../lib/clipLink.ts";
+import { getVideoId } from "../../lib/videoId.ts";
 import { createClipButton } from "./clipButton.ts";
 import { createClipPanel } from "./clipPanel.tsx";
 import "./clipButton.css";
 
 export default defineContentScript({
   matches: ["*://www.youtube.com/*", "*://m.youtube.com/*"],
-  // YouTube strips the clip hash from the address bar right after load, so read it before its scripts run.
-  runAt: "document_start",
   async main(ctx) {
     let videoId: string | null = null;
 
