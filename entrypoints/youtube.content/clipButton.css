@@ -1,0 +1,35 @@
+/* Size, colour, hover and focus come from YouTube's .ytp-button; only the extras live here. */
+
+.clip-ext-button svg {
+  display: block;
+  margin: auto;
+}
+
+/* Panel open: the same underline YouTube draws under the CC button when captions are on.
+   The colour is DESIGN.md's --clip-active-bar, repeated here because page CSS can't see the
+   panel's shadow-root tokens. */
+.clip-ext-button[aria-expanded="true"]::after {
+  position: absolute;
+  bottom: 9px;
+  left: 50%;
+  width: 18px;
+  height: 3px;
+  border-radius: 3px;
+  background: #e1002d;
+  transform: translateX(-50%);
+  content: "";
+}
+
+/* Matches YouTube's current control tooltip: plain text with a shadow, no box. */
+.clip-ext-tooltip {
+  position: absolute;
+  z-index: 1003;
+  color: #eeeeee;
+  font-family: "YouTube Noto", "Roboto", "Arial", sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 15px;
+  text-shadow: 0 0 2px #000000;
+  white-space: nowrap;
+  pointer-events: none;
+}
