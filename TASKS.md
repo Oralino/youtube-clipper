@@ -22,7 +22,6 @@ that link with the extension plays just start→end.
       public domain)
 - [ ] README screenshots of the panel, popup and clip playback in both themes **(owner approves)**
 - [ ] Open decision: support YouTube Shorts and live streams, or watch pages only?
-- [ ] Nice-to-have: Chrome build (WXT `-b chrome`)
 
 ## Launch
 - [ ] **(owner)** Settle the final name (Mozilla naming policy; see `CONTENT.md`)
@@ -32,6 +31,15 @@ that link with the extension plays just start→end.
 - [ ] **(owner)** Decide on addons.mozilla.org listed vs unlisted; create the Mozilla account; submit
       `npm run zip` output
 - [ ] Verify an installed (non-temporary) build: a clip link opened in a fresh tab plays start→end
+
+## Chrome (after the Firefox version works)
+- [ ] Add Chrome scripts (`dev:chrome`, `build:chrome`, `zip:chrome`) using WXT's `-b chrome`
+- [ ] Run the manual YouTube check in Chrome: clip button, panel, clip links, playback, popup
+- [ ] Fix any Chrome differences found (manifest keys, shadow-root styles, event isolation)
+- [ ] README: add Chrome install and build steps
+- [ ] **(owner)** Create a Chrome Web Store developer account (one-time registration fee) and decide
+      listed vs unlisted
+- [ ] Submit the `zip:chrome` build to the Chrome Web Store
 
 ## Done
 - [x] **(owner)** Decided: the fullscreen panel is always dark; build with the drafted copy in

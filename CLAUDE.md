@@ -20,7 +20,7 @@ forbid downloading, Mozilla would likely reject it, and neither service has an u
 API is read-only; Medal's API only records local gameplay). Also out of scope: a backend, accounts and a
 hosted player page. All clip data lives in the link.
 
-**Status:** Planning. Current work is tracked in `TASKS.md`.
+**Status:** In development (Firefox first, then Chrome). Current work is tracked in `TASKS.md`.
 
 ## Source-of-truth documents
 | File | Owns | Maintained by |
@@ -35,7 +35,8 @@ Don't duplicate information across these files; link to the owning file instead.
 
 ## Tech stack
 - **Extension framework:** [WXT](https://wxt.dev) (Vite-based), targeting Firefox with Manifest V3.
-  A Chrome build is a later nice-to-have (see `TASKS.md`).
+  A Chrome version follows once the Firefox version works (owner decision, 2026-09-24; see the Chrome
+  phase in `TASKS.md`), so code stays cross-browser from the start (see Guidelines).
 - **Language:** TypeScript, strict mode.
 - **UI:** React 19. The in-page panel uses WXT's shadow-root UI (`createShadowRootUi`), so YouTube's
   CSS and ours can't leak into each other.
@@ -156,6 +157,9 @@ wxt.config.ts          manifest settings (MV3, Firefox gecko settings, host perm
 - Accessibility: WCAG AA, keyboard navigable, visible focus, respects `prefers-reduced-motion`.
 - Themes: the in-page UI follows YouTube's light/dark theme; the popup follows the system setting. No
   flash on load. Details in `DESIGN.md`.
+- Cross-browser: a Chrome version follows the Firefox one. Use WXT's `browser` for extension APIs, keep
+  Firefox-only manifest keys under `browser_specific_settings`, and don't rely on Firefox-only
+  behaviour without a Chrome fallback. Note anything Firefox-specific in the code.
 - No analytics, no tracking, no network calls beyond YouTube itself. Clips are never sent anywhere.
 - Nothing personal in public files unless the owner asks.
 - Copy comes from `CONTENT.md`; never invent features, metrics or results.
