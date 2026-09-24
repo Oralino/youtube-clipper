@@ -1,7 +1,7 @@
 # DESIGN.md
 
 Visual source of truth, maintained by design-advisor. **Status: Approved by the owner (2026-09-24).** Open TODO (owner) items below are tracked in `TASKS.md`.
-*Revised 2026-09-24:* the clip button sections (Layout, Components, its contrast note) were updated to match YouTube's current player (`ytp-delhi-modern-icons`), the open state is now a filled icon instead of a red underline (owner decision; `--clip-active-bar` removed, no red anywhere), and Popup states treats live streams as watch pages.
+*Revised 2026-09-24:* the clip button sections (Layout, Components, its contrast note) were updated to match YouTube's current player (`ytp-delhi-modern-icons`), the open state is now a filled icon instead of a red underline (owner decision; `--clip-active-bar` removed, no red anywhere), Popup states treats live streams as watch pages, and the fullscreen panel overlay is always dark (owner decision; TODO resolved).
 
 ## Constraints (decided)
 
@@ -42,7 +42,7 @@ One component with two placements.
 | Fullscreen | Overlay inside the player, anchored `right: 12px; bottom: 72px` (clears the progress bar and controls) | `360px`, `max-height: calc(100% - 96px)`, scrolls inside | Dark tokens always |
 
 Why it docks: the video stays fully visible and scrubbable while times are set, and it keeps working at any window width because it sits in the page flow. Fullscreen hides the page, so there it has to overlay the player.
-**TODO (owner)**: confirm that the fullscreen overlay uses dark tokens even when YouTube is in light mode (a white card over fullscreen video glares, and YouTube's own in-player menus are always dark).
+The fullscreen overlay always uses dark tokens, even when YouTube is in light mode, to match YouTube's in-player menus (owner decision, 2026-09-24).
 *Main session:* this means moving or re-mounting the shadow host on `fullscreenchange`. The mechanism is your call.
 
 Internal layout uses a container query on the panel's own width, not the viewport:
@@ -131,7 +131,7 @@ Tokens use YouTube's own neutrals so the UI blends in. They are prefixed `--clip
 }
 ```
 
-*Main session:* Firefox does not support `:host-context()`, so mirror YouTube's `<html dark>` onto the shadow host as `data-theme` before the first render (to avoid a flash) and keep it in sync afterwards. The fullscreen overlay forces `data-theme="dark"`, pending the TODO above.
+*Main session:* Firefox does not support `:host-context()`, so mirror YouTube's `<html dark>` onto the shadow host as `data-theme` before the first render (to avoid a flash) and keep it in sync afterwards. The fullscreen overlay always forces `data-theme="dark"`.
 
 **The accent (blue) is used only for:** focus rings, the pressed Preview state, and any text links. It is never used for fills on large areas and never for the primary button.
 
