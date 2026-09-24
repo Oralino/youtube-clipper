@@ -39,24 +39,44 @@ export function videoBitrate(width: number, height: number, fps?: number): numbe
   return Math.round(Math.min(Math.max(bits, MIN_VIDEO_BPS), MAX_VIDEO_BPS));
 }
 
-const MAX_TITLE_LENGTH = 80;
+/** Longest name kept, typed or automatic (the extension comes on top). */
+export const MAX_NAME_LENGTH = 80;
+// Device names Windows won't accept as file names, with or without an extension.
+const WINDOWS_RESERVED = /^(con|prn|aux|nul|com\d|lpt\d)$/i;
 
-/** A file name like "Me at the zoo (0.05-0.12).mp4", safe on Windows, macOS and Linux. */
+/** The video's title from the tab title, without YouTube's suffix or the unread count like "(3) ". */
+export function videoTitleFrom(documentTitle: string): string {
+  // A title that really starts with "(2024) " loses it too; that's rare and only affects the name.
+  return documentTitle.replace(/^\(\d+\)\s*/, "").replace(/\s*-\s*YouTube$/, "");
+}
+
+/** The automatic clip name, like "Me at the zoo (0.05-0.12)". Also the name field's placeholder. */
+export function defaultClipName(title: string, start: number, end: number): string {
+  const range = `${formatTime(start)}-${formatTime(end)}`.replaceAll(":", ".");
+  return `${safeName(title) || "clip"} (${range})`;
+}
+
+/**
+ * The saved file's name: what the user typed if anything usable is left after cleaning it, otherwise
+ * the automatic name. Safe on Windows, macOS and Linux; a typed ".mp4" or ".webm" isn't doubled.
+ */
 export function clipFileName(
-  title: string,
-  start: number,
-  end: number,
+  typedName: string,
+  fallback: string,
   extension: RecordingType["extension"],
 ): string {
-  const safeTitle =
-    title
-      // Characters Windows forbids in file names, plus control characters.
-      .replace(/[<>:"/\\|?*]|\p{Cc}/gu, " ")
-      .replace(/\s+/g, " ")
-      .trim()
-      // Windows also rejects names ending in a dot or space.
-      .slice(0, MAX_TITLE_LENGTH)
-      .replace(/[. ]+$/, "") || "clip";
-  const range = `${formatTime(start)}-${formatTime(end)}`.replaceAll(":", ".");
-  return `${safeTitle} (${range}).${extension}`;
+  const typed = safeName(typedName.replace(/\.(mp4|webm)\s*$/i, ""));
+  return `${typed || safeName(fallback) || "clip"}.${extension}`;
+}
+
+function safeName(text: string): string {
+  const name = text
+    // Characters Windows forbids in file names, plus control characters.
+    .replace(/[<>:"/\\|?*]|\p{Cc}/gu, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, MAX_NAME_LENGTH)
+    // Windows also rejects names ending in a dot or space.
+    .replace(/[. ]+$/, "");
+  return WINDOWS_RESERVED.test(name) ? `_${name}` : name;
 }

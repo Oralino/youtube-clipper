@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { clipFileName, pickRecordingType, videoBitrate } from "./recording.ts";
+import {
+  clipFileName,
+  defaultClipName,
+  pickRecordingType,
+  videoBitrate,
+  videoTitleFrom,
+} from "./recording.ts";
 
 describe("pickRecordingType", () => {
   it("prefers MP4 with H.264 and AAC", () => {
@@ -48,22 +54,68 @@ describe("videoBitrate", () => {
   });
 });
 
-describe("clipFileName", () => {
-  it("names the file after the video and the range", () => {
-    expect(clipFileName("Me at the zoo", 5, 12, "mp4")).toBe("Me at the zoo (0.05-0.12).mp4");
-    expect(clipFileName("Long talk", 3723, 3800, "webm")).toBe("Long talk (1.02.03-1.03.20).webm");
+describe("videoTitleFrom", () => {
+  it("drops YouTube's suffix and the unread count", () => {
+    expect(videoTitleFrom("Me at the zoo - YouTube")).toBe("Me at the zoo");
+    expect(videoTitleFrom("(3) Me at the zoo - YouTube")).toBe("Me at the zoo");
+  });
+
+  it("keeps a title without the suffix", () => {
+    expect(videoTitleFrom("Me at the zoo")).toBe("Me at the zoo");
+  });
+});
+
+describe("defaultClipName", () => {
+  it("names the clip after the video and the range", () => {
+    expect(defaultClipName("Me at the zoo", 5, 12)).toBe("Me at the zoo (0.05-0.12)");
+    expect(defaultClipName("Long talk", 3723, 3800)).toBe("Long talk (1.02.03-1.03.20)");
   });
 
   it("removes characters that aren't allowed in file names", () => {
-    expect(clipFileName('A/B: "C" <D>?*|\\', 0, 5, "mp4")).toBe("A B C D (0.00-0.05).mp4");
+    expect(defaultClipName('A/B: "C" <D>?*|\\', 0, 5)).toBe("A B C D (0.00-0.05)");
   });
 
   it("shortens very long titles and drops trailing dots or spaces", () => {
-    const name = clipFileName(`${"a".repeat(79)}. more`, 0, 5, "mp4");
-    expect(name).toBe(`${"a".repeat(79)} (0.00-0.05).mp4`);
+    expect(defaultClipName(`${"a".repeat(79)}. more`, 0, 5)).toBe(`${"a".repeat(79)} (0.00-0.05)`);
   });
 
   it("falls back to 'clip' when nothing usable is left", () => {
-    expect(clipFileName("  ???  ", 0, 5, "mp4")).toBe("clip (0.00-0.05).mp4");
+    expect(defaultClipName("  ???  ", 0, 5)).toBe("clip (0.00-0.05)");
+  });
+});
+
+describe("clipFileName", () => {
+  const fallback = "Me at the zoo (0.05-0.12)";
+
+  it("uses the typed name", () => {
+    expect(clipFileName("Elephants", fallback, "mp4")).toBe("Elephants.mp4");
+  });
+
+  it("uses the automatic name when nothing was typed", () => {
+    expect(clipFileName("", fallback, "mp4")).toBe(`${fallback}.mp4`);
+    expect(clipFileName("   ", fallback, "webm")).toBe(`${fallback}.webm`);
+  });
+
+  it("doesn't double a typed extension", () => {
+    expect(clipFileName("Elephants.mp4", fallback, "mp4")).toBe("Elephants.mp4");
+    expect(clipFileName("Elephants.MP4 ", fallback, "mp4")).toBe("Elephants.mp4");
+    expect(clipFileName("Elephants.webm", fallback, "mp4")).toBe("Elephants.mp4");
+  });
+
+  it("cleans characters that aren't allowed and trailing dots", () => {
+    expect(clipFileName('My: "best" clip?.', fallback, "mp4")).toBe("My best clip.mp4");
+  });
+
+  it("falls back when the typed name has nothing usable left", () => {
+    expect(clipFileName("???", fallback, "mp4")).toBe(`${fallback}.mp4`);
+  });
+
+  it("keeps Windows reserved names usable", () => {
+    expect(clipFileName("con", fallback, "mp4")).toBe("_con.mp4");
+    expect(clipFileName("LPT1", fallback, "mp4")).toBe("_LPT1.mp4");
+  });
+
+  it("caps very long names at 80 characters", () => {
+    expect(clipFileName("x".repeat(200), fallback, "mp4")).toBe(`${"x".repeat(80)}.mp4`);
   });
 });
