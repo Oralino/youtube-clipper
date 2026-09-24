@@ -1,4 +1,4 @@
-# YouTube Clips
+# Clipper for YouTube
 A Firefox extension that lets you clip part of a YouTube video and save it as an MP4 to share.
 
 > **Status:** in planning; nothing is built yet. Progress is tracked in [TASKS.md](TASKS.md).

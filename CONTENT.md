@@ -7,10 +7,8 @@ metrics or results. Only link public repos. **TODO (owner)** items need the owne
 **Status:** Approved by the owner to build with (2026-09-24); the owner may still change any text.
 
 ## About
-- **Display name:** YouTube Clips (working name).
-  **TODO (owner)**: Settle the final name before any addons.mozilla.org listing. Mozilla's policy
-  doesn't allow names that suggest an official connection with another brand; "Clipper for YouTube"
-  follows the accepted pattern and matches the repo name `youtube-clipper`.
+- **Display name:** Clipper for YouTube (owner decision, 2026-09-24; Mozilla's naming policy prefers
+  the "… for YouTube" pattern over names starting with "YouTube").
 - **One-liner:** Clip part of a YouTube video and save it as an MP4 to share.
 - **Tone:** short, plain and native to YouTube. Labels are verbs, with no exclamation marks or emoji.
 - **Personal info shown:** none.
@@ -61,18 +59,10 @@ metrics or results. Only link public repos. **TODO (owner)** items need the owne
 | Error: MP4 conversion failed (WebM saved instead) | Couldn't convert to MP4, so it was saved as WebM. |
 | File name | {video title} ({start}-{end}).mp4, times with dots, e.g. Me at the zoo (0.05-0.12).mp4 (.webm only if the MP4 conversion fails) |
 
-### Toolbar popup
-| State | Text |
-|---|---|
-| Watch page, panel closed | Clip a section of this video. · Button: Open clip panel |
-| Watch page, panel open | Button: Close clip panel |
-| Any other page | Open a YouTube video to clip it. |
-| Content script missing | Reload this tab to use the extension. · Button: Reload tab |
-
 
 ## Screenshots and media
-- None exist yet. After the first version works, capture the clip panel (idle and while saving) and
-  the toolbar popup, on a video with no personal details visible.
+- None exist yet. Capture the clip panel (idle and while saving), on a video with no personal details
+  visible.
 - The owner approves every screenshot before it goes into the README.
 - The extension icon still needs designing (sizes and style are in `DESIGN.md`).
 

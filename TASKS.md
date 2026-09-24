@@ -9,18 +9,16 @@ MP4 with sound, at the selected quality and original size.
       Firefox the audio is Opus (no AAC encoder), which older iPhones may not play
 - [ ] **(owner)** Check Stop saving (while recording and while converting) saves nothing, and that
       YouTube keeps its sound after a save
-- [ ] Toolbar popup: opens the panel on the active YouTube tab
 
 ## Next
 - [ ] Accessibility pass: keyboard-only use, focus order, contrast in both themes, reduced motion
 - [ ] Extension icon (sizes in `DESIGN.md`); **(owner)** final colour and tile, after the name is settled
 - [ ] **(owner)** Choose a demo video you have the right to show (your own upload, Creative Commons or
       public domain)
-- [ ] README screenshots of the panel, popup and clip playback in both themes **(owner approves)**
+- [ ] README screenshots of the clip panel, idle and while saving **(owner approves)**
 - [ ] Open decision: support YouTube Shorts and live streams, or watch pages only?
 
 ## Launch
-- [ ] **(owner)** Settle the final name (Mozilla naming policy; see `CONTENT.md`)
 - [ ] **(owner)** Choose a license (see `README.md`)
 - [ ] Full-history audit: secrets, personal data, commit identity
 - [ ] **(owner)** Make the repo public
@@ -30,7 +28,7 @@ MP4 with sound, at the selected quality and original size.
 
 ## Chrome (after the Firefox version works)
 - [ ] Add Chrome scripts (`dev:chrome`, `build:chrome`, `zip:chrome`) using WXT's `-b chrome`
-- [ ] Run the manual YouTube check in Chrome: clip button, panel, preview, Save video, popup
+- [ ] Run the manual YouTube check in Chrome: clip button, panel, preview, Save video
 - [ ] Fix any Chrome differences found (manifest keys, shadow-root styles, event isolation)
 - [ ] README: add Chrome install and build steps
 - [ ] **(owner)** Decide how to ship on Chrome: the Chrome Web Store bans YouTube downloaders, and with
@@ -41,6 +39,8 @@ MP4 with sound, at the selected quality and original size.
 - [ ] Submit the `zip:chrome` build to the Chrome Web Store
 
 ## Done
+- [x] **(owner)** Name: Clipper for YouTube; no toolbar popup, the clip button and panel are enough
+      (2026-09-24)
 - [x] **First milestone reached (2026-09-24):** clip button → start/end → Save video gives an MP4 with
       sound at the selected quality and original size in Firefox (owner confirmed sound and size)
 - [x] Save video: records start→end at the playing quality, converts Firefox's WebM to MP4 in the

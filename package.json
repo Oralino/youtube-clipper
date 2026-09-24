@@ -1,6 +1,6 @@
 {
   "name": "youtube-clipper",
-  "description": "Make clips straight from a YouTube video and share them as a link.",
+  "description": "Clip part of a YouTube video and save it as an MP4.",
   "private": true,
   "version": "0.0.0",
   "type": "module",

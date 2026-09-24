@@ -120,7 +120,6 @@ WXT's file-based entrypoints. Create a folder only when its first real file exis
 entrypoints/
   youtube.content/     content script on youtube.com: clip button and clip panel
   background.ts        background page: converts Firefox's WebM recordings to MP4
-  popup/               toolbar popup (shortcut to the panel on the active tab)
 components/            shared React components
 lib/                   pure logic: video IDs, time parsing, form checks, recording (unit tested)
 media/                 browser media work that can't be unit tested (WebM → MP4 conversion)
@@ -171,8 +170,7 @@ wxt.config.ts          manifest settings (MV3, Firefox gecko settings, host perm
 
 ## Guidelines
 - Accessibility: WCAG AA, keyboard navigable, visible focus, respects `prefers-reduced-motion`.
-- Themes: the in-page panel is always dark (it sits on the video); the popup follows the system
-  setting. No flash on load. Details in `DESIGN.md`.
+- Themes: the in-page panel is always dark (it sits on the video). Details in `DESIGN.md`.
 - Cross-browser: a Chrome version follows the Firefox one. Use WXT's `browser` for extension APIs, keep
   Firefox-only manifest keys under `browser_specific_settings`, and don't rely on Firefox-only
   behaviour without a Chrome fallback. Note anything Firefox-specific in the code.

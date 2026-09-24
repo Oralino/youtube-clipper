@@ -314,7 +314,7 @@ type Outcome =
 // A save that fails for an unexpected reason shows "Couldn't save the video"; this keeps the cause
 // findable in the page's console.
 function logError(step: string, error: unknown) {
-  console.error(`[YouTube Clips] Save video failed while ${step}:`, error);
+  console.error(`[Clipper for YouTube] Save video failed while ${step}:`, error);
 }
 
 function videoTitle(): string {

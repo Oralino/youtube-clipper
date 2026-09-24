@@ -24,12 +24,12 @@ export default defineConfig({
   },
   manifestVersion: 3,
   manifest: {
-    name: "YouTube Clips",
-    description: "Make clips straight from a YouTube video and share them as a link.",
+    name: "Clipper for YouTube",
+    description: "Clip part of a YouTube video and save it as an MP4.",
     browser_specific_settings: {
       gecko: {
         id: "{a9e93662-cd96-4e4d-9406-69f18ca40af8}",
-        // Clips live only in the link; nothing is collected or sent anywhere.
+        // Nothing is collected or sent anywhere: clips are recorded and saved on the user's device.
         data_collection_permissions: { required: ["none"] },
       },
     },

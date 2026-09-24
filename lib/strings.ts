@@ -42,12 +42,4 @@ export const STRINGS = {
       webm: "Couldn't convert to MP4, so it was saved as WebM.",
     },
   },
-  popup: {
-    watchPageBody: "Clip a section of this video.",
-    openPanel: "Open clip panel",
-    closePanel: "Close clip panel",
-    otherPage: "Open a YouTube video to clip it.",
-    needsReload: "Reload this tab to use the extension.",
-    reloadTab: "Reload tab",
-  },
 } as const;
