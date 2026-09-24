@@ -25,6 +25,8 @@ Development tracker. Owner-only items are marked **(owner)**. Detailed history i
 None open.
 
 ## Done (milestones)
+- [x] 1.0.1: Chrome falls back to WebM + software MP4 conversion when its hardware H.264 encoder
+      fails (reported by a friend on Chrome 154; confirmed fixed) (2026-09-24)
 - [x] 1.0.0: public repo and GitHub release (Chrome zip, unsigned Firefox test build); submitted to
       addons.mozilla.org; MIT; history audited (2026-09-24)
 - [x] Name, icon, File name field, Chrome support (2026-09-24)
