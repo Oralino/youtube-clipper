@@ -10,6 +10,8 @@ that link with the extension plays just start→end.
       `https://www.youtube.com/watch?v=jNQXAC9IVRw&t=5#clip_end=12`
 - [ ] Check what happens when a clip link is clicked *inside* YouTube (a comment or description). YouTube
       handles those clicks without a page load and may drop the hash before the content script sees it
+- [ ] Save video: record the clip start→end to an MP4 (WebM fallback) and download it, with progress,
+      cancel and errors (protected video, ad, navigation); check MP4 support and audio in Firefox
 - [ ] Clip playback: open a clip link, play start→end, pause at the end, replay, watch full video
 - [ ] Toolbar popup: opens the panel on the active YouTube tab
 - [ ] **(owner)** Decide whether to mark the clip range on YouTube's progress bar (recommended: skip for v1)
@@ -36,6 +38,8 @@ that link with the extension plays just start→end.
 - [ ] Run the manual YouTube check in Chrome: clip button, panel, clip links, playback, popup
 - [ ] Fix any Chrome differences found (manifest keys, shadow-root styles, event isolation)
 - [ ] README: add Chrome install and build steps
+- [ ] **(owner)** Decide how Save video fits Chrome: the Chrome Web Store bans YouTube downloaders, so
+      either leave Save video out of the store build or distribute the Chrome version outside the store
 - [ ] **(owner)** Create a Chrome Web Store developer account (one-time registration fee) and decide
       listed vs unlisted
 - [ ] Submit the `zip:chrome` build to the Chrome Web Store

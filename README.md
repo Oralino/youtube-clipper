@@ -10,9 +10,10 @@ Planned for the first version:
 - Preview the clip before sharing.
 - Copy a clip link. Friends with the extension see just that part; without it, the video plays from the
   clip's start.
-- Copy an embed link for friends without the extension (doesn't work on videos that block embedding).
+- Copy an embed link, which plays inline in desktop Discord (not in a browser or Discord mobile).
+- Save the clip as a video file (MP4 where the browser supports it) to share anywhere, including phones.
 
-No downloading, no accounts, no servers: everything about a clip lives in its link.
+No accounts and no servers: a clip's link carries everything about it.
 
 ## Run from source
 Requirements: [Node.js](https://nodejs.org) 24 and Firefox.

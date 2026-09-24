@@ -16,12 +16,19 @@ mobile app opens it like a browser and fails, tested 2026-09-24).
 Opened directly in a browser it fails with YouTube's Error 153, because embeds must be requested by a
 page that sends a Referer; that's expected, not a bug. It also fails on videos that block embedding.
 
-**First version:** clip button in the player, set start/end, preview, copy link, copy embed link.
+**First version:** clip button in the player, set start/end, preview, copy link, copy embed link, and
+**Save video**, which records the clip to a file so it can be watched on phones.
 
-**Out of scope:** downloading video, MP4 files, and re-hosting on Streamable/Medal. YouTube's terms
-forbid downloading, Mozilla would likely reject it, and neither service has an upload API (Streamable's
-API is read-only; Medal's API only records local gameplay). Also out of scope: a backend, accounts and a
-hosted player page. All clip data lives in the link.
+**Save video (owner decision, 2026-09-24):** the owner wants clips viewable on mobile and chose a saved
+video file over a hosted clip page, accepting that it goes against YouTube's terms of service, that the
+Chrome Web Store bans YouTube downloaders (see the Chrome phase in `TASKS.md`), and that protected (DRM)
+videos can't be saved. It records the playing `<video>` in the browser with `MediaRecorder` while it
+plays start→end (so saving takes as long as the clip), preferring MP4 (H.264/AAC) and falling back to
+WebM. It never fetches YouTube's streams directly.
+
+**Out of scope:** re-hosting on Streamable/Medal (neither has an upload API: Streamable's API is
+read-only; Medal's only records local gameplay), a backend, accounts and a hosted player page. Clip
+data lives in the link.
 
 **Status:** In development (Firefox first, then Chrome). Current work is tracked in `TASKS.md`.
 
