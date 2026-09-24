@@ -10,7 +10,6 @@ that link with the extension plays just start→end.
       `https://www.youtube.com/watch?v=jNQXAC9IVRw&t=5#clip_end=12`
 - [ ] Check what happens when a clip link is clicked *inside* YouTube (a comment or description). YouTube
       handles those clicks without a page load and may drop the hash before the content script sees it
-- [ ] Clip button injected into the player; survives moving between videos
 - [ ] Clip panel: start/end, use current time, preview, copy link, copy embed link, validation
 - [ ] Clip playback: open a clip link, play start→end, pause at the end, replay, watch full video
 - [ ] Toolbar popup: opens the panel on the active YouTube tab
@@ -37,6 +36,9 @@ that link with the extension plays just start→end.
 - [ ] Verify an installed (non-temporary) build: a clip link opened in a fresh tab plays start→end
 
 ## Done
+- [x] Clip button in the player: outline icon, filled while the panel is open, Clip tooltip, Enter
+      toggles it, survives moving between videos; code-reviewer + qa-checker clean; owner checked it
+      in Firefox (2026-09-24)
 - [x] `lib/`: clip link build/parse, embed link, range validation, time parsing/formatting; 91 unit
       tests; reviewed by code-reviewer and qa-checker, findings fixed (2026-09-24)
 - [x] Scaffolded WXT (Firefox MV3, React 19, TypeScript strict), ESLint + Prettier, Vitest, npm scripts;
