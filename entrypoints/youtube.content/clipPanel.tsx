@@ -4,11 +4,11 @@ import { createShadowRootUi } from "wxt/utils/content-script-ui/shadow-root";
 import ClipPanel from "../../components/ClipPanel.tsx";
 import panelCss from "../../components/clipPanel.css?inline";
 
-// Between the player and the video title, in both default and theater mode.
-const ANCHOR = "ytd-watch-flexy #below ytd-watch-metadata";
+// An overlay inside the player, in every player mode (the owner's choice, 2026-09-24).
+const PLAYER = "#movie_player";
 const CLOSE_MS = 100;
-// Kept from YouTube's player: its shortcuts (typing "5" in a field would seek to 50%), and in
-// fullscreen its click (play/pause), double-click (exit fullscreen) and wheel (volume) handlers.
+// Kept from YouTube's player: its shortcuts (typing "5" in a field would seek to 50%), and its
+// click (play/pause), double-click (fullscreen) and wheel (volume) handlers.
 const ISOLATED_EVENTS = [
   "keydown",
   "keyup",
@@ -37,7 +37,14 @@ export interface ClipPanelController {
 
 export async function createClipPanel(
   ctx: ContentScriptContext,
-  { onClose }: { onClose: () => void },
+  {
+    onClose,
+    onFocusLost,
+  }: {
+    onClose: () => void;
+    /** Called when an ad hides the panel while focus is inside it. */
+    onFocusLost: () => void;
+  },
 ): Promise<ClipPanelController> {
   let isOpen = false;
   let video: HTMLVideoElement | null = null;
@@ -46,13 +53,13 @@ export async function createClipPanel(
   const ui = await createShadowRootUi<Root>(ctx, {
     name: "clip-ext-panel",
     position: "inline",
-    anchor: ANCHOR,
-    append: "before",
+    anchor: PLAYER,
+    append: "last",
     css: panelCss,
     isolateEvents: ISOLATED_EVENTS,
     onMount: (container, _shadow, host) => {
-      // Set before the first render so the panel never flashes in the wrong theme.
-      applyTheme(host);
+      // Always dark on top of the video, like YouTube's own in-player menus.
+      host.dataset.theme = "dark";
       const root = createRoot(container);
       if (video) root.render(<ClipPanel video={video} onClose={onClose} />);
       return root;
@@ -61,33 +68,23 @@ export async function createClipPanel(
   });
   const host = ui.shadowHost;
 
-  const themeObserver = new MutationObserver(() => applyTheme(host));
-
-  function place() {
-    const player = document.querySelector("#movie_player");
-    const fullscreen = document.fullscreenElement;
-    if (player && fullscreen?.contains(player)) {
-      player.append(host);
-      host.dataset.placement = "overlay";
-    } else {
-      document.querySelector(ANCHOR)?.before(host);
-      delete host.dataset.placement;
-    }
-    applyTheme(host);
+  // Hidden while an ad plays: it would cover "Skip ad", and the video element is playing the ad.
+  // Hiding (not closing) keeps what was typed for when the ad ends.
+  const adObserver = new MutationObserver(syncAd);
+  function syncAd() {
+    const ad = host.parentElement?.classList.contains("ad-showing") ?? false;
+    if (ad && !host.hasAttribute("data-ad") && document.activeElement === host) onFocusLost();
+    host.toggleAttribute("data-ad", ad);
   }
 
   function remove() {
     clearTimeout(closeTimer);
     closeTimer = undefined;
-    themeObserver.disconnect();
+    adObserver.disconnect();
     delete host.dataset.closing;
     ui.remove();
   }
 
-  ctx.addEventListener(document, "fullscreenchange", () => {
-    // Also while the close animation runs, so it doesn't fade out in the wrong place.
-    if (host.isConnected) place();
-  });
   ctx.onInvalidated(remove);
 
   return {
@@ -108,12 +105,13 @@ export async function createClipPanel(
         isOpen = true;
         return true;
       }
-      video = document.querySelector<HTMLVideoElement>("#movie_player video");
-      if (!video || !document.querySelector(ANCHOR)) return false;
+      video = document.querySelector<HTMLVideoElement>(`${PLAYER} video`);
+      if (!video) return false;
 
       ui.mount();
-      place();
-      themeObserver.observe(document.documentElement, { attributeFilter: ["dark"] });
+      syncAd();
+      if (host.parentElement)
+        adObserver.observe(host.parentElement, { attributeFilter: ["class"] });
       isOpen = true;
       return true;
     },
@@ -131,11 +129,4 @@ export async function createClipPanel(
       closeTimer = setTimeout(remove, CLOSE_MS);
     },
   };
-}
-
-function applyTheme(host: HTMLElement) {
-  // Fullscreen is always dark, like YouTube's own in-player menus.
-  const dark =
-    host.dataset.placement === "overlay" || document.documentElement.hasAttribute("dark");
-  host.dataset.theme = dark ? "dark" : "light";
 }

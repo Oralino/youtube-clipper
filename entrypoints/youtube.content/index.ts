@@ -10,7 +10,10 @@ export default defineContentScript({
   async main(ctx) {
     let videoId: string | null = null;
 
-    const panel = await createClipPanel(ctx, { onClose: () => closePanel(true) });
+    const panel = await createClipPanel(ctx, {
+      onClose: () => closePanel(true),
+      onFocusLost: () => button.focus(),
+    });
     const button = createClipButton(ctx, {
       onClick: () => (panel.isOpen ? closePanel(false) : openPanel()),
     });
