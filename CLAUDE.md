@@ -24,7 +24,10 @@ video file over a hosted clip page, accepting that it goes against YouTube's ter
 Chrome Web Store bans YouTube downloaders (see the Chrome phase in `TASKS.md`), and that protected (DRM)
 videos can't be saved. It records the playing `<video>` in the browser with `MediaRecorder` while it
 plays start→end (so saving takes as long as the clip), preferring MP4 (H.264/AAC) and falling back to
-WebM. It never fetches YouTube's streams directly.
+WebM. It never fetches YouTube's streams directly. **Quality matches what's playing** (owner
+requirement): the recording uses the video's current resolution and frame rate, with the video bitrate
+scaled to them (about 0.1 bits per pixel per frame, so ~6 Mbps at 1080p30) and 192 kbps audio, instead
+of MediaRecorder's low default. On YouTube's "Auto" quality the resolution can change mid-clip.
 
 **Out of scope:** re-hosting on Streamable/Medal (neither has an upload API: Streamable's API is
 read-only; Medal's only records local gameplay), a backend, accounts and a hosted player page. Clip

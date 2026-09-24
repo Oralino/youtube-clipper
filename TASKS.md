@@ -11,7 +11,8 @@ that link with the extension plays just start→end.
 - [ ] Check what happens when a clip link is clicked *inside* YouTube (a comment or description). YouTube
       handles those clicks without a page load and may drop the hash before the content script sees it
 - [ ] Save video: record the clip start→end to an MP4 (WebM fallback) and download it, with progress,
-      cancel and errors (protected video, ad, navigation); check MP4 support and audio in Firefox
+      cancel and errors (protected video, ad, navigation); same quality as the selected one (bitrate
+      scaled to resolution and frame rate); check MP4 support, audio and quality in Firefox
 - [ ] Clip playback: open a clip link, play start→end, pause at the end, replay, watch full video
 - [ ] Toolbar popup: opens the panel on the active YouTube tab
 - [ ] **(owner)** Decide whether to mark the clip range on YouTube's progress bar (recommended: skip for v1)
