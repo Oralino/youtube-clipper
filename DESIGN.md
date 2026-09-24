@@ -2,6 +2,7 @@
 
 Visual source of truth, maintained by design-advisor. **Status: Approved by the owner (2026-09-24).** Open TODO (owner) items below are tracked in `TASKS.md`.
 *Revised 2026-09-24:* the clip button sections (Layout, Components, its contrast note) were updated to match YouTube's current player (`ytp-delhi-modern-icons`), the open state is now a filled icon instead of a red underline (owner decision; `--clip-active-bar` removed, no red anywhere), Popup states treats live streams as watch pages, and the fullscreen panel overlay is always dark (owner decision; TODO resolved).
+*Revised 2026-09-24 (clip panel review):* panel wording (heading, region name, close button name) now defers to CONTENT.md; the container-query line explains the 528px CSS value; the overlay records `z-index: 70` (to verify); Motion notes the replay on placement change; the time-input error documents its layout push and 4px gap; "Use current time" accessible names follow WCAG 2.5.3; added the clip-length readout type role and pill padding.
 
 ## Constraints (decided)
 
@@ -39,15 +40,15 @@ One component with two placements.
 |---|---|---|---|
 | Default | Docked in the page flow, **directly below the player and above the video title**, `margin-top: 12px` | Full width of the primary column | YouTube theme |
 | Theater | Same slot, below the full-width player, in the primary column | Primary column width | YouTube theme |
-| Fullscreen | Overlay inside the player, anchored `right: 12px; bottom: 72px` (clears the progress bar and controls) | `360px`, `max-height: calc(100% - 96px)`, scrolls inside | Dark tokens always |
+| Fullscreen | Overlay inside the player, anchored `right: 12px; bottom: 72px` (clears the progress bar and controls), `z-index: 70` (to verify in the owner's fullscreen check: the settings menu and the progress-bar thumbnail open above it, and `bottom: 72px` clears the enlarged scrubber) | `360px`, `max-height: calc(100% - 96px)`, scrolls inside | Dark tokens always |
 
 Why it docks: the video stays fully visible and scrubbable while times are set, and it keeps working at any window width because it sits in the page flow. Fullscreen hides the page, so there it has to overlay the player.
 The fullscreen overlay always uses dark tokens, even when YouTube is in light mode, to match YouTube's in-player menus (owner decision, 2026-09-24).
 *Main session:* this means moving or re-mounting the shadow host on `fullscreenchange`. The mechanism is your call.
 
-Internal layout uses a container query on the panel's own width, not the viewport:
+Internal layout uses a container query on the panel's own width, not the viewport. The 560px breakpoint is the panel's width; the CSS uses `@container (min-width: 528px)` because container queries measure the content box (560 − 2 × 16px padding).
 - **≥ 560px (wide):**
-  - Row 1: header ("Clip" title, duration readout, close button on the right).
+  - Row 1: header (panel title, duration readout, close button on the right).
   - Row 2: Start group, then End group (`gap: 24px`).
   - Row 3: Preview toggle on the left. Copy embed link, then Copy link, on the right (primary action last, as in YouTube dialogs).
   - Row 4: embed note, full width.
@@ -76,12 +77,13 @@ Use `font-variant-numeric: tabular-nums` on every time value.
 
 | Role | Size / line height | Weight |
 |---|---|---|
-| Panel title ("Clip") | 16px / 22px | 500 |
+| Panel title | 16px / 22px | 500 |
 | Popup extension name | 14px / 20px | 500 |
 | Field label ("Start", "End") | 12px / 16px | 500 |
 | Time input value | 14px / 20px | 400, tabular |
 | Body text (popup, clip bar) | 14px / 20px | 400 |
 | Clip bar range ("1:23 – 1:45") | 14px / 20px | 500, tabular |
+| Clip-length readout (panel header) | 14px / 20px | 400, tabular, `--clip-text-secondary` |
 | Button label | 14px / 20px (36px control height) | 500 |
 | Note, helper, error text | 12px / 18px | 400 |
 
@@ -162,7 +164,8 @@ The dark pairs at 4.5 to 4.6 pass with little margin. Don't lighten those backgr
 
 ## Spacing, radius, elevation
 
-- Spacing scale: `4, 8, 12, 16, 24px`. Inside a group: 8. Between rows: 12. Panel padding: 16. Between the Start and End groups: 24.
+- Spacing scale: `4, 8, 12, 16, 24px`. Inside a group: 8. Between rows: 12. Panel padding: 16. Between the Start and End groups: 24. Between a field and its error message: 4.
+- Pill buttons: horizontal padding `0 16px`.
 - Control height: `36px` for buttons, inputs and icon buttons (touch target ≥ 24px, so it meets 2.5.8).
 - Radius: panel, clip bar and fullscreen overlay `12px` (as YouTube's description box). Inputs `8px`. Buttons are pills, `18px`. Icon buttons are circles, `50%`.
 - Elevation: **none**. The docked panel and bar are flat, like the description box. The fullscreen overlay is opaque `--clip-surface`, with no shadow and no blur.
@@ -183,14 +186,14 @@ Shared states for every button and input:
 - Disabled: not shown. Remove the button rather than showing a dead control (for example on a video that isn't ready yet).
 
 ### Clip panel
-- Region with `aria-label` "Clip". Background `--clip-surface`, radius 12, padding 16.
-- Header: "Clip" (panel title style), then the duration readout "0:22" in secondary text, then a close icon button (36px circle, transparent, hover `--clip-tonal`, `aria-label` "Close clip panel").
+- Region named by its heading (`aria-labelledby`). Background `--clip-surface`, radius 12, padding 16. All wording (heading, labels, accessible names) comes from CONTENT.md.
+- Header: the heading (panel title style), then the duration readout "0:22" in secondary text, then a close icon button (36px circle, transparent, hover `--clip-tonal`, accessible name from CONTENT.md).
 
 ### Time input + "Use current time"
 - Label above the field ("Start" or "End", field label style). The field is `104px` wide and 36px high, with `--clip-field` background, 1px `--clip-border`, radius 8 and padding `0 12px`. It accepts `m:ss` or `h:mm:ss`. Placeholder "0:00" in `--clip-text-secondary`.
-- To its right, 8px gap: a tonal pill "Use current time". Its accessible name includes the field ("Set start to current time").
+- To its right, 8px gap: a tonal pill "Use current time". Its accessible name starts with the visible label and adds the field (WCAG 2.5.3); wording in CONTENT.md.
 - Hover: field border changes to `--clip-text`. Focus-visible: the accent outline.
-- Error (unparseable, end ≤ start, or past the video length): 2px `--clip-error` border (use `box-shadow: inset 0 0 0 1px` on top of the 1px border so the layout doesn't shift), `aria-invalid="true"`, and a 12px error message below in `--clip-error` linked by `aria-describedby`. Example: "End must be after start." Wording goes in CONTENT.md.
+- Error (unparseable, end ≤ start, or past the video length): 2px `--clip-error` border (use `box-shadow: inset 0 0 0 1px` on top of the 1px border so the layout doesn't shift), `aria-invalid="true"`, and a 12px error message below in `--clip-error` linked by `aria-describedby`. Example: "End must be after start." Wording goes in CONTENT.md. The message takes 4px + 18px and pushes content below it down. No space is reserved; errors show only after the field is left.
 - Disabled: not used.
 
 ### Preview toggle
@@ -230,6 +233,7 @@ Button states follow the shared rules. Focus goes to the button (if there is one
 ## Motion
 
 - Panel open: `opacity 0→1` plus `translateY(4px→0)`, `150ms cubic-bezier(0.2, 0, 0, 1)`. Close: `100ms` opacity only. The clip bar uses the same open motion.
+- A placement change (entering or leaving fullscreen) replays the open motion.
 - Everything else is instant: hover, pressed, the copied/error label swap, and theme changes. **No `transition` on colour or background properties**, so a theme swap can never animate.
 - `prefers-reduced-motion: reduce`: no transforms and no fades. Everything appears and disappears instantly.
 - Preview looping is video playback, not UI motion. Nothing in the UI pulses or animates while it runs.
