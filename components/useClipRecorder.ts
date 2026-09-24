@@ -1,5 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { AUDIO_BPS, clipFileName, pickRecordingType, videoBitrate } from "../lib/recording.ts";
+import {
+  AUDIO_BPS,
+  clipFileName,
+  defaultClipName,
+  pickRecordingType,
+  videoBitrate,
+  videoTitleFrom,
+} from "../lib/recording.ts";
 import { convertInBackground } from "../media/convertInBackground.ts";
 import type { Mp4Conversion } from "../media/convertToMp4.ts";
 
@@ -122,7 +129,7 @@ export default function useClipRecorder(
       });
   }
 
-  async function save(start: number, end: number) {
+  async function save(start: number, end: number, typedName = "") {
     if (finish.current) return;
     clearTimeout(savedTimer.current);
     const type = pickRecordingType((mime) => MediaRecorder.isTypeSupported(mime));
@@ -211,8 +218,8 @@ export default function useClipRecorder(
           logError("recording", new Error("the recording is empty"));
           return fail("failed");
         }
-        const title = videoTitle();
-        const name = (extension: "mp4" | "webm") => clipFileName(title, start, end, extension);
+        const fallback = defaultClipName(videoTitleFrom(document.title), start, end);
+        const name = (extension: "mp4" | "webm") => clipFileName(typedName, fallback, extension);
         if (type.extension === "mp4") saved(blob, name("mp4"));
         else convertAndSave(blob, bitrate, name);
       };
@@ -315,12 +322,6 @@ type Outcome =
 // findable in the page's console.
 function logError(step: string, error: unknown) {
   console.error(`[Clipper for YouTube] Save video failed while ${step}:`, error);
-}
-
-function videoTitle(): string {
-  // Strips the tab's unread count, like "(3) ". A title that really starts with "(2024) " loses it too;
-  // that's rare and only affects the file name.
-  return document.title.replace(/^\(\d+\)\s*/, "").replace(/\s*-\s*YouTube$/, "");
 }
 
 function downloadFile(blob: Blob, name: string) {

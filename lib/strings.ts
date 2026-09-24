@@ -10,6 +10,7 @@ export const STRINGS = {
     useCurrentTime: "Use current time",
     useCurrentTimeForStart: "Use current time for start",
     useCurrentTimeForEnd: "Use current time for end",
+    fileName: "File name (optional)",
     preview: "Preview",
     stopPreview: "Stop preview",
     errorUnreadableTime: "Enter a time like 1:23.",

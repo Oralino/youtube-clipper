@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { checkClipForm, type FieldError } from "../lib/clipForm.ts";
+import { defaultClipName, MAX_NAME_LENGTH, videoTitleFrom } from "../lib/recording.ts";
 import { STRINGS } from "../lib/strings.ts";
 import { formatTime } from "../lib/time.ts";
 import Icon from "./Icon.tsx";
@@ -25,6 +26,7 @@ const ANNOUNCE_GAP_MS = 100;
 export default function ClipPanel({ video, onClose }: ClipPanelProps) {
   const [startText, setStartText] = useState("");
   const [endText, setEndText] = useState("");
+  const [fileName, setFileName] = useState("");
   // Errors show only once a field has been left or filled from the video, not while typing.
   const [touched, setTouched] = useState({ start: false, end: false });
   const [previewing, setPreviewing] = useState(false);
@@ -36,6 +38,9 @@ export default function ClipPanel({ video, onClose }: ClipPanelProps) {
   const saving = saver.status.state === "saving" || saver.status.state === "converting";
 
   const { startError, endError, range } = checkClipForm(startText, endText, duration);
+  // Shows the automatic name, so leaving the field empty holds no surprise.
+  const videoTitle = videoTitleFrom(document.title);
+  const namePlaceholder = range ? defaultClipName(videoTitle, range.start, range.end) : videoTitle;
   // An invalid range ends the preview; it doesn't resume by itself when the range is fixed.
   if (previewing && !range) setPreviewing(false);
   usePreviewLoop(video, range?.start ?? null, range?.end ?? null, previewing, () =>
@@ -64,7 +69,7 @@ export default function ClipPanel({ video, onClose }: ClipPanelProps) {
   function startSaving() {
     if (!range) return;
     setPreviewing(false);
-    void saver.save(range.start, range.end);
+    void saver.save(range.start, range.end, fileName);
   }
 
   function handleSaveEvent(event: SaveEvent) {
@@ -131,6 +136,23 @@ export default function ClipPanel({ video, onClose }: ClipPanelProps) {
           onBlur={() => setTouched((current) => ({ ...current, end: true }))}
           onUseCurrent={() => fillFromVideo("end")}
         />
+        <div>
+          <label className="field-label" htmlFor="clip-file-name">
+            {STRINGS.panel.fileName}
+          </label>
+          <input
+            id="clip-file-name"
+            className="name-input"
+            type="text"
+            autoComplete="off"
+            spellCheck={false}
+            maxLength={MAX_NAME_LENGTH}
+            placeholder={namePlaceholder}
+            value={fileName}
+            readOnly={saving}
+            onChange={(event) => setFileName(event.target.value)}
+          />
+        </div>
       </div>
       <div className="actions">
         <button
