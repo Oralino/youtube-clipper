@@ -29,6 +29,7 @@ metrics or results. Only link public repos. **TODO (owner)** items need the owne
 | Start field label | Start |
 | End field label | End |
 | Use-current-time button | Use current time |
+| Use-current-time accessible names (start with the visible label, WCAG 2.5.3) | Use current time for start / Use current time for end |
 | Preview button (off / on) | Preview / Stop preview |
 | Copy link button | Copy link |
 | Copy embed link button | Copy embed link |

@@ -8,6 +8,8 @@ export const STRINGS = {
     start: "Start",
     end: "End",
     useCurrentTime: "Use current time",
+    useCurrentTimeForStart: "Use current time for start",
+    useCurrentTimeForEnd: "Use current time for end",
     preview: "Preview",
     stopPreview: "Stop preview",
     copyLink: "Copy link",
