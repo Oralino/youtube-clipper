@@ -75,8 +75,14 @@ describe("defaultClipName", () => {
     expect(defaultClipName('A/B: "C" <D>?*|\\', 0, 5)).toBe("A B C D (0.00-0.05)");
   });
 
-  it("shortens very long titles and drops trailing dots or spaces", () => {
-    expect(defaultClipName(`${"a".repeat(79)}. more`, 0, 5)).toBe(`${"a".repeat(79)} (0.00-0.05)`);
+  it("shortens long titles, not the range, to fit 80 characters", () => {
+    const name = defaultClipName("a".repeat(120), 0, 5);
+    expect(name).toBe(`${"a".repeat(68)} (0.00-0.05)`);
+    expect(name).toHaveLength(80);
+  });
+
+  it("drops trailing dots or spaces left by shortening", () => {
+    expect(defaultClipName(`${"a".repeat(66)}. more`, 0, 5)).toBe(`${"a".repeat(66)} (0.00-0.05)`);
   });
 
   it("falls back to 'clip' when nothing usable is left", () => {
@@ -113,6 +119,11 @@ describe("clipFileName", () => {
   it("keeps Windows reserved names usable", () => {
     expect(clipFileName("con", fallback, "mp4")).toBe("_con.mp4");
     expect(clipFileName("LPT1", fallback, "mp4")).toBe("_LPT1.mp4");
+  });
+
+  it("keeps the range of a long automatic name", () => {
+    const longFallback = defaultClipName("b".repeat(150), 61, 75);
+    expect(clipFileName("", longFallback, "mp4")).toBe(`${"b".repeat(68)} (1.01-1.15).mp4`);
   });
 
   it("caps very long names at 80 characters", () => {

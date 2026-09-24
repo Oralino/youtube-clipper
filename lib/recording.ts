@@ -52,8 +52,13 @@ export function videoTitleFrom(documentTitle: string): string {
 
 /** The automatic clip name, like "Me at the zoo (0.05-0.12)". Also the name field's placeholder. */
 export function defaultClipName(title: string, start: number, end: number): string {
-  const range = `${formatTime(start)}-${formatTime(end)}`.replaceAll(":", ".");
-  return `${safeName(title) || "clip"} (${range})`;
+  const range = ` (${`${formatTime(start)}-${formatTime(end)}`.replaceAll(":", ".")})`;
+  // Shorten the title rather than the range, so the whole name fits the cap and clips from the same
+  // long-titled video still get different names.
+  const shortTitle = safeName(title)
+    .slice(0, MAX_NAME_LENGTH - range.length)
+    .replace(/[. ]+$/, "");
+  return `${shortTitle || "clip"}${range}`;
 }
 
 /**
