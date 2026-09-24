@@ -2,9 +2,17 @@ node_modules/
 .output/
 .wxt/
 web-ext.config.ts
+stats.html
+stats-*.json
+*.log
 
 .env
 .env.*
 !.env.example
 
 private/
+
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
