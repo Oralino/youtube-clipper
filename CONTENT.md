@@ -4,7 +4,7 @@ module (see `CLAUDE.md`).
 
 Rules: Claude drafts copy from the agreed features and the owner reviews it. Never invent features,
 metrics or results. Only link public repos. **TODO (owner)** items need the owner's input.
-**Status:** Draft, awaiting owner review.
+**Status:** Approved by the owner to build with (2026-09-24); the owner may still change any text.
 
 ## About
 - **Display name:** YouTube Clips (working name).

@@ -13,8 +13,6 @@ that link with the extension plays just start→end.
 - [ ] Clip panel: start/end, use current time, preview, copy link, copy embed link, validation
 - [ ] Clip playback: open a clip link, play start→end, pause at the end, replay, watch full video
 - [ ] Toolbar popup: opens the panel on the active YouTube tab
-- [ ] **(owner)** Review the draft UI copy in `CONTENT.md`
-- [ ] **(owner)** Confirm the fullscreen panel overlay is always dark, even in YouTube light mode (`DESIGN.md`)
 - [ ] **(owner)** Decide whether to mark the clip range on YouTube's progress bar (recommended: skip for v1)
 
 ## Next
@@ -36,6 +34,8 @@ that link with the extension plays just start→end.
 - [ ] Verify an installed (non-temporary) build: a clip link opened in a fresh tab plays start→end
 
 ## Done
+- [x] **(owner)** Decided: the fullscreen panel is always dark; build with the drafted copy in
+      `CONTENT.md` (2026-09-24)
 - [x] Clip button in the player: outline icon, filled while the panel is open, Clip tooltip, Enter
       toggles it, survives moving between videos; code-reviewer + qa-checker clean; owner checked it
       in Firefox (2026-09-24)
