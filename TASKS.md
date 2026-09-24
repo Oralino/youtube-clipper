@@ -18,14 +18,15 @@ MP4 with sound, at the selected quality and original size.
 - [ ] Open decision: support YouTube Shorts and live streams, or watch pages only?
 
 ## Launch
-- [ ] **(owner)** Make the repo public
 - [ ] **(owner)** Create a Mozilla add-ons account and submit the `npm run zip` build (listed), plus the
       source zip AMO asks for
 - [ ] **(owner)** Add the addons.mozilla.org link to `README.md` once the listing is live
-- [ ] Create a GitHub release with `youtube-clipper-<version>-chrome.zip` attached (repo must be public)
+- [ ] **(owner)** Once Mozilla approves the add-on, download the signed `.xpi` from the developer hub
+      and attach it to the GitHub release as `clipper-for-youtube-<version>.xpi` (I can upload it)
 - [ ] Verify an installed (non-temporary) build: Save video produces a working file
 
 ## Done
+- [x] Public repo github.com/Oralino/youtube-clipper; release v1.0.0 with the Chrome zip (2026-09-24)
 - [x] Version 1.0.0 for the first release (2026-09-24)
 - [x] Full-history audit: no secrets, personal emails or private files in any commit; commit author
       name rewritten to "Oralino" on all commits at the owner's request (2026-09-24)

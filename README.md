@@ -15,8 +15,14 @@ No accounts and no servers: everything happens in your browser.
 ## Install
 
 ### Firefox
-Install it from addons.mozilla.org.
-**TODO (owner)**: add the listing link once it's published.
+Either way works:
+
+- **From addons.mozilla.org** (updates automatically).
+  **TODO (owner)**: add the listing link once it's published.
+- **From GitHub:** download `clipper-for-youtube-<version>.xpi` from the
+  [latest release](../../releases/latest) and open it in Firefox (drag it into a Firefox window, or use
+  **File → Open File**), then click **Add**. It's the same file Mozilla signs for the store; Firefox
+  only installs signed extensions permanently.
 
 ### Chrome
 The Chrome Web Store doesn't allow extensions that save YouTube videos, so on Chrome you install it

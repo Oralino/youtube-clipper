@@ -173,6 +173,8 @@ wxt.config.ts          manifest settings (MV3, Firefox gecko settings, host perm
   - **Chrome:** not on the Chrome Web Store, which bans YouTube downloaders. Each GitHub release attaches
     `npm run zip:chrome`'s `youtube-clipper-<version>-chrome.zip`; users load it unpacked in Developer
     mode (steps in `README.md`). GitHub releases need the repo to be public.
+  - Firefox from GitHub: each release also carries the Mozilla-signed `.xpi` (downloaded from the AMO
+    developer hub after approval), because release Firefox only installs signed extensions.
   - Bump `version` in `package.json` for each release; both zips carry it in their names.
 - **Manifest identity** (in `wxt.config.ts`): the gecko ID is a random UUID, so it has no name or email in
   it and stays the same if the name changes; never change it after the first AMO upload. The manifest
