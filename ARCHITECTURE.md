@@ -4,7 +4,7 @@ How the extension works. What it must do is in `REQUIREMENTS.md`; how it looks i
 ## Stack
 WXT 0.21 (Vite) building Manifest V3 for Firefox and Chrome · TypeScript (strict) · React 19 · plain
 CSS with custom properties · Vitest · [Mediabunny](https://mediabunny.dev) (MPL-2.0, unmodified) for
-Firefox's MP4 conversion · Node 24 + npm. No backend, no storage, no API keys.
+converting WebM recordings to MP4 (Firefox, and Chrome's fallback) · Node 24 + npm. No backend, no storage, no API keys.
 
 ## Layout
 ```
@@ -37,12 +37,19 @@ wxt.config.ts          manifest (name, gecko ID and data-collection "none" for F
    scaled to the playing resolution and frame rate (~0.1 bits per pixel per frame, 192 kbps audio). It
    seeks to start, plays in real time, and stops at end. Pausing, seeking more than 1s, or an ad fails
    the save with a reason.
-6. **Format:** Chromium records MP4 (H.264/AAC) and downloads it directly. Firefox records WebM
-   (VP8/Opus); the content script sends it over a runtime port to the background page, which runs
+6. **Format:** Chromium records MP4 (H.264/AAC) and downloads it directly. If the MP4 recorder errors,
+   delivers no data within 2.5s, or ends empty, the save restarts in WebM. Some PCs' hardware H.264
+   encoder rejects the job even though `isTypeSupported` says yes: seen on Chrome 154 as `EncodingError`
+   with 0 bytes, 2026-09-24. Firefox always records WebM (VP8/Opus). WebM recordings are converted with
    `convertToMp4` (Mediabunny file conversion with WebCodecs: H.264 with `fit: "contain"` for mid-clip
-   resolution changes; AAC if available, otherwise Opus copied). Disconnecting the port cancels it. It
-   runs in the background page because it failed in the content script. On failure, the WebM is
-   downloaded instead.
+   resolution changes; AAC if available, otherwise Opus copied):
+   - **Firefox:** in the background page, over a runtime port (disconnecting cancels). Conversion
+     failed in Firefox's content script.
+   - **Chrome:** in the content script with the software encoder, since the background is a service
+     worker whose port can't carry the file. The choice is made at build time
+     (`import.meta.env.FIREFOX`), so Mediabunny is only in Chrome's content script.
+
+   If the conversion fails, the WebM is downloaded instead.
 7. **Download:** a temporary `<a download>` blob link, named by `clipFileName` (typed name or
    `<title> (<start>-<end>)`, cleaned for Windows, capped at 80 characters, keeping the range).
 
@@ -70,8 +77,11 @@ after the first AMO upload.
 
 ## Known limits
 - Saving takes as long as the clip.
-- During Firefox's conversion, the WebM and the MP4 are both in memory (~50 MB per minute at 1080p30
-  each), so very long clips can run out of memory.
+- During a conversion (Firefox's, or Chrome's fallback, which runs in the YouTube tab itself), the
+  WebM and the MP4 are both in memory (~50 MB per minute at 1080p30 each), so very long clips can run
+  out of memory.
 - On "Auto" quality, the resolution can change mid-clip; the conversion fits later frames into the
   first frame's size.
 - Firefox MP4s carry Opus audio (Firefox has no AAC encoder), which older iPhones may not play.
+- On Chrome PCs with a failing H.264 encoder, a save loses about 2.5s before restarting in WebM,
+  and then needs a software conversion step.
