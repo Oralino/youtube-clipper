@@ -10,7 +10,6 @@ that link with the extension plays just start→end.
       `https://www.youtube.com/watch?v=jNQXAC9IVRw&t=5#clip_end=12`
 - [ ] Check what happens when a clip link is clicked *inside* YouTube (a comment or description). YouTube
       handles those clicks without a page load and may drop the hash before the content script sees it
-- [ ] Clip panel: start/end, use current time, preview, copy link, copy embed link, validation
 - [ ] Clip playback: open a clip link, play start→end, pause at the end, replay, watch full video
 - [ ] Toolbar popup: opens the panel on the active YouTube tab
 - [ ] **(owner)** Decide whether to mark the clip range on YouTube's progress bar (recommended: skip for v1)
@@ -42,6 +41,10 @@ that link with the extension plays just start→end.
 - [ ] Submit the `zip:chrome` build to the Chrome Web Store
 
 ## Done
+- [x] Clip panel: in-player overlay (owner's choice), start/end with use current time and
+      validation, preview loop, copy link, copy embed link (plays in Discord; Error 153 in a browser is
+      expected), hidden during ads; reviewed by all three agents; owner tested copy and preview
+      (2026-09-24)
 - [x] **(owner)** Decided: the fullscreen panel is always dark; build with the drafted copy in
       `CONTENT.md` (2026-09-24)
 - [x] Clip button in the player: outline icon, filled while the panel is open, Clip tooltip, Enter
