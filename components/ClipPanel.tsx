@@ -33,7 +33,7 @@ export default function ClipPanel({ video, onClose }: ClipPanelProps) {
   const startRef = useRef<HTMLInputElement>(null);
   const announceTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const saver = useClipRecorder(video, handleSaveEvent);
-  const saving = saver.status.state === "saving";
+  const saving = saver.status.state === "saving" || saver.status.state === "converting";
 
   const { startError, endError, range } = checkClipForm(startText, endText, duration);
   // An invalid range ends the preview; it doesn't resume by itself when the range is fixed.
@@ -71,7 +71,8 @@ export default function ClipPanel({ video, onClose }: ClipPanelProps) {
     if (event.type === "started") announce(STRINGS.save.announceStart(formatTime(event.total)));
     else if (event.type === "progress") {
       announce(STRINGS.save.announceProgress(formatTime(event.elapsed), formatTime(event.total)));
-    } else if (event.type === "saved") announce(STRINGS.save.announceSaved);
+    } else if (event.type === "converting") announce(STRINGS.save.announceConverting);
+    else if (event.type === "saved") announce(STRINGS.save.announceSaved);
     else if (event.type === "stopped") announce(STRINGS.save.announceStopped);
     else announce(STRINGS.save.errors[event.reason]);
   }

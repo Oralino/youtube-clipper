@@ -1,11 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 import { AUDIO_BPS, clipFileName, pickRecordingType, videoBitrate } from "../lib/recording.ts";
+import { convertInBackground } from "../media/convertInBackground.ts";
+import type { Mp4Conversion } from "../media/convertToMp4.ts";
 
-export type SaveFailure = "unsupported" | "protected" | "ad" | "paused" | "skipped" | "failed";
+/** `webm`: the MP4 conversion failed, so the recording was saved as WebM instead. */
+export type SaveFailure =
+  "unsupported" | "protected" | "ad" | "paused" | "skipped" | "failed" | "webm";
 
 export type SaveStatus =
   | { state: "idle" }
   | { state: "saving"; elapsed: number; total: number }
+  | { state: "converting"; progress: number }
   | { state: "saved" }
   | { state: "failed"; reason: SaveFailure };
 
@@ -13,6 +18,7 @@ export type SaveStatus =
 export type SaveEvent =
   | { type: "started"; total: number }
   | { type: "progress"; elapsed: number; total: number }
+  | { type: "converting" }
   | { type: "saved" }
   | { type: "stopped" }
   | { type: "failed"; reason: SaveFailure };
@@ -46,6 +52,8 @@ export default function useClipRecorder(
   // Ends the recording in progress with the given outcome.
   const finish = useRef<((outcome: Outcome) => void) | null>(null);
   const savedTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  // The MP4 conversion after recording (Firefox), so Stop saving and closing can cancel it.
+  const conversion = useRef<Mp4Conversion | null>(null);
   const emit = useRef(onEvent);
   useEffect(() => {
     emit.current = onEvent;
@@ -54,6 +62,7 @@ export default function useClipRecorder(
   useEffect(
     () => () => {
       finish.current?.({ kind: "discard", pause: false });
+      cancelConversion();
       clearTimeout(savedTimer.current);
     },
     [],
@@ -62,6 +71,55 @@ export default function useClipRecorder(
   function fail(reason: SaveFailure) {
     setStatus({ state: "failed", reason });
     emit.current({ type: "failed", reason });
+  }
+
+  function saved(file: Blob, name: string) {
+    downloadFile(file, name);
+    setStatus({ state: "saved" });
+    emit.current({ type: "saved" });
+    savedTimer.current = setTimeout(() => setStatus({ state: "idle" }), SAVED_MS);
+  }
+
+  function cancelConversion(): boolean {
+    const job = conversion.current;
+    if (!job) return false;
+    conversion.current = null;
+    job.cancel();
+    return true;
+  }
+
+  /** Turns Firefox's WebM into an MP4; if that fails, the WebM is saved so the clip isn't lost. */
+  function convertAndSave(
+    webm: Blob,
+    bitrate: number,
+    name: (extension: "mp4" | "webm") => string,
+  ) {
+    let shown = -1;
+    setStatus({ state: "converting", progress: 0 });
+    emit.current({ type: "converting" });
+    const job = convertInBackground(webm, bitrate, (progress) => {
+      // Re-render per whole percent, not on every progress callback.
+      const percent = Math.floor(progress * 100);
+      if (percent > shown) {
+        shown = percent;
+        setStatus({ state: "converting", progress });
+      }
+    });
+    conversion.current = job;
+    job.result
+      .then((mp4) => {
+        if (conversion.current !== job) return;
+        conversion.current = null;
+        saved(mp4, name("mp4"));
+      })
+      .catch((error: unknown) => {
+        // Cancelled by Stop saving or closing the panel: nothing to report.
+        if (conversion.current !== job) return;
+        conversion.current = null;
+        logError("converting to MP4", error);
+        downloadFile(webm, name("webm"));
+        fail("webm");
+      });
   }
 
   async function save(start: number, end: number) {
@@ -96,15 +154,16 @@ export default function useClipRecorder(
       audio.createMediaStreamSource(stream).connect(audio.destination);
     }
 
+    const bitrate = videoBitrate(
+      video.videoWidth,
+      video.videoHeight,
+      videoTrack.getSettings().frameRate,
+    );
     let recorder: MediaRecorder;
     try {
       recorder = new MediaRecorder(stream, {
         mimeType: type.mimeType,
-        videoBitsPerSecond: videoBitrate(
-          video.videoWidth,
-          video.videoHeight,
-          videoTrack.getSettings().frameRate,
-        ),
+        videoBitsPerSecond: bitrate,
         audioBitsPerSecond: AUDIO_BPS,
       });
     } catch {
@@ -152,10 +211,10 @@ export default function useClipRecorder(
           logError("recording", new Error("the recording is empty"));
           return fail("failed");
         }
-        downloadFile(blob, clipFileName(videoTitle(), start, end, type.extension));
-        setStatus({ state: "saved" });
-        emit.current({ type: "saved" });
-        savedTimer.current = setTimeout(() => setStatus({ state: "idle" }), SAVED_MS);
+        const title = videoTitle();
+        const name = (extension: "mp4" | "webm") => clipFileName(title, start, end, extension);
+        if (type.extension === "mp4") saved(blob, name("mp4"));
+        else convertAndSave(blob, bitrate, name);
       };
       if (recorder.state !== "inactive") recorder.stop();
       else recorder.onstop?.(new Event("stop"));
@@ -219,7 +278,8 @@ export default function useClipRecorder(
         const second = Math.floor(elapsed);
         if (second > lastSecond) {
           lastSecond = second;
-          if (total > ANNOUNCE_EVERY_S && second % ANNOUNCE_EVERY_S === 0) {
+          // Not in the last seconds, where it would talk over the end-of-save announcement.
+          if (total > ANNOUNCE_EVERY_S && second % ANNOUNCE_EVERY_S === 0 && total - second > 5) {
             emit.current({ type: "progress", elapsed: second, total });
           }
         }
@@ -228,8 +288,13 @@ export default function useClipRecorder(
     });
   }
 
-  /** "Stop saving": discard the recording and pause where the video is. */
+  /** "Stop saving": discard the recording (or its conversion) and pause where the video is. */
   function stop() {
+    if (cancelConversion()) {
+      setStatus({ state: "idle" });
+      emit.current({ type: "stopped" });
+      return;
+    }
     finish.current?.({ kind: "discard", pause: true });
   }
 

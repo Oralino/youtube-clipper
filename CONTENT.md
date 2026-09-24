@@ -11,7 +11,7 @@ metrics or results. Only link public repos. **TODO (owner)** items need the owne
   **TODO (owner)**: Settle the final name before any addons.mozilla.org listing. Mozilla's policy
   doesn't allow names that suggest an official connection with another brand; "Clipper for YouTube"
   follows the accepted pattern and matches the repo name `youtube-clipper`.
-- **One-liner:** Clip part of a YouTube video and save it as a video file to share.
+- **One-liner:** Clip part of a YouTube video and save it as an MP4 to share.
 - **Tone:** short, plain and native to YouTube. Labels are verbs, with no exclamation marks or emoji.
 - **Personal info shown:** none.
 
@@ -44,9 +44,12 @@ metrics or results. Only link public repos. **TODO (owner)** items need the owne
 | Progress line | Saving {elapsed} / {length} |
 | Saving note | Let it play to the end. Pausing, skipping or closing this panel stops saving. |
 | Quality note | Saves at the player's quality. For a steady result, pick one in Settings instead of Auto. |
+| Converting line (Firefox, after recording) | Converting to MP4 {percent}% |
+| Converting note | Converting to MP4. Closing this panel stops it. |
 | Saved (button label, 2s) | Saved |
 | Announcement: start | Saving video. This takes {length}. |
 | Announcement: progress (every 30s on long clips) | Saving {elapsed} of {length} |
+| Announcement: converting | Converting to MP4 |
 | Announcement: saved | Video saved |
 | Announcement: stopped | Saving stopped |
 | Error: protected video | This video is protected and can't be saved. |
@@ -55,7 +58,8 @@ metrics or results. Only link public repos. **TODO (owner)** items need the owne
 | Error: skipped | Saving stopped because the video was skipped. |
 | Error: can't record | Your browser can't record this video. |
 | Error: other | Couldn't save the video. |
-| File name | {video title} ({start}-{end}).mp4, times with dots, e.g. Me at the zoo (0.05-0.12).mp4 (.webm when MP4 isn't available) |
+| Error: MP4 conversion failed (WebM saved instead) | Couldn't convert to MP4, so it was saved as WebM. |
+| File name | {video title} ({start}-{end}).mp4, times with dots, e.g. Me at the zoo (0.05-0.12).mp4 (.webm only if the MP4 conversion fails) |
 
 ### Toolbar popup
 | State | Text |

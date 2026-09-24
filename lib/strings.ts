@@ -24,9 +24,12 @@ export const STRINGS = {
     savingNote: "Let it play to the end. Pausing, skipping or closing this panel stops saving.",
     qualityNote:
       "Saves at the player's quality. For a steady result, pick one in Settings instead of Auto.",
+    converting: (percent: number) => `Converting to MP4 ${percent}%`,
+    convertingNote: "Converting to MP4. Closing this panel stops it.",
     saved: "Saved",
     announceStart: (length: string) => `Saving video. This takes ${length}.`,
     announceProgress: (elapsed: string, length: string) => `Saving ${elapsed} of ${length}`,
+    announceConverting: "Converting to MP4",
     announceSaved: "Video saved",
     announceStopped: "Saving stopped",
     errors: {
@@ -36,6 +39,7 @@ export const STRINGS = {
       skipped: "Saving stopped because the video was skipped.",
       unsupported: "Your browser can't record this video.",
       failed: "Couldn't save the video.",
+      webm: "Couldn't convert to MP4, so it was saved as WebM.",
     },
   },
   popup: {

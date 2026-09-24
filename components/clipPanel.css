@@ -226,6 +226,8 @@
 }
 
 .save > .note {
+  /* Two lines tall at minimum, so the button doesn't move when the note changes length. */
+  min-height: 36px;
   margin-top: 8px;
 }
 

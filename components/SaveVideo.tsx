@@ -12,17 +12,36 @@ interface SaveVideoProps {
 }
 
 export default function SaveVideo({ status, available, onSave, onStop }: SaveVideoProps) {
-  const saving = status.state === "saving";
+  // Converting to MP4 after recording counts as saving: the same Stop button and locked fields.
+  const saving = status.state === "saving" || status.state === "converting";
   const inactive = !available && !saving;
   const noteId = saving ? "clip-save-saving-note" : "clip-save-quality-note";
   const describedBy = status.state === "failed" ? `clip-save-error ${noteId}` : noteId;
 
-  const button =
+  const button = saving
+    ? { icon: "stop" as const, label: STRINGS.save.stop }
+    : status.state === "saved"
+      ? { icon: "check" as const, label: STRINGS.save.saved }
+      : { icon: "download" as const, label: STRINGS.save.button };
+
+  const progress =
     status.state === "saving"
-      ? { icon: "stop" as const, label: STRINGS.save.stop }
-      : status.state === "saved"
-        ? { icon: "check" as const, label: STRINGS.save.saved }
-        : { icon: "download" as const, label: STRINGS.save.button };
+      ? {
+          text: STRINGS.save.progress(formatTime(status.elapsed), formatTime(status.total)),
+          fraction: status.elapsed / status.total,
+        }
+      : status.state === "converting"
+        ? {
+            text: STRINGS.save.converting(Math.floor(status.progress * 100)),
+            fraction: status.progress,
+          }
+        : null;
+  const note =
+    status.state === "converting"
+      ? STRINGS.save.convertingNote
+      : saving
+        ? STRINGS.save.savingNote
+        : STRINGS.save.qualityNote;
 
   function handleClick() {
     if (saving) onStop();
@@ -37,16 +56,11 @@ export default function SaveVideo({ status, available, onSave, onStop }: SaveVid
           {STRINGS.save.errors[status.reason]}
         </p>
       )}
-      {status.state === "saving" && (
+      {progress && (
         <>
-          <p className="progress-text">
-            {STRINGS.save.progress(formatTime(status.elapsed), formatTime(status.total))}
-          </p>
+          <p className="progress-text">{progress.text}</p>
           <div className="progress" aria-hidden="true">
-            <div
-              className="progress-fill"
-              style={{ transform: `scaleX(${status.elapsed / status.total})` }}
-            />
+            <div className="progress-fill" style={{ transform: `scaleX(${progress.fraction})` }} />
           </div>
         </>
       )}
@@ -62,7 +76,7 @@ export default function SaveVideo({ status, available, onSave, onStop }: SaveVid
       </button>
       <p id={noteId} className="note">
         <Icon name="info" size={16} />
-        {saving ? STRINGS.save.savingNote : STRINGS.save.qualityNote}
+        {note}
       </p>
     </div>
   );
