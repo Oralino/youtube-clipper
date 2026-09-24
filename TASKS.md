@@ -5,12 +5,10 @@ Development tracker. Newest completed items go on top. Owner-only items are mark
 First milestone: on any YouTube video, click the clip button, set start/end and save the clip as an
 MP4 with sound, at the selected quality and original size.
 
-- [ ] Save video: record the clip start→end and download it as MP4 (Firefox: WebM converted in the
-      browser), with progress,
-      cancel and errors (protected video, ad, navigation); same quality as the selected one (bitrate
-      scaled to resolution and frame rate); check audio and quality in Firefox
-- [ ] **(owner)** Check a saved MP4 plays where you share clips (PC, phone, Discord). From Firefox the
-      audio is Opus (no AAC encoder), which older iPhones may not play
+- [ ] **(owner)** Check a saved MP4 plays on your phone and in Discord (plays with sound on PC). From
+      Firefox the audio is Opus (no AAC encoder), which older iPhones may not play
+- [ ] **(owner)** Check Stop saving (while recording and while converting) saves nothing, and that
+      YouTube keeps its sound after a save
 - [ ] Toolbar popup: opens the panel on the active YouTube tab
 
 ## Next
@@ -43,6 +41,11 @@ MP4 with sound, at the selected quality and original size.
 - [ ] Submit the `zip:chrome` build to the Chrome Web Store
 
 ## Done
+- [x] **First milestone reached (2026-09-24):** clip button → start/end → Save video gives an MP4 with
+      sound at the selected quality and original size in Firefox (owner confirmed sound and size)
+- [x] Save video: records start→end at the playing quality, converts Firefox's WebM to MP4 in the
+      background page (Mediabunny), progress, Stop saving, errors, WebM fallback; reviewed by all
+      three agents
 - [x] **(owner)** MP4 in Firefox by converting the finished WebM with Firefox's encoders (Mediabunny
       file conversion); live encoding failed in Firefox, and ffmpeg.wasm was rejected (GPL, 31 MB)
       (2026-09-24)
