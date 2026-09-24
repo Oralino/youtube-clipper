@@ -4,7 +4,12 @@ import { STRINGS } from "../../lib/strings.ts";
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 // A play triangle between range brackets. Not scissors: YouTube's own Clip feature uses those.
-const ICON_PATH = "M4 4h4v2H6v12h2v2H4zM20 4h-4v2h2v12h-2v2h4zM10 8l6 4-6 4z";
+// While the panel is open the brackets fill in to a box with the triangle cut out, following
+// YouTube's outline-to-filled convention for "on".
+const ICON_PATHS = {
+  closed: "M4 4h4v2H6v12h2v2H4zM20 4h-4v2h2v12h-2v2h4zM10 8l6 4-6 4z",
+  open: "M6 4h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM10 8l6 4-6 4z",
+};
 // YouTube's tooltip sits this far above the top of its control buttons.
 const TOOLTIP_GAP = 20;
 const TOOLTIP_EDGE = 12;
@@ -20,6 +25,7 @@ export function createClipButton(
   ctx: ContentScriptContext,
   { onClick }: { onClick: () => void },
 ): ClipButton {
+  let expanded = false;
   const tooltip = document.createElement("div");
   tooltip.className = "clip-ext-tooltip";
   tooltip.textContent = STRINGS.clipButton.label;
@@ -34,7 +40,7 @@ export function createClipButton(
     append: (anchor, root) =>
       (anchor.querySelector(".ytp-right-controls-left") ?? anchor).prepend(root),
     // WXT empties the wrapper on every removal, so the icon is rebuilt on each mount.
-    onMount: (wrapper) => wrapper.replaceChildren(createIcon()),
+    onMount: (wrapper) => wrapper.replaceChildren(createIcon(expanded)),
     onRemove: () => tooltip.remove(),
   });
   // WXT's own invalidation cleanup detaches the button but leaves autoMount's observer running,
@@ -77,13 +83,15 @@ export function createClipButton(
         autoMounting = false;
       }
     },
-    setExpanded(expanded) {
+    setExpanded(next) {
+      expanded = next;
       button.setAttribute("aria-expanded", String(expanded));
+      button.replaceChildren(createIcon(expanded));
     },
   };
 }
 
-function createIcon(): SVGSVGElement {
+function createIcon(open: boolean): SVGSVGElement {
   // Built with DOM calls: YouTube enforces Trusted Types, so innerHTML throws.
   const svg = document.createElementNS(SVG_NS, "svg");
   svg.setAttribute("viewBox", "0 0 24 24");
@@ -92,7 +100,9 @@ function createIcon(): SVGSVGElement {
   svg.setAttribute("fill", "currentColor");
   svg.setAttribute("aria-hidden", "true");
   const path = document.createElementNS(SVG_NS, "path");
-  path.setAttribute("d", ICON_PATH);
+  path.setAttribute("d", open ? ICON_PATHS.open : ICON_PATHS.closed);
+  // Cuts the triangle out of the filled box.
+  path.setAttribute("fill-rule", "evenodd");
   svg.append(path);
   return svg;
 }

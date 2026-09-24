@@ -5,23 +5,6 @@
   margin: auto;
 }
 
-/* Panel open: the same underline YouTube draws under the CC button when captions are on.
-   The colour is DESIGN.md's --clip-active-bar, repeated here because page CSS can't see the
-   panel's shadow-root tokens. */
-.clip-ext-button[aria-expanded="true"]::after {
-  position: absolute;
-  /* 3px below the brackets at any button height: they end 8px below the icon's centre, and CC's
-     9px would overlap them. */
-  bottom: calc(50% - 14px);
-  left: 50%;
-  width: 18px;
-  height: 3px;
-  border-radius: 3px;
-  background: #e1002d;
-  transform: translateX(-50%);
-  content: "";
-}
-
 /* Matches YouTube's current control tooltip: plain text with a shadow, no box. */
 .clip-ext-tooltip {
   position: absolute;
