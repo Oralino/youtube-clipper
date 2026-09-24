@@ -2,6 +2,7 @@ import { createRoot, type Root } from "react-dom/client";
 import type { ContentScriptContext } from "wxt/utils/content-script-context";
 import { createShadowRootUi } from "wxt/utils/content-script-ui/shadow-root";
 import ClipPanel from "../../components/ClipPanel.tsx";
+import { getVideoId } from "../../lib/clipLink.ts";
 import panelCss from "../../components/clipPanel.css?inline";
 
 // An overlay inside the player, in every player mode (the owner's choice, 2026-09-24).
@@ -48,6 +49,7 @@ export async function createClipPanel(
 ): Promise<ClipPanelController> {
   let isOpen = false;
   let video: HTMLVideoElement | null = null;
+  let videoId: string | null = null;
   let closeTimer: ReturnType<typeof setTimeout> | undefined;
 
   const ui = await createShadowRootUi<Root>(ctx, {
@@ -61,7 +63,9 @@ export async function createClipPanel(
       // Always dark on top of the video, like YouTube's own in-player menus.
       host.dataset.theme = "dark";
       const root = createRoot(container);
-      if (video) root.render(<ClipPanel video={video} onClose={onClose} />);
+      if (video && videoId) {
+        root.render(<ClipPanel video={video} videoId={videoId} onClose={onClose} />);
+      }
       return root;
     },
     onRemove: (root) => root?.unmount(),
@@ -106,7 +110,8 @@ export async function createClipPanel(
         return true;
       }
       video = document.querySelector<HTMLVideoElement>(`${PLAYER} video`);
-      if (!video) return false;
+      videoId = getVideoId(location.href);
+      if (!video || !videoId) return false;
 
       ui.mount();
       syncAd();
