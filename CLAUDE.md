@@ -167,12 +167,18 @@ wxt.config.ts          manifest settings (MV3, Firefox gecko settings, host perm
 ## Deployment
 - **Now:** local only. Load the extension with `npm run dev`, or load the build as a temporary add-on
   from `about:debugging`.
-- **Later:** addons.mozilla.org (listed or unlisted), using `npm run zip`. This needs a Mozilla account
-  and a name that complies with Mozilla's policy (see `CONTENT.md`).
+- **Release plan (owner decision, 2026-09-24):**
+  - **Firefox:** published on addons.mozilla.org with `npm run zip` (the build plus the source zip AMO
+    asks for). Needs the owner's Mozilla account.
+  - **Chrome:** not on the Chrome Web Store, which bans YouTube downloaders. Each GitHub release attaches
+    `npm run zip:chrome`'s `youtube-clipper-<version>-chrome.zip`; users load it unpacked in Developer
+    mode (steps in `README.md`). GitHub releases need the repo to be public.
+  - Bump `version` in `package.json` for each release; both zips carry it in their names.
 - **Manifest identity** (in `wxt.config.ts`): the gecko ID is a random UUID, so it has no name or email in
   it and stays the same if the name changes; never change it after the first AMO upload. The manifest
   declares `data_collection_permissions: none`; keep it true.
-- **Repo:** private until the first version is done, then public (see the launch list in `TASKS.md`).
+- **Repo:** private until the first release, then public, because Chrome users download from its
+  GitHub releases (see the launch list in `TASKS.md`).
 - **Commit identity:** the owner's GitHub no-reply address, set in this repo's local git config (never
   the personal email).
 

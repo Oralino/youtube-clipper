@@ -21,20 +21,17 @@ MP4 with sound, at the selected quality and original size.
 - [ ] **(owner)** Choose a license (see `README.md`)
 - [ ] Full-history audit: secrets, personal data, commit identity
 - [ ] **(owner)** Make the repo public
-- [ ] **(owner)** Decide on addons.mozilla.org listed vs unlisted; create the Mozilla account; submit
-      `npm run zip` output
+- [ ] Set the first release version in `package.json` (for example 1.0.0)
+- [ ] **(owner)** Create a Mozilla add-ons account and submit the `npm run zip` build (listed), plus the
+      source zip AMO asks for
+- [ ] **(owner)** Add the addons.mozilla.org link to `README.md` once the listing is live
+- [ ] Create a GitHub release with `youtube-clipper-<version>-chrome.zip` attached (repo must be public)
 - [ ] Verify an installed (non-temporary) build: Save video produces a working file
 
-## Chrome (after the Firefox version works)
-- [ ] README: add Chrome install and build steps
-- [ ] **(owner)** Decide how to ship on Chrome: the Chrome Web Store bans YouTube downloaders, and with
-      links gone a store build without Save video could only preview. So the Chrome version most
-      likely has to be distributed outside the store (for example as a .zip to load unpacked)
-- [ ] **(owner)** Create a Chrome Web Store developer account (one-time registration fee) and decide
-      listed vs unlisted
-- [ ] Submit the `zip:chrome` build to the Chrome Web Store
-
 ## Done
+- [x] **(owner)** Release plan: Firefox on addons.mozilla.org; Chrome from GitHub releases, loaded
+      unpacked (the Chrome Web Store bans YouTube downloaders); Chrome install steps in the README
+      (2026-09-24)
 - [x] File name field: the saved clip gets the typed name, or the automatic "<title> (<start>-<end>)"
       name shown as its placeholder; reviewed by code-reviewer (2026-09-24)
 - [x] Chrome: `dev:chrome`, `build:chrome`, `zip:chrome` scripts; Firefox-only manifest keys kept out

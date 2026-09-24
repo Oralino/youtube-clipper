@@ -12,6 +12,26 @@ Planned for the first version:
 
 No accounts and no servers: everything happens in your browser.
 
+## Install
+
+### Firefox
+Install it from addons.mozilla.org.
+**TODO (owner)**: add the listing link once it's published.
+
+### Chrome
+The Chrome Web Store doesn't allow extensions that save YouTube videos, so on Chrome you install it
+yourself from GitHub:
+
+1. Download `youtube-clipper-<version>-chrome.zip` from the
+   [latest release](../../releases/latest).
+2. Unzip it into a folder you'll keep. Chrome loads the extension from that folder, so don't delete it.
+3. Open `chrome://extensions` and turn on **Developer mode** (top right).
+4. Click **Load unpacked** and choose the unzipped folder.
+
+The clip button then appears on YouTube videos. Chrome doesn't update extensions installed this way.
+To update, download the new release, replace the folder's contents, and click the reload arrow on the
+extension's card in `chrome://extensions`.
+
 ## Run from source
 Requirements: [Node.js](https://nodejs.org) 24 and Firefox.
 
