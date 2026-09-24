@@ -19,6 +19,8 @@ export interface ClipButton {
   setVisible(visible: boolean): void;
   /** Reflects whether the clip panel is open. */
   setExpanded(expanded: boolean): void;
+  /** Returns focus here when the panel closes from inside (Esc or its close button). */
+  focus(): void;
 }
 
 export function createClipButton(
@@ -87,6 +89,9 @@ export function createClipButton(
       expanded = next;
       button.setAttribute("aria-expanded", String(expanded));
       button.replaceChildren(createIcon(expanded));
+    },
+    focus() {
+      button.focus();
     },
   };
 }
