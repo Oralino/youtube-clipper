@@ -116,7 +116,10 @@ export default function useClipRecorder(
     recorder.ondataavailable = (event) => {
       if (event.data.size > 0) chunks.push(event.data);
     };
-    recorder.onerror = () => finish.current?.({ kind: "fail", reason: "failed" });
+    recorder.onerror = (event) => {
+      logError("recording", event);
+      finish.current?.({ kind: "fail", reason: "failed" });
+    };
 
     const total = end - start;
     let frame = 0;
@@ -145,7 +148,10 @@ export default function useClipRecorder(
         void audio?.close();
         if (outcome.kind !== "download") return;
         const blob = new Blob(chunks, { type: type.mimeType });
-        if (blob.size === 0) return fail("failed");
+        if (blob.size === 0) {
+          logError("recording", new Error("the recording is empty"));
+          return fail("failed");
+        }
         downloadFile(blob, clipFileName(videoTitle(), start, end, type.extension));
         setStatus({ state: "saved" });
         emit.current({ type: "saved" });
@@ -180,14 +186,18 @@ export default function useClipRecorder(
         );
       });
       video.currentTime = start;
-      if (!(await seeked)) return finish.current?.({ kind: "fail", reason: "failed" });
+      if (!(await seeked)) {
+        logError("seeking to the start", new Error("no seeked event within 5s"));
+        return finish.current?.({ kind: "fail", reason: "failed" });
+      }
     }
     if (!finish.current) return;
 
     recorder.start(1000);
     try {
       await video.play();
-    } catch {
+    } catch (error) {
+      logError("starting playback", error);
       return finish.current?.({ kind: "fail", reason: "failed" });
     }
     if (!finish.current) return;
@@ -235,6 +245,12 @@ type Outcome =
   | { kind: "download" }
   | { kind: "discard"; pause: boolean }
   | { kind: "fail"; reason: SaveFailure };
+
+// A save that fails for an unexpected reason shows "Couldn't save the video"; this keeps the cause
+// findable in the page's console.
+function logError(step: string, error: unknown) {
+  console.error(`[YouTube Clips] Save video failed while ${step}:`, error);
+}
 
 function videoTitle(): string {
   // Strips the tab's unread count, like "(3) ". A title that really starts with "(2024) " loses it too;
