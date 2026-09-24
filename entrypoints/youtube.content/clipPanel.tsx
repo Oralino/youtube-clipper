@@ -57,9 +57,7 @@ export async function createClipPanel(
     append: "last",
     css: panelCss,
     isolateEvents: ISOLATED_EVENTS,
-    onMount: (container, _shadow, host) => {
-      // Always dark on top of the video, like YouTube's own in-player menus.
-      host.dataset.theme = "dark";
+    onMount: (container) => {
       const root = createRoot(container);
       if (video) root.render(<ClipPanel video={video} onClose={onClose} />);
       return root;

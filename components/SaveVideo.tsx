@@ -52,7 +52,7 @@ export default function SaveVideo({ status, available, onSave, onStop }: SaveVid
       )}
       <button
         type="button"
-        className="tonal"
+        className={saving ? "tonal" : "primary"}
         aria-disabled={inactive}
         aria-describedby={describedBy}
         onClick={handleClick}
