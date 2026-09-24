@@ -109,13 +109,20 @@ wxt.config.ts          manifest settings (MV3, Firefox gecko settings, host perm
 - **YouTube navigation:** YouTube changes videos without reloading. Re-inject and reset state on WXT's
   `wxt:locationchange` (or YouTube's `yt-navigate-finish`), and clean up through the content script
   `ctx`.
+- **Trusted Types:** YouTube enforces them, so `innerHTML`, `outerHTML`, `insertAdjacentHTML` and
+  `document.write` throw on its pages. Build DOM (including SVG icons) with `createElement` /
+  `createElementNS`; React is fine.
+- **Player controls:** YouTube's current player splits `.ytp-right-controls` into
+  `.ytp-right-controls-left` and `.ytp-right-controls-right`; older players have a flat
+  `.ytp-right-controls`. Handle both. Buttons injected there use YouTube's `.ytp-button` class, and CSS
+  that lands in YouTube's page uses the `clip-ext-` prefix.
 - **Playback control** goes through the page's `<video>` element (seek, `timeupdate` to pause at the end).
   Don't depend on fragile YouTube internals when a DOM or media API will do.
 - **Permissions:** request only what's needed (content script on `*://*.youtube.com/*`, `clipboardWrite`
   if required). No broad host permissions.
 - Relative imports include the file extension (`./clipLink.ts`). One component per file,
   default-exported and named after the file. Comment only what isn't obvious.
-- UI strings live in one typed module mirrored from `CONTENT.md`, never hard-coded in JSX.
+- UI strings live in `lib/strings.ts`, mirrored from `CONTENT.md`, never hard-coded in JSX or DOM code.
 - Add a dependency only with a clear reason.
 
 ## Secrets policy
