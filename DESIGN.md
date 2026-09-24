@@ -3,12 +3,13 @@
 Visual source of truth, maintained by design-advisor. **Status: Approved by the owner (2026-09-24).** Open TODO (owner) items below are tracked in `TASKS.md`.
 *Revised 2026-09-24:* the clip button sections (Layout, Components, its contrast note) were updated to match YouTube's current player (`ytp-delhi-modern-icons`), the open state is now a filled icon instead of a red underline (owner decision; `--clip-active-bar` removed, no red anywhere), Popup states treats live streams as watch pages, and the fullscreen panel overlay is always dark (owner decision; TODO resolved).
 *Revised 2026-09-24 (clip panel review):* panel wording (heading, region name, close button name) now defers to CONTENT.md; the container-query line explains the 528px CSS value; the overlay records `z-index: 70` (to verify); Motion notes the replay on placement change; the time-input error documents its layout push and 4px gap; "Use current time" accessible names follow WCAG 2.5.3; added the clip-length readout type role and pill padding.
+*Revised 2026-09-24 (overlay panel):* after trying the build, the owner decided the clip panel is an overlay inside the player in every mode (default, theater, fullscreen), bottom-right and always dark. The docked placement table, the wide ≥560px container-query layout, the placement-change motion replay and the `fullscreenchange` re-mount note are removed; single column is the only layout. The Constraints and Color theme wording is updated. The clip playback bar keeps its docked slot on its own. Follow-up: Personality, radius, elevation and screenshots no longer describe a docked panel; focus order now matches the single-column visual order (WCAG 2.4.3); the panel hides during ads (`#movie_player.ad-showing`) and keeps what was typed.
 
 ## Constraints (decided)
 
 - Plain CSS with custom properties, React 19 + TypeScript. No Tailwind, no UI library.
 - Feel: quick, unobtrusive, native, as if YouTube had built it. Match YouTube's control sizing, spacing and type. No web fonts loaded into youtube.com.
-- Themes (D11): the in-page button, panel and clip bar follow YouTube's `dark` attribute on `<html>`. The popup follows `prefers-color-scheme`. No flash on load. Theme swaps are instant.
+- Themes (D11): the clip panel is always dark (it's an in-player overlay, like YouTube's player menus). The clip bar follows YouTube's `dark` attribute on `<html>`. The clip button has no theme; it inherits YouTube's player control styling. The popup follows `prefers-color-scheme`. No flash on load. Theme swaps are instant.
 - Accessibility (D10): WCAG AA contrast for every text/background pair in both themes, full keyboard use, visible focus, `prefers-reduced-motion` respected, no opacity on text for hierarchy.
 - Surfaces must work in the default, theater and fullscreen player modes and in narrow windows. The popup has a fixed small width.
 - Nothing personal in the UI, docs or screenshots.
@@ -23,7 +24,7 @@ Visual source of truth, maintained by design-advisor. **Status: Approved by the 
 
 ## Personality / direction
 
-A YouTube control, not an app. The panel looks like YouTube's own description box: a flat grey rounded block in the page flow, with Roboto, pill buttons and the black/white "Subscribe" style for the one primary action. Numbers (times) are the content, so they get tabular figures and the clearest type. Silent when idle, with one small button in the player. It shows feedback only where the user is looking: the label on the button they just pressed.
+A YouTube control, not an app. The panel looks like YouTube's own in-player menus: a flat, opaque dark rounded block over the video, with Roboto, pill buttons and the black/white "Subscribe" style for the one primary action. Numbers (times) are the content, so they get tabular figures and the clearest type. Silent when idle, with one small button in the player. It shows feedback only where the user is looking: the label on the button they just pressed.
 
 ## Layout
 
@@ -34,28 +35,19 @@ A YouTube control, not an app. The panel looks like YouTube's own description bo
 - Shown on every `/watch` page, including live streams for now (live detection is unverified). Hidden elsewhere. **TODO (owner)**: decide on Shorts and live streams; hiding it on live stays part of that TODO.
 
 ### Clip panel
-One component with two placements.
+An overlay inside the player in **every player mode** (default, theater and fullscreen), with one placement (owner decision, 2026-09-24).
+- Placement: inside `#movie_player`, anchored `right: 12px; bottom: 72px` (clears the progress bar and controls), `z-index: 70` (to verify in the owner's fullscreen check: the settings menu and the progress-bar thumbnail open above it, and `bottom: 72px` clears the enlarged scrubber).
+- Size: `width: min(360px, calc(100% - 24px))`, `max-height: calc(100% - 96px)`, scrolls inside. It shrinks to fit small players.
+- Theme: dark tokens always, even when YouTube is in light mode.
+- While open it covers the bottom-right of the video.
+- During ads (`#movie_player.ad-showing`): hidden without losing what was typed, and shown again when the ad ends. This keeps it off "Skip ad" and stops "Use current time" reading the ad's time. Implemented as a `data-ad` attribute on the host with `:host([data-ad]) { display: none !important }`.
 
-| Player mode | Placement | Width | Theme |
-|---|---|---|---|
-| Default | Docked in the page flow, **directly below the player and above the video title**, `margin-top: 12px` | Full width of the primary column | YouTube theme |
-| Theater | Same slot, below the full-width player, in the primary column | Primary column width | YouTube theme |
-| Fullscreen | Overlay inside the player, anchored `right: 12px; bottom: 72px` (clears the progress bar and controls), `z-index: 70` (to verify in the owner's fullscreen check: the settings menu and the progress-bar thumbnail open above it, and `bottom: 72px` clears the enlarged scrubber) | `360px`, `max-height: calc(100% - 96px)`, scrolls inside | Dark tokens always |
+Why an overlay: opening and closing it never moves the video or the title, it behaves the same in all three modes, and it appears the way YouTube's own in-player menus do.
 
-Why it docks: the video stays fully visible and scrubbable while times are set, and it keeps working at any window width because it sits in the page flow. Fullscreen hides the page, so there it has to overlay the player.
-The fullscreen overlay always uses dark tokens, even when YouTube is in light mode, to match YouTube's in-player menus (owner decision, 2026-09-24).
-*Main session:* this means moving or re-mounting the shadow host on `fullscreenchange`. The mechanism is your call.
-
-Internal layout uses a container query on the panel's own width, not the viewport. The 560px breakpoint is the panel's width; the CSS uses `@container (min-width: 528px)` because container queries measure the content box (560 − 2 × 16px padding).
-- **≥ 560px (wide):**
-  - Row 1: header (panel title, duration readout, close button on the right).
-  - Row 2: Start group, then End group (`gap: 24px`).
-  - Row 3: Preview toggle on the left. Copy embed link, then Copy link, on the right (primary action last, as in YouTube dialogs).
-  - Row 4: embed note, full width.
-- **< 560px (narrow):** everything stacks in a single column. Each time group stays on one row (field plus "Use current time"). The Preview and copy buttons become full width in the order Preview, Copy link, Copy embed link. The note sits below Copy embed link.
+Internal layout: a single column (the panel never gets wide enough for more). Each time group stays on one row (field plus "Use current time"). The Preview and copy buttons are full width in the order Preview, Copy link, Copy embed link. The note sits below Copy embed link.
 - Padding `16px`. Row gap `12px`.
 
-Focus order: Close → Start → Use current time (start) → End → Use current time (end) → Preview → Copy embed link → Copy link. When the panel opens, focus goes to Start. `Esc` closes the panel and returns focus to the clip button.
+Focus order: Close → Start → Use current time (start) → End → Use current time (end) → Preview → Copy link → Copy embed link (matches the visual order). When the panel opens, focus goes to Start. `Esc` closes the panel and returns focus to the clip button.
 *Main session:* keydown events inside the panel must not reach YouTube's shortcuts. Otherwise typing "1:23" seeks the video, because number keys jump to 10%, 20% and so on.
 
 ### Toolbar popup
@@ -63,7 +55,7 @@ Focus order: Close → Start → Use current time (start) → End → Use curren
 - Header row: 16px extension icon + extension name. Below it: one line of body text and at most one action.
 
 ### Clip playback bar
-- Same docked slot as the panel (below the player, above the title), full width of the primary column. If the panel is also open, the bar sits above it with `8px` between them.
+- Docked in the page flow, directly below the player and above the video title, full width of the primary column.
 - Fullscreen: a compact bar inside the player, anchored `left: 12px; top: 12px`, dark tokens, `max-width: calc(100% - 24px)`.
 - Narrow (< 480px container): the text stays on the first line and the buttons wrap to a second line, each `flex: 1`.
 
@@ -133,7 +125,7 @@ Tokens use YouTube's own neutrals so the UI blends in. They are prefixed `--clip
 }
 ```
 
-*Main session:* Firefox does not support `:host-context()`, so mirror YouTube's `<html dark>` onto the shadow host as `data-theme` before the first render (to avoid a flash) and keep it in sync afterwards. The fullscreen overlay always forces `data-theme="dark"`.
+*Main session:* the clip panel's shadow host always sets `data-theme="dark"`. For the clip bar, Firefox does not support `:host-context()`, so mirror YouTube's `<html dark>` onto its shadow host as `data-theme` before the first render (to avoid a flash) and keep it in sync afterwards. The clip bar's fullscreen variant always forces `data-theme="dark"`.
 
 **The accent (blue) is used only for:** focus rings, the pressed Preview state, and any text links. It is never used for fills on large areas and never for the primary button.
 
@@ -167,8 +159,8 @@ The dark pairs at 4.5 to 4.6 pass with little margin. Don't lighten those backgr
 - Spacing scale: `4, 8, 12, 16, 24px`. Inside a group: 8. Between rows: 12. Panel padding: 16. Between the Start and End groups: 24. Between a field and its error message: 4.
 - Pill buttons: horizontal padding `0 16px`.
 - Control height: `36px` for buttons, inputs and icon buttons (touch target ≥ 24px, so it meets 2.5.8).
-- Radius: panel, clip bar and fullscreen overlay `12px` (as YouTube's description box). Inputs `8px`. Buttons are pills, `18px`. Icon buttons are circles, `50%`.
-- Elevation: **none**. The docked panel and bar are flat, like the description box. The fullscreen overlay is opaque `--clip-surface`, with no shadow and no blur.
+- Radius: panel and clip bar (docked and fullscreen) `12px`. Inputs `8px`. Buttons are pills, `18px`. Icon buttons are circles, `50%`.
+- Elevation: **none**. The panel overlay and the clip bar's fullscreen variant are opaque `--clip-surface`, with no shadow and no blur. The docked clip bar is flat, like the description box.
 
 ## Components
 
@@ -233,7 +225,6 @@ Button states follow the shared rules. Focus goes to the button (if there is one
 ## Motion
 
 - Panel open: `opacity 0→1` plus `translateY(4px→0)`, `150ms cubic-bezier(0.2, 0, 0, 1)`. Close: `100ms` opacity only. The clip bar uses the same open motion.
-- A placement change (entering or leaving fullscreen) replays the open motion.
 - Everything else is instant: hover, pressed, the copied/error label swap, and theme changes. **No `transition` on colour or background properties**, so a theme swap can never animate.
 - `prefers-reduced-motion: reduce`: no transforms and no fades. Everything appears and disappears instantly.
 - Preview looping is video playback, not UI motion. Nothing in the UI pulses or animates while it runs.
@@ -248,7 +239,7 @@ Button states follow the shared rules. Focus goes to the button (if there is one
 - **TODO (owner)**: the final colour and whether the tile keeps the glyph alone. This depends on the final name, which is still open. Note that "YouTube" in the name may conflict with AMO naming policy and with YouTube's own "Clips" feature.
 
 ### Screenshots (README and AMO)
-- Three shots: clip panel (light theme), clip playback bar (dark theme), popup (either theme). 1280×800, browser content only, with no bookmarks bar and no other tabs visible.
+- Three shots: clip panel (always dark), clip playback bar (dark theme), popup (either theme). 1280×800, browser content only, with no bookmarks bar and no other tabs visible.
 - Use a clean Firefox profile, signed out of YouTube. No avatar, history, subscriptions, notifications or personalised recommendations visible. Crop or blur recommendations if needed.
 - **TODO (owner)**: choose the demo video. It should be one you have the right to show (your own upload, Creative Commons or public domain).
 - The owner approves every screenshot before it is committed.
