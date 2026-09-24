@@ -14,7 +14,7 @@ MP4 with sound, at the selected quality and original size.
 - [ ] Accessibility pass: keyboard-only use, focus order, contrast in both themes, reduced motion
 - [ ] **(owner)** Choose a demo video you have the right to show (your own upload, Creative Commons or
       public domain)
-- [ ] README screenshots of the clip panel, idle and while saving **(owner approves)**
+- [ ] README screenshot of the clip panel while saving **(owner approves)** (idle one added)
 - [ ] Open decision: support YouTube Shorts and live streams, or watch pages only?
 
 ## Launch

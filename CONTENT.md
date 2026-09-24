@@ -63,8 +63,8 @@ metrics or results. Only link public repos. **TODO (owner)** items need the owne
 
 
 ## Screenshots and media
-- None exist yet. Capture the clip panel (idle and while saving), on a video with no personal details
-  visible.
+- `assets/screenshots/clip-panel.png`: the clip panel, idle, owner's screenshot (2026-09-24), used in
+  the README. Still to capture: the panel while saving.
 - The owner approves every screenshot before it goes into the README.
 - Extension icon: `assets/icon/icon.svg` (48–128px) and `icon-small.svg` (16–32px), rendered to
   `public/icon/`; owner approved 2026-09-24. Spec in `DESIGN.md`.
