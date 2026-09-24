@@ -22,10 +22,13 @@ MP4 with sound, at the selected quality and original size.
       source zip AMO asks for
 - [ ] **(owner)** Add the addons.mozilla.org link to `README.md` once the listing is live
 - [ ] **(owner)** Once Mozilla approves the add-on, download the signed `.xpi` from the developer hub
-      and attach it to the GitHub release as `clipper-for-youtube-<version>.xpi` (I can upload it)
+      and attach it to the GitHub release as `clipper-for-youtube-<version>.xpi` (I can upload it), then
+      remove the unsigned test build from the release and README
 - [ ] Verify an installed (non-temporary) build: Save video produces a working file
 
 ## Done
+- [x] Submitted to addons.mozilla.org (waiting for review); unsigned Firefox test build attached to
+      release v1.0.0 meanwhile (2026-09-24)
 - [x] Public repo github.com/Oralino/youtube-clipper; release v1.0.0 with the Chrome zip (2026-09-24)
 - [x] Version 1.0.0 for the first release (2026-09-24)
 - [x] Full-history audit: no secrets, personal emails or private files in any commit; commit author

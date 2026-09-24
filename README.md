@@ -23,6 +23,10 @@ Either way works:
   [latest release](../../releases/latest) and open it in Firefox (drag it into a Firefox window, or use
   **File → Open File**), then click **Add**. It's the same file Mozilla signs for the store; Firefox
   only installs signed extensions permanently.
+- **Unsigned test build** (while the store review is pending): `youtube-clipper-<version>-firefox-unsigned.zip`
+  from the release. Load it in any Firefox through `about:debugging` → **This Firefox** → **Load
+  Temporary Add-on** (removed on restart), or install it permanently in Firefox Developer Edition,
+  Nightly or ESR with `xpinstall.signatures.required` set to `false` in `about:config`.
 
 ### Chrome
 The Chrome Web Store doesn't allow extensions that save YouTube videos, so on Chrome you install it
