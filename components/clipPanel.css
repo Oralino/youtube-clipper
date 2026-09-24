@@ -1,0 +1,217 @@
+/* Tokens from DESIGN.md. The host's data-theme mirrors YouTube's <html dark> (always dark in fullscreen).
+   WXT puts `:host { all: initial !important }` before this file, so real properties on the host
+   need !important to count; custom properties aren't affected by `all`. */
+:host {
+  display: block !important;
+  color-scheme: light !important;
+  --clip-page: #ffffff;
+  --clip-surface: #f2f2f2;
+  --clip-field: #ffffff;
+  --clip-tonal: #e5e5e5;
+  --clip-tonal-hover: #d9d9d9;
+  --clip-text: #0f0f0f;
+  --clip-text-secondary: #606060;
+  --clip-border: #767676;
+  --clip-primary-bg: #0f0f0f;
+  --clip-primary-bg-hover: #272727;
+  --clip-primary-text: #ffffff;
+  --clip-accent: #065fd4;
+  --clip-accent-subtle: #def1ff;
+  --clip-error: #cc0000;
+}
+
+:host([data-theme="dark"]) {
+  color-scheme: dark !important;
+  --clip-page: #0f0f0f;
+  --clip-surface: #272727;
+  --clip-field: #0f0f0f;
+  --clip-tonal: #3f3f3f;
+  --clip-tonal-hover: #4d4d4d;
+  --clip-text: #f1f1f1;
+  --clip-text-secondary: #aaaaaa;
+  --clip-border: #717171;
+  --clip-primary-bg: #f1f1f1;
+  --clip-primary-bg-hover: #d9d9d9;
+  --clip-primary-text: #0f0f0f;
+  --clip-accent: #3ea6ff;
+  --clip-accent-subtle: #263850;
+  --clip-error: #ff4e45;
+}
+
+/* px only: YouTube sets html { font-size: 10px }, so rem would shrink everything. */
+.panel {
+  display: block;
+  box-sizing: border-box;
+  margin-top: 12px;
+  padding: 16px;
+  border-radius: 12px;
+  background: var(--clip-surface);
+  color: var(--clip-text);
+  font-family: "Roboto", "Arial", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  container-type: inline-size;
+  animation: clip-open 150ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+:host([data-placement="overlay"]) .panel {
+  position: absolute;
+  right: 12px;
+  bottom: 72px;
+  z-index: 70;
+  width: 360px;
+  max-height: calc(100% - 96px);
+  margin: 0;
+  overflow-y: auto;
+}
+
+:host([data-closing]) .panel {
+  animation: clip-close 100ms linear forwards;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+.header {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 22px;
+}
+
+.length {
+  color: var(--clip-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.icon-button {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  margin-left: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--clip-text);
+  cursor: pointer;
+}
+
+.icon-button:hover {
+  background: var(--clip-tonal);
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 560px panel width, per DESIGN.md: container queries measure the content box (inside 16px padding). */
+@container (min-width: 528px) {
+  .fields {
+    flex-direction: row;
+    gap: 24px;
+  }
+}
+
+.field-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+}
+
+.time-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.time-input {
+  width: 104px;
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--clip-border);
+  border-radius: 8px;
+  background: var(--clip-field);
+  color: var(--clip-text);
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+}
+
+.time-input::placeholder {
+  color: var(--clip-text-secondary);
+  opacity: 1;
+}
+
+.time-input:hover {
+  border-color: var(--clip-text);
+}
+
+.time-input[aria-invalid="true"] {
+  border-color: var(--clip-error);
+  box-shadow: inset 0 0 0 1px var(--clip-error);
+}
+
+.field-error {
+  margin: 4px 0 0;
+  color: var(--clip-error);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.tonal {
+  height: 36px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 18px;
+  background: var(--clip-tonal);
+  color: var(--clip-text);
+  font: inherit;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.tonal:hover {
+  background: var(--clip-tonal-hover);
+}
+
+button:focus-visible,
+.time-input:focus-visible {
+  outline: 2px solid var(--clip-accent);
+  outline-offset: 2px;
+}
+
+@keyframes clip-open {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+@keyframes clip-close {
+  to {
+    opacity: 0;
+  }
+}
+
+/* Closing under reduced motion skips data-closing entirely (see clipPanel.tsx). */
+@media (prefers-reduced-motion: reduce) {
+  .panel {
+    animation: none;
+  }
+}
