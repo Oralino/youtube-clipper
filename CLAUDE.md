@@ -77,8 +77,9 @@ Before every commit: `lint`, `typecheck`, `format:check`, `test` and `build` mus
 - **Feature flow:** plan → design-advisor (new visual patterns or `DESIGN.md` deviations only) →
   implement → code-reviewer + qa-checker in parallel → fix → manual YouTube check → commit.
 - **Manual YouTube check** after every feature that touches the page, in Firefox via `npm run dev`
-  (refresh the YouTube tab after each content-script change: WXT's reload doesn't update pages that
-  are already open):
+  (refresh the YouTube tab after each change. A hook in `wxt.config.ts` makes every content-script
+  change reload the whole extension, because WXT's quick MV3 reload left Firefox running the old
+  copy; if a tab still looks stale, press Alt+R in the dev Firefox window, then refresh):
   - the clip button appears on a watch page;
   - it still works after moving to another video without a page reload (YouTube is a single-page app);
   - light and dark YouTube themes;
