@@ -17,7 +17,10 @@
     "format:check": "prettier --check .",
     "test": "vitest run",
     "postinstall": "wxt prepare",
-    "lint:addon": "web-ext lint --source-dir .output/firefox-mv3"
+    "lint:addon": "web-ext lint --source-dir .output/firefox-mv3",
+    "dev:chrome": "wxt -b chrome",
+    "build:chrome": "wxt build -b chrome",
+    "zip:chrome": "wxt zip -b chrome"
   },
   "dependencies": {
     "mediabunny": "^1.59.1",

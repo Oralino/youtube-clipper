@@ -23,15 +23,18 @@ export default defineConfig({
     },
   },
   manifestVersion: 3,
-  manifest: {
+  manifest: ({ browser }) => ({
     name: "Clipper for YouTube",
     description: "Clip part of a YouTube video and save it as an MP4.",
-    browser_specific_settings: {
-      gecko: {
-        id: "{a9e93662-cd96-4e4d-9406-69f18ca40af8}",
-        // Nothing is collected or sent anywhere: clips are recorded and saved on the user's device.
-        data_collection_permissions: { required: ["none"] },
+    // Firefox-only keys; Chrome would warn about them.
+    ...(browser === "firefox" && {
+      browser_specific_settings: {
+        gecko: {
+          id: "{a9e93662-cd96-4e4d-9406-69f18ca40af8}",
+          // Nothing is collected or sent anywhere: clips are recorded and saved on the user's device.
+          data_collection_permissions: { required: ["none"] },
+        },
       },
-    },
-  },
+    }),
+  }),
 });
