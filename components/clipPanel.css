@@ -149,8 +149,7 @@
   opacity: 1;
 }
 
-.time-input:hover,
-.manual-input:hover {
+.time-input:hover {
   border-color: var(--clip-text);
 }
 
@@ -194,29 +193,13 @@
   margin-top: 12px;
 }
 
-.actions button {
+.actions button,
+.save > button {
   display: inline-flex;
   gap: 8px;
   align-items: center;
   justify-content: center;
   width: 100%;
-}
-
-.primary {
-  height: 36px;
-  padding: 0 16px;
-  border: 0;
-  border-radius: 18px;
-  background: var(--clip-primary-bg);
-  color: var(--clip-primary-text);
-  font: inherit;
-  font-weight: 500;
-  white-space: nowrap;
-  cursor: pointer;
-}
-
-.primary:hover:not([aria-disabled="true"]) {
-  background: var(--clip-primary-bg-hover);
 }
 
 .tonal[aria-pressed="true"] {
@@ -225,12 +208,6 @@
 }
 
 /* Disabled controls lose their fill instead of fading: no opacity on text (DESIGN.md). */
-.primary[aria-disabled="true"] {
-  background: var(--clip-tonal);
-  color: var(--clip-text-secondary);
-  cursor: default;
-}
-
 .tonal[aria-disabled="true"] {
   border: 1px solid var(--clip-tonal-hover);
   background: var(--clip-surface);
@@ -252,19 +229,44 @@
   margin-top: 1px;
 }
 
-.manual {
+.save {
   margin-top: 12px;
 }
 
-.manual-input {
-  width: 100%;
-  height: 36px;
-  padding: 0 12px;
-  border: 1px solid var(--clip-border);
-  border-radius: 8px;
-  background: var(--clip-field);
-  color: var(--clip-text);
-  font: inherit;
+.save > .note {
+  margin-top: 8px;
+}
+
+.progress {
+  height: 4px;
+  margin: 8px 0;
+  overflow: hidden;
+  border-radius: 2px;
+  background: var(--clip-tonal);
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--clip-text);
+  transform-origin: left;
+}
+
+.save > .field-error {
+  margin: 0 0 8px;
+}
+
+.progress-text {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 18px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Locked while saving: still readable and focusable, but visibly not editable. */
+.time-input:read-only {
+  border-color: var(--clip-tonal-hover);
+  background: var(--clip-surface);
 }
 
 .visually-hidden {
@@ -279,8 +281,7 @@
 }
 
 button:focus-visible,
-.time-input:focus-visible,
-.manual-input:focus-visible {
+.time-input:focus-visible {
   outline: 2px solid var(--clip-accent);
   outline-offset: 2px;
 }

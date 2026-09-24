@@ -1,16 +1,15 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { checkClipForm, type FieldError } from "../lib/clipForm.ts";
-import { buildClipLink, buildEmbedLink } from "../lib/clipLink.ts";
 import { STRINGS } from "../lib/strings.ts";
 import { formatTime } from "../lib/time.ts";
-import CopyButton from "./CopyButton.tsx";
 import Icon from "./Icon.tsx";
+import SaveVideo from "./SaveVideo.tsx";
 import TimeField from "./TimeField.tsx";
+import useClipRecorder, { type SaveEvent } from "./useClipRecorder.ts";
 import usePreviewLoop from "./usePreviewLoop.ts";
 
 interface ClipPanelProps {
   video: HTMLVideoElement;
-  videoId: string;
   onClose: () => void;
 }
 
@@ -23,19 +22,18 @@ const ANNOUNCE_MS = 2000;
 // Long enough for screen readers to notice the live region emptied before the new text arrives.
 const ANNOUNCE_GAP_MS = 100;
 
-export default function ClipPanel({ video, videoId, onClose }: ClipPanelProps) {
+export default function ClipPanel({ video, onClose }: ClipPanelProps) {
   const [startText, setStartText] = useState("");
   const [endText, setEndText] = useState("");
   // Errors show only once a field has been left or filled from the video, not while typing.
   const [touched, setTouched] = useState({ start: false, end: false });
   const [previewing, setPreviewing] = useState(false);
   const [announcement, setAnnouncement] = useState("");
-  // The link to copy by hand after the clipboard refused it.
-  const [manualLink, setManualLink] = useState<string | null>(null);
   const duration = useVideoDuration(video);
   const startRef = useRef<HTMLInputElement>(null);
-  const manualRef = useRef<HTMLInputElement>(null);
   const announceTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const saver = useClipRecorder(video, handleSaveEvent);
+  const saving = saver.status.state === "saving";
 
   const { startError, endError, range } = checkClipForm(startText, endText, duration);
   // An invalid range ends the preview; it doesn't resume by itself when the range is fixed.
@@ -44,29 +42,38 @@ export default function ClipPanel({ video, videoId, onClose }: ClipPanelProps) {
     setPreviewing(false),
   );
 
-  const clipLink = range && buildClipLink({ videoId, ...range });
-  const embedLink = range && buildEmbedLink({ videoId, ...range });
-  // Only offer the manual field while it still matches what's in the fields.
-  const shownManualLink = manualLink === clipLink || manualLink === embedLink ? manualLink : null;
-
   useEffect(() => startRef.current?.focus(), []);
   useEffect(() => () => clearTimeout(announceTimer.current), []);
-  useEffect(() => {
-    if (shownManualLink) {
-      manualRef.current?.focus();
-      manualRef.current?.select();
-    }
-  }, [shownManualLink]);
+
+  function setTime(field: "start" | "end", text: string) {
+    if (field === "start") setStartText(text);
+    else setEndText(text);
+    // A save error is about the old times.
+    saver.clearFailure();
+  }
 
   function fillFromVideo(field: "start" | "end") {
-    const time = formatTime(video.currentTime);
-    if (field === "start") setStartText(time);
-    else setEndText(time);
+    setTime(field, formatTime(video.currentTime));
     setTouched((current) => ({ ...current, [field]: true }));
   }
 
   function togglePreview() {
-    if (range) setPreviewing(!previewing);
+    if (range && !saving) setPreviewing(!previewing);
+  }
+
+  function startSaving() {
+    if (!range) return;
+    setPreviewing(false);
+    void saver.save(range.start, range.end);
+  }
+
+  function handleSaveEvent(event: SaveEvent) {
+    if (event.type === "started") announce(STRINGS.save.announceStart(formatTime(event.total)));
+    else if (event.type === "progress") {
+      announce(STRINGS.save.announceProgress(formatTime(event.elapsed), formatTime(event.total)));
+    } else if (event.type === "saved") announce(STRINGS.save.announceSaved);
+    else if (event.type === "stopped") announce(STRINGS.save.announceStopped);
+    else announce(STRINGS.save.errors[event.reason]);
   }
 
   function announce(text: string) {
@@ -77,11 +84,6 @@ export default function ClipPanel({ video, videoId, onClose }: ClipPanelProps) {
       setAnnouncement(text);
       announceTimer.current = setTimeout(() => setAnnouncement(""), ANNOUNCE_MS);
     }, ANNOUNCE_GAP_MS);
-  }
-
-  function handleCopyResult(copied: boolean, text: string) {
-    setManualLink(copied ? null : text);
-    announce(copied ? STRINGS.panel.copiedAnnouncement : STRINGS.panel.copyFailed);
   }
 
   function handleKeyDown(event: KeyboardEvent) {
@@ -112,7 +114,8 @@ export default function ClipPanel({ video, videoId, onClose }: ClipPanelProps) {
           useCurrentLabel={STRINGS.panel.useCurrentTime}
           useCurrentName={STRINGS.panel.useCurrentTimeForStart}
           inputRef={startRef}
-          onChange={setStartText}
+          locked={saving}
+          onChange={(text) => setTime("start", text)}
           onBlur={() => setTouched((current) => ({ ...current, start: true }))}
           onUseCurrent={() => fillFromVideo("start")}
         />
@@ -122,7 +125,8 @@ export default function ClipPanel({ video, videoId, onClose }: ClipPanelProps) {
           error={touched.end && endError ? ERROR_TEXT[endError] : null}
           useCurrentLabel={STRINGS.panel.useCurrentTime}
           useCurrentName={STRINGS.panel.useCurrentTimeForEnd}
-          onChange={setEndText}
+          locked={saving}
+          onChange={(text) => setTime("end", text)}
           onBlur={() => setTouched((current) => ({ ...current, end: true }))}
           onUseCurrent={() => fillFromVideo("end")}
         />
@@ -132,47 +136,19 @@ export default function ClipPanel({ video, videoId, onClose }: ClipPanelProps) {
           type="button"
           className="tonal"
           aria-pressed={previewing}
-          aria-disabled={!range}
+          aria-disabled={!range || saving}
           onClick={togglePreview}
         >
           <Icon name="loop" />
           {previewing ? STRINGS.panel.stopPreview : STRINGS.panel.preview}
         </button>
-        <CopyButton
-          label={STRINGS.panel.copyLink}
-          icon="link"
-          text={clipLink}
-          variant="primary"
-          onResult={handleCopyResult}
-        />
-        <CopyButton
-          label={STRINGS.panel.copyEmbedLink}
-          icon="code"
-          text={embedLink}
-          variant="tonal"
-          describedBy="clip-embed-note"
-          onResult={handleCopyResult}
-        />
-        <p id="clip-embed-note" className="note">
-          <Icon name="info" size={16} />
-          {STRINGS.panel.embedNote}
-        </p>
       </div>
-      {shownManualLink && (
-        <div className="manual">
-          <label className="field-label" htmlFor="clip-manual-link">
-            {STRINGS.panel.copyManually}
-          </label>
-          <input
-            ref={manualRef}
-            id="clip-manual-link"
-            className="manual-input"
-            type="text"
-            readOnly
-            value={shownManualLink}
-          />
-        </div>
-      )}
+      <SaveVideo
+        status={saver.status}
+        available={range !== null}
+        onSave={startSaving}
+        onStop={saver.stop}
+      />
       <p className="visually-hidden" role="status">
         {announcement}
       </p>

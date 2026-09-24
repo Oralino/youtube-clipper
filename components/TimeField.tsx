@@ -8,6 +8,8 @@ interface TimeFieldProps {
   useCurrentLabel: string;
   useCurrentName: string;
   inputRef?: Ref<HTMLInputElement>;
+  /** Read-only while a clip is being saved. */
+  locked?: boolean;
   onChange: (value: string) => void;
   onBlur: () => void;
   onUseCurrent: () => void;
@@ -20,6 +22,7 @@ export default function TimeField({
   useCurrentLabel,
   useCurrentName,
   inputRef,
+  locked = false,
   onChange,
   onBlur,
   onUseCurrent,
@@ -43,12 +46,21 @@ export default function TimeField({
           spellCheck={false}
           placeholder={formatTime(0)}
           value={value}
+          readOnly={locked}
           aria-invalid={error !== null}
           aria-describedby={error ? errorId : undefined}
           onChange={(event) => onChange(event.target.value)}
           onBlur={onBlur}
         />
-        <button type="button" className="tonal" aria-label={useCurrentName} onClick={onUseCurrent}>
+        <button
+          type="button"
+          className="tonal"
+          aria-label={useCurrentName}
+          aria-disabled={locked}
+          onClick={() => {
+            if (!locked) onUseCurrent();
+          }}
+        >
           {useCurrentLabel}
         </button>
       </div>

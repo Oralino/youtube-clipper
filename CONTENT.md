@@ -11,7 +11,7 @@ metrics or results. Only link public repos. **TODO (owner)** items need the owne
   **TODO (owner)**: Settle the final name before any addons.mozilla.org listing. Mozilla's policy
   doesn't allow names that suggest an official connection with another brand; "Clipper for YouTube"
   follows the accepted pattern and matches the repo name `youtube-clipper`.
-- **One-liner:** Make clips straight from a YouTube video and share them as a link.
+- **One-liner:** Clip part of a YouTube video and save it as an MP4 to share anywhere.
 - **Tone:** short, plain and native to YouTube. Labels are verbs, with no exclamation marks or emoji.
 - **Personal info shown:** none.
 
@@ -31,17 +31,31 @@ metrics or results. Only link public repos. **TODO (owner)** items need the owne
 | Use-current-time button | Use current time |
 | Use-current-time accessible names (start with the visible label, WCAG 2.5.3) | Use current time for start / Use current time for end |
 | Preview button (off / on) | Preview / Stop preview |
-| Copy link button | Copy link |
-| Copy embed link button | Copy embed link |
-| Embed note | Plays inline in Discord on desktop. It won't open in a browser or in Discord's mobile app, and some videos block embedding. |
-| Copied (button label, 2s) | Copied |
-| Copied (screen-reader announcement) | Link copied |
-| Copy failed (button label, 2s) | Couldn't copy |
-| Copy failed (manual field label) | Copy this link manually |
 | Error: unreadable time | Enter a time like 1:23. |
 | Error: end before start | End must be after start. |
 | Error: time outside video | Time is outside the video. |
 | Close button accessible name | Close |
+
+### Save video
+| Element | Text |
+|---|---|
+| Button | Save video |
+| Button while saving | Stop saving |
+| Progress line | Saving {elapsed} / {length} |
+| Saving note | Let it play to the end. Pausing, skipping or closing this panel stops saving. |
+| Quality note | Saves at the player's quality. For a steady result, pick one in Settings instead of Auto. |
+| Saved (button label, 2s) | Saved |
+| Announcement: start | Saving video. This takes {length}. |
+| Announcement: progress (every 30s on long clips) | Saving {elapsed} of {length} |
+| Announcement: saved | Video saved |
+| Announcement: stopped | Saving stopped |
+| Error: protected video | This video is protected and can't be saved. |
+| Error: ad | An ad interrupted saving. Try again after it ends. |
+| Error: paused | Saving stopped because the video was paused. |
+| Error: skipped | Saving stopped because the video was skipped. |
+| Error: can't record | Your browser can't record this video. |
+| Error: other | Couldn't save the video. |
+| File name | {video title} ({start}-{end}).mp4, times with dots, e.g. Me at the zoo (0.05-0.12).mp4 (.webm when MP4 isn't available) |
 
 ### Toolbar popup
 | State | Text |
@@ -51,17 +65,10 @@ metrics or results. Only link public repos. **TODO (owner)** items need the owne
 | Any other page | Open a YouTube video to clip it. |
 | Content script missing | Reload this tab to use the extension. · Button: Reload tab |
 
-### Clip playback (opening a clip link)
-| Element | Text |
-|---|---|
-| Clip indicator | Clip · {start} – {end} |
-| Clip ended | Clip ended |
-| Replay button | Replay |
-| Exit button | Watch full video |
 
 ## Screenshots and media
-- None exist yet. After the first version works, capture the clip panel, the toolbar popup and clip
-  playback, in light and dark themes, on a video with no personal details visible.
+- None exist yet. After the first version works, capture the clip panel (idle and while saving) and
+  the toolbar popup, on a video with no personal details visible.
 - The owner approves every screenshot before it goes into the README.
 - The extension icon still needs designing (sizes and style are in `DESIGN.md`).
 
