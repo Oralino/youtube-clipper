@@ -62,7 +62,9 @@ npm run lint           # eslint .
 npm run format         # prettier --write .
 npm run format:check   # prettier --check .
 npm test               # vitest run
-npm run lint:addon     # Mozilla's add-on linter on the build (run after `build`)
+npm run lint:addon     # Mozilla's add-on linter on the build (run after `build`). 2 UNSAFE_VAR_ASSIGNMENT
+                       # warnings for innerHTML are expected: they're in ReactDOM (<script> creation and
+                       # dangerouslySetInnerHTML, neither of which we use). Anything else must be fixed.
 ```
 
 Before every commit: `lint`, `typecheck`, `format:check`, `test` and `build` must pass, plus
