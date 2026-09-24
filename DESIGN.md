@@ -4,6 +4,7 @@ Visual source of truth, maintained by design-advisor. **Status: Approved by the 
 *Revised 2026-09-24:* the clip button sections (Layout, Components, its contrast note) were updated to match YouTube's current player (`ytp-delhi-modern-icons`), the open state is now a filled icon instead of a red underline (owner decision; `--clip-active-bar` removed, no red anywhere), Popup states treats live streams as watch pages, and the fullscreen panel overlay is always dark (owner decision; TODO resolved).
 *Revised 2026-09-24 (clip panel review):* panel wording (heading, region name, close button name) now defers to CONTENT.md; the container-query line explains the 528px CSS value; the overlay records `z-index: 70` (to verify); Motion notes the replay on placement change; the time-input error documents its layout push and 4px gap; "Use current time" accessible names follow WCAG 2.5.3; added the clip-length readout type role and pill padding.
 *Revised 2026-09-24 (overlay panel):* after trying the build, the owner decided the clip panel is an overlay inside the player in every mode (default, theater, fullscreen), bottom-right and always dark. The docked placement table, the wide ≥560px container-query layout, the placement-change motion replay and the `fullscreenchange` re-mount note are removed; single column is the only layout. The Constraints and Color theme wording is updated. The clip playback bar keeps its docked slot on its own. Follow-up: Personality, radius, elevation and screenshots no longer describe a docked panel; focus order now matches the single-column visual order (WCAG 2.4.3); the panel hides during ads (`#movie_player.ad-showing`) and keeps what was typed.
+*Revised 2026-09-24 (preview and copy review):* added Icons (stroke set, sizes, the filled range-glyph exception), default copy-button icons, the button-stack and note gaps, the manual link field's placement and styling, and the manual field at the end of the focus order. Removed the stale 24px Start/End gap left over from the wide layout; the stacked groups use the 12px row gap.
 
 ## Constraints (decided)
 
@@ -44,10 +45,10 @@ An overlay inside the player in **every player mode** (default, theater and full
 
 Why an overlay: opening and closing it never moves the video or the title, it behaves the same in all three modes, and it appears the way YouTube's own in-player menus do.
 
-Internal layout: a single column (the panel never gets wide enough for more). Each time group stays on one row (field plus "Use current time"). The Preview and copy buttons are full width in the order Preview, Copy link, Copy embed link. The note sits below Copy embed link.
+Internal layout: a single column (the panel never gets wide enough for more). Each time group stays on one row (field plus "Use current time"). The Preview and copy buttons are full width in the order Preview, Copy link, Copy embed link, `8px` apart (one group, 12px below the End group). The note sits `8px` below Copy embed link. If copying fails, the manual link field appears below the note with a `12px` top margin (a new row), so nothing above it moves.
 - Padding `16px`. Row gap `12px`.
 
-Focus order: Close → Start → Use current time (start) → End → Use current time (end) → Preview → Copy link → Copy embed link (matches the visual order). When the panel opens, focus goes to Start. `Esc` closes the panel and returns focus to the clip button.
+Focus order: Close → Start → Use current time (start) → End → Use current time (end) → Preview → Copy link → Copy embed link → manual link field (only while shown) (matches the visual order). When the panel opens, focus goes to Start. `Esc` closes the panel and returns focus to the clip button.
 *Main session:* keydown events inside the panel must not reach YouTube's shortcuts. Otherwise typing "1:23" seeks the video, because number keys jump to 10%, 20% and so on.
 
 ### Toolbar popup
@@ -156,7 +157,7 @@ The dark pairs at 4.5 to 4.6 pass with little margin. Don't lighten those backgr
 
 ## Spacing, radius, elevation
 
-- Spacing scale: `4, 8, 12, 16, 24px`. Inside a group: 8. Between rows: 12. Panel padding: 16. Between the Start and End groups: 24. Between a field and its error message: 4.
+- Spacing scale: `4, 8, 12, 16, 24px`. Inside a group: 8. Between rows (including the stacked Start and End groups): 12. Panel padding: 16. Between a field and its error message: 4.
 - Pill buttons: horizontal padding `0 16px`.
 - Control height: `36px` for buttons, inputs and icon buttons (touch target ≥ 24px, so it meets 2.5.8).
 - Radius: panel and clip bar (docked and fullscreen) `12px`. Inputs `8px`. Buttons are pills, `18px`. Icon buttons are circles, `50%`.
@@ -169,6 +170,13 @@ Shared states for every button and input:
 - **Hover:** changes the background token instantly (see Motion).
 - **Disabled:** loses its fill or changes to secondary text. It is never faded with opacity. `cursor: default`. Uses `aria-disabled` or `disabled`.
 
+### Icons
+- UI icons (panel, clip bar, popup) are simple line icons drawn for the project: 24×24 grid, `fill="none"`, `stroke="currentColor"`, stroke width 2, round caps and joins, `aria-hidden="true"`. They take the text colour of their control, including pressed and disabled.
+- Sizes: `20px` in pill buttons (8px gap to the label, centred with the label), `16px` in notes (1px top offset so it centres on the 18px line), `24px` in the close icon button.
+- Set: close (X), loop (Preview), link (Copy link), code `< >` (Copy embed link, as in YouTube's Share → Embed), check (Copied), info (embed note). The clip bar's Replay icon, still to draw, must be a single circular arrow so it can't be confused with loop.
+- Exception: the range glyph `[ ▶ ]` stays filled everywhere it appears (clip button, clip bar's 20px range icon, extension icon). It is the product mark and a player control, drawn like YouTube's player icons.
+- Why stroke fits: the player's current icons read as ~2px line icons (outline by default, filled when active), and the panel is an opaque block read with its own text, not next to the control bar.
+
 ### Clip button
 - Markup: `<button class="ytp-button clip-ext-button" aria-label="Clip" aria-expanded="false">`. No `title` attribute (it would add a second, browser tooltip).
 - Icon: a play triangle centred between two range brackets `[ ▶ ]`. 24×24 SVG, `fill="currentColor"`, path `M4 4h4v2H6v12h2v2H4zM20 4h-4v2h2v12h-2v2h4zM10 8l6 4-6 4z`. No drop-shadow `<use>`; current native icons have none.
@@ -179,7 +187,7 @@ Shared states for every button and input:
 
 ### Clip panel
 - Region named by its heading (`aria-labelledby`). Background `--clip-surface`, radius 12, padding 16. All wording (heading, labels, accessible names) comes from CONTENT.md.
-- Header: the heading (panel title style), then the duration readout "0:22" in secondary text, then a close icon button (36px circle, transparent, hover `--clip-tonal`, accessible name from CONTENT.md).
+- Header: the heading (panel title style), then the duration readout "0:22" in secondary text, then a close icon button (36px circle, transparent, hover `--clip-tonal`, 24px close icon in `--clip-text`, accessible name from CONTENT.md).
 
 ### Time input + "Use current time"
 - Label above the field ("Start" or "End", field label style). The field is `104px` wide and 36px high, with `--clip-field` background, 1px `--clip-border`, radius 8 and padding `0 12px`. It accepts `m:ss` or `h:mm:ss`. Placeholder "0:00" in `--clip-text-secondary`.
@@ -195,9 +203,10 @@ Shared states for every button and input:
 - Disabled (range invalid): `--clip-surface` background, 1px `--clip-tonal-hover` border, `--clip-text-secondary` text.
 
 ### Copy buttons
-- **Copy link** is primary: `--clip-primary-bg` and `--clip-primary-text`, with hover `--clip-primary-bg-hover`. **Copy embed link** is tonal.
-- Copied: the label and icon change in place to a check icon plus "Copied" for 2s, then revert. The button width is fixed with `min-width` so nothing jumps. A polite live region announces "Link copied".
-- Error (clipboard refused): the label changes to "Couldn't copy" in the same button colours for 2s, and a read-only field with the URL appears below the buttons, pre-selected, so the user can copy it manually. It is announced politely.
+- **Copy link** is primary: `--clip-primary-bg` and `--clip-primary-text`, with hover `--clip-primary-bg-hover`. **Copy embed link** is tonal. Default icons: link (Copy link), code (Copy embed link).
+- Copied: the label and icon change in place to a check icon plus "Copied" for 2s, then revert. Full-width buttons keep their width, so nothing jumps. A polite live region announces "Link copied".
+- Error (clipboard refused): the label changes to "Couldn't copy" for 2s in the same button colours, keeping the button's default icon. A read-only manual link field appears (placement in Layout) and is announced politely. It gets focus with its text selected, and stays until a copy succeeds or the times change.
+- Manual link field: label above in the field label style, 8px gap (as Start/End). The field is full width, and height, background, border, radius, padding, hover and focus match the time input.
 - Disabled (range invalid): primary uses `--clip-tonal` background with `--clip-text-secondary` text. Tonal uses the Preview disabled style.
 
 ### Embed-link warning
