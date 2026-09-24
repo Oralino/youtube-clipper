@@ -6,6 +6,7 @@ Visual source of truth, maintained by design-advisor. **Status: Approved by the 
 *Revised 2026-09-24 (overlay panel):* after trying the build, the owner decided the clip panel is an overlay inside the player in every mode (default, theater, fullscreen), bottom-right and always dark. The docked placement table, the wide ≥560px container-query layout, the placement-change motion replay and the `fullscreenchange` re-mount note are removed; single column is the only layout. The Constraints and Color theme wording is updated. The clip playback bar keeps its docked slot on its own. Follow-up: Personality, radius, elevation and screenshots no longer describe a docked panel; focus order now matches the single-column visual order (WCAG 2.4.3); the panel hides during ads (`#movie_player.ad-showing`) and keeps what was typed.
 *Revised 2026-09-24 (preview and copy review):* added Icons (stroke set, sizes, the filled range-glyph exception), default copy-button icons, the button-stack and note gaps, the manual link field's placement and styling, and the manual field at the end of the focus order. Removed the stale 24px Start/End gap left over from the wide layout; the stacked groups use the 12px row gap.
 *Revised 2026-09-24 (Save video):* added the Save video control (owner decision, see `CLAUDE.md`): its own group at the end of the stack, tonal, with saving/saved/failed states, a 4px progress bar, a quality note (the recording follows the player's quality, and "Auto" can change it mid-save), locked fields while saving, and closing the panel stops saving. Added the download and stop icons, the save-progress type role, the progress-bar contrast pairs, and Save video at the end of the focus order.
+*Revised 2026-09-24 (Save video review):* accepted the throttled (~4 Hz) progress updates and the `:read-only` locked style. Save video status (progress, error) now sits above the button so the button never moves in the bottom-anchored panel, and the 4px saving-note gap is removed. The saving note and quality note must wrap to the same number of lines. The manual link field and time-field error lines now say that the content above them moves up, which the main session accepted.
 
 ## Constraints (decided)
 
@@ -46,7 +47,7 @@ An overlay inside the player in **every player mode** (default, theater and full
 
 Why an overlay: opening and closing it never moves the video or the title, it behaves the same in all three modes, and it appears the way YouTube's own in-player menus do.
 
-Internal layout: a single column (the panel never gets wide enough for more). Each time group stays on one row (field plus "Use current time"). The Preview and copy buttons are full width in the order Preview, Copy link, Copy embed link, `8px` apart (one group, 12px below the End group). The note sits `8px` below Copy embed link. If copying fails, the manual link field appears below the note with a `12px` top margin (a new row), so nothing above it moves. The Save video group comes last, `12px` below the note (or the manual field while shown). It is a separate group because it is a different kind of action (slow, makes a file), and the 12px gap keeps the embed note visibly attached to Copy embed link. If a build leaves Save video out (Chrome store, see `TASKS.md`), the group is simply absent.
+Internal layout: a single column (the panel never gets wide enough for more). Each time group stays on one row (field plus "Use current time"). The Preview and copy buttons are full width in the order Preview, Copy link, Copy embed link, `8px` apart (one group, 12px below the End group). The note sits `8px` below Copy embed link. If copying fails, the manual link field appears below the note with a `12px` top margin (a new row). Because the panel is anchored to the bottom, the content above it moves up. This is accepted: focus moves to the field, and it appears only after a failed copy. The Save video group comes last, `12px` below the note (or the manual field while shown). It is a separate group because it is a different kind of action (slow, makes a file), and the 12px gap keeps the embed note visibly attached to Copy embed link. If a build leaves Save video out (Chrome store, see `TASKS.md`), the group is simply absent.
 - Padding `16px`. Row gap `12px`.
 
 Focus order: Close → Start → Use current time (start) → End → Use current time (end) → Preview → Copy link → Copy embed link → manual link field (only while shown) → Save video (matches the visual order). When the panel opens, focus goes to Start. `Esc` closes the panel and returns focus to the clip button.
@@ -196,8 +197,8 @@ Shared states for every button and input:
 - Label above the field ("Start" or "End", field label style). The field is `104px` wide and 36px high, with `--clip-field` background, 1px `--clip-border`, radius 8 and padding `0 12px`. It accepts `m:ss` or `h:mm:ss`. Placeholder "0:00" in `--clip-text-secondary`.
 - To its right, 8px gap: a tonal pill "Use current time". Its accessible name starts with the visible label and adds the field (WCAG 2.5.3); wording in CONTENT.md.
 - Hover: field border changes to `--clip-text`. Focus-visible: the accent outline.
-- Locked (while saving): `readonly`, still focusable and readable. `--clip-surface` background, 1px `--clip-tonal-hover` border, text stays `--clip-text`, no hover change. "Use current time" uses the tonal disabled style with `aria-disabled`.
-- Error (unparseable, end ≤ start, or past the video length): 2px `--clip-error` border (use `box-shadow: inset 0 0 0 1px` on top of the 1px border so the layout doesn't shift), `aria-invalid="true"`, and a 12px error message below in `--clip-error` linked by `aria-describedby`. Example: "End must be after start." Wording goes in CONTENT.md. The message takes 4px + 18px and pushes content below it down. No space is reserved; errors show only after the field is left.
+- Locked (while saving): `readonly`, still focusable and readable. `--clip-surface` background, 1px `--clip-tonal-hover` border, text stays `--clip-text`, no hover change. "Use current time" uses the tonal disabled style with `aria-disabled`. Styled with `.time-input:read-only`. It never needs to combine with Error, because saving needs a valid range.
+- Error (unparseable, end ≤ start, or past the video length): 2px `--clip-error` border (use `box-shadow: inset 0 0 0 1px` on top of the 1px border so the layout doesn't shift), `aria-invalid="true"`, and a 12px error message below in `--clip-error` linked by `aria-describedby`. Example: "End must be after start." Wording goes in CONTENT.md. The message takes 4px + 18px. Because the panel is anchored to the bottom, it pushes the content above it up (accepted: errors show only after the field is left, so the shift never happens under the user's typing). No space is reserved.
 - Disabled: not used (see Locked).
 
 ### Preview toggle
@@ -215,18 +216,18 @@ Shared states for every button and input:
 - While saving: both stay enabled. The range is locked, so the links stay valid, and copying doesn't touch playback.
 
 ### Save video
-One button that changes in place (like Preview and the copy buttons), so focus never has to move. Everything below it is part of the group.
+One button that changes in place (like Preview and the copy buttons), so focus never has to move. Status (progress or error) goes **above** the button and notes go below it, so the button itself never moves: the panel is anchored to the bottom and grows upwards, so anything added below the button would push it up under the pointer. The saving note and quality note must wrap to the same number of lines (2 at most) for this to hold; keep both short in CONTENT.md.
 
-| State | Button | Below the button |
-|---|---|---|
-| Idle | Tonal, download icon + "Save video" | 8px: quality note |
-| Unavailable (range invalid) | Preview disabled style, `aria-disabled`, still focusable | 8px: quality note |
-| Saving | Tonal, stop icon + "Stop saving" | 8px: progress bar. 8px: progress line "Saving 0:03 / 0:07". 4px: saving note. The quality note is replaced |
-| Saved (2s) | Check icon + "Saved", same colours, then back to Idle | 8px: quality note (the browser shows its own download) |
-| Failed | Back to Idle immediately, so retry is one press | 4px: error line (field error style, `--clip-error`), linked by `aria-describedby`. 8px: quality note |
+| State | Above the button (group starts 12px below the previous row) | Button | Below the button |
+|---|---|---|---|
+| Idle | nothing | Tonal, download icon + "Save video" | 8px: quality note |
+| Unavailable (range invalid) | nothing | Preview disabled style, `aria-disabled`, still focusable | 8px: quality note |
+| Saving | Progress line "Saving 0:03 / 0:07", 8px, progress bar, 8px | Tonal, stop icon + "Stop saving" | 8px: saving note (replaces the quality note) |
+| Saved (2s) | nothing | Check icon + "Saved", same colours, then back to Idle | 8px: quality note (the browser shows its own download) |
+| Failed | Error line (field error style, `--clip-error`, linked by `aria-describedby`), 8px | Back to Idle immediately, so retry is one press | 8px: quality note |
 
 - Quality note: the recording follows the quality selected in YouTube's player, and on "Auto" the resolution can change mid-save. One static note in the embed-note style (16px info icon, 12px secondary text), linked to the button with `aria-describedby`, so it's read before pressing. It's a hint, not a warning: no colour, never an error. If the main session can tell that the player is on Auto without YouTube internals, show the note only then. Otherwise always show it. The saving note uses the same style.
-- Progress bar: full width, `4px` high, radius `2px`, track `--clip-tonal`, fill `--clip-text`. Fill uses `transform: scaleX(elapsed / length)` from the left, updated on `timeupdate`, no transition. `aria-hidden="true"`: the text line carries the value. Times are clip-relative (0:00 to the clip length), `m:ss` as elsewhere.
+- Progress bar: full width, `4px` high, radius `2px`, track `--clip-tonal`, fill `--clip-text`. Fill uses `transform: scaleX(elapsed / length)` from the left, updated about 4 times a second (throttled; Chrome's `timeupdate` runs at about this rate anyway, so steps look the same in both browsers), no transition. `aria-hidden="true"`: the text line carries the value. Times are clip-relative (0:00 to the clip length), `m:ss` as elsewhere.
 - Saving locks the Start/End fields and "Use current time" (see Locked), and disables Preview. Copy buttons, Close and the header stay as they are. The Stop saving button gets `aria-describedby` on the saving note.
 - Stop saving: discards the recording (no partial file), pauses the video where it is, removes the progress block, and restores Idle and the fields. Focus stays on the button.
 - Finished: the video pauses at the clip's end (as in clip playback), the file downloads, the button shows Saved. Focus stays on the button.
