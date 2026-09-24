@@ -18,9 +18,7 @@ MP4 with sound, at the selected quality and original size.
 - [ ] Open decision: support YouTube Shorts and live streams, or watch pages only?
 
 ## Launch
-- [ ] Full-history audit: secrets, personal data, commit identity
 - [ ] **(owner)** Make the repo public
-- [ ] Set the first release version in `package.json` (for example 1.0.0)
 - [ ] **(owner)** Create a Mozilla add-ons account and submit the `npm run zip` build (listed), plus the
       source zip AMO asks for
 - [ ] **(owner)** Add the addons.mozilla.org link to `README.md` once the listing is live
@@ -28,6 +26,9 @@ MP4 with sound, at the selected quality and original size.
 - [ ] Verify an installed (non-temporary) build: Save video produces a working file
 
 ## Done
+- [x] Version 1.0.0 for the first release (2026-09-24)
+- [x] Full-history audit: no secrets, personal emails or private files in any commit; commit author
+      name rewritten to "Oralino" on all commits at the owner's request (2026-09-24)
 - [x] **(owner)** License: MIT, copyright "Oralino" (GitHub username, nothing personal) (2026-09-24)
 - [x] **(owner)** Release plan: Firefox on addons.mozilla.org; Chrome from GitHub releases, loaded
       unpacked (the Chrome Web Store bans YouTube downloaders); Chrome install steps in the README

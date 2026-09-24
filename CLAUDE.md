@@ -179,8 +179,8 @@ wxt.config.ts          manifest settings (MV3, Firefox gecko settings, host perm
   declares `data_collection_permissions: none`; keep it true.
 - **Repo:** private until the first release, then public, because Chrome users download from its
   GitHub releases (see the launch list in `TASKS.md`).
-- **Commit identity:** the owner's GitHub no-reply address, set in this repo's local git config (never
-  the personal email).
+- **Commit identity:** name "Oralino" and the owner's GitHub no-reply address, both set in this repo's
+  local git config (never the real name or personal email; history rewritten to match, 2026-09-24).
 
 ## Guidelines
 - Accessibility: WCAG AA, keyboard navigable, visible focus, respects `prefers-reduced-motion`.
