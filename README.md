@@ -24,9 +24,24 @@ Either way works:
   **File → Open File**), then click **Add**. It's the same file Mozilla signs for the store; Firefox
   only installs signed extensions permanently.
 - **Unsigned test build** (while the store review is pending): `youtube-clipper-<version>-firefox-unsigned.zip`
-  from the release. Load it in any Firefox through `about:debugging` → **This Firefox** → **Load
-  Temporary Add-on** (removed on restart), or install it permanently in Firefox Developer Edition,
-  Nightly or ESR with `xpinstall.signatures.required` set to `false` in `about:config`.
+  from the [latest release](../../releases/latest).
+
+  **Any Firefox, temporarily:** open `about:debugging` → **This Firefox** → **Load Temporary Add-on**
+  and pick the zip. It's removed when Firefox restarts.
+
+  **Permanently, in Firefox Developer Edition, Nightly or ESR** (regular Firefox doesn't allow
+  unsigned add-ons):
+
+  1. Open `about:config`, accept the warning, search for `xpinstall.signatures.required` and
+     double-click it so it shows `false`.
+  2. Rename the downloaded `.zip` so it ends in `.xpi` (it's the same file; Firefox's install dialog
+     only lists `.xpi` files). If Windows hides extensions, turn on **View → Show → File name
+     extensions** in File Explorer.
+  3. Open `about:addons`, click the gear icon (⚙) → **Install Add-on From File…**, pick the `.xpi` and
+     click **Add**.
+
+  It stays installed after restarts. When the signed version comes out, installing it replaces this
+  one (same extension ID), and you can set `xpinstall.signatures.required` back to `true`.
 
 ### Chrome
 The Chrome Web Store doesn't allow extensions that save YouTube videos, so on Chrome you install it
