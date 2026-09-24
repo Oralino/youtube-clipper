@@ -14,7 +14,8 @@ export const STRINGS = {
     stopPreview: "Stop preview",
     copyLink: "Copy link",
     copyEmbedLink: "Copy embed link",
-    embedNote: "For friends without the extension. Some videos don't allow embedding.",
+    embedNote:
+      "Plays inline in apps like Discord. It won't open in a browser, and some videos block embedding.",
     copied: "Copied",
     copiedAnnouncement: "Link copied",
     copyFailed: "Couldn't copy",
