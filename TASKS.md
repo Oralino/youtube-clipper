@@ -10,8 +10,6 @@ that link with the extension plays just start→end.
       `https://www.youtube.com/watch?v=jNQXAC9IVRw&t=5#clip_end=12`
 - [ ] Check what happens when a clip link is clicked *inside* YouTube (a comment or description). YouTube
       handles those clicks without a page load and may drop the hash before the content script sees it
-- [ ] Scaffold WXT (Firefox, MV3, React, TypeScript strict), ESLint + Prettier, Vitest and the npm
-      scripts listed in `CLAUDE.md`
 - [ ] `lib/` clip link build/parse and time parsing/formatting, with unit tests
 - [ ] Clip button injected into the player; survives moving between videos
 - [ ] Clip panel: start/end, use current time, preview, copy link, copy embed link, validation
@@ -40,6 +38,8 @@ that link with the extension plays just start→end.
 - [ ] Verify an installed (non-temporary) build: a clip link opened in a fresh tab plays start→end
 
 ## Done
+- [x] Scaffolded WXT (Firefox MV3, React 19, TypeScript strict), ESLint + Prettier, Vitest, npm scripts;
+      all checks and Mozilla's add-on linter pass (2026-09-24)
 - [x] Link-format test (2026-09-24): chose `watch?v=ID&t=START#clip_end=END`. YouTube strips the extra
       part from the address bar after load, but it reaches the page intact on direct opens, `youtu.be`
       redirects and `m.youtube.com` redirects, so a `document_start` content script can read it

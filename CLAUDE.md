@@ -48,10 +48,11 @@ Don't duplicate information across these files; link to the owning file instead.
 - **Backend / database:** none.
 
 ## Commands
-The project isn't scaffolded yet. These are the scripts `package.json` must define. qa-checker runs them.
+qa-checker runs these.
 
 ```bash
-npm install            # install dependencies (runs `wxt prepare` via postinstall)
+npm install            # install dependencies (runs `wxt prepare` via postinstall; run
+                       # `npx wxt prepare` yourself after `npm install <pkg>`, which skips it)
 npm run dev            # start Firefox with the extension loaded and hot reload
 npm run build          # production build for Firefox into .output/
 npm run zip            # package the build (and source zip) for addons.mozilla.org
@@ -60,9 +61,11 @@ npm run lint           # eslint .
 npm run format         # prettier --write .
 npm run format:check   # prettier --check .
 npm test               # vitest run
+npm run lint:addon     # Mozilla's add-on linter on the build (run after `build`)
 ```
 
-Before every commit: `lint`, `typecheck`, `format:check`, `test` and `build` must pass.
+Before every commit: `lint`, `typecheck`, `format:check`, `test` and `build` must pass, plus
+`lint:addon` whenever the manifest or permissions change.
 
 ## Workflow
 - **Agents:** the main session codes and decides. `design-advisor` (Opus) edits `DESIGN.md` only.
@@ -127,8 +130,11 @@ wxt.config.ts          manifest settings (MV3, Firefox gecko settings, host perm
 ## Deployment
 - **Now:** local only. Load the extension with `npm run dev`, or load the build as a temporary add-on
   from `about:debugging`.
-- **Later:** addons.mozilla.org (listed or unlisted), using `npm run zip`. This needs a Mozilla account,
-  a gecko add-on ID in `wxt.config.ts` and a name that complies with Mozilla's policy (see `CONTENT.md`).
+- **Later:** addons.mozilla.org (listed or unlisted), using `npm run zip`. This needs a Mozilla account
+  and a name that complies with Mozilla's policy (see `CONTENT.md`).
+- **Manifest identity** (in `wxt.config.ts`): the gecko ID is a random UUID, so it has no name or email in
+  it and stays the same if the name changes; never change it after the first AMO upload. The manifest
+  declares `data_collection_permissions: none`; keep it true.
 - **Repo:** private until the first version is done, then public (see the launch list in `TASKS.md`).
 - **Commit identity:** the owner's GitHub no-reply address, set in this repo's local git config (never
   the personal email).
