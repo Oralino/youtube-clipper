@@ -20,7 +20,8 @@
     "lint:addon": "web-ext lint --source-dir .output/firefox-mv3",
     "dev:chrome": "wxt -b chrome",
     "build:chrome": "wxt build -b chrome",
-    "zip:chrome": "wxt zip -b chrome"
+    "zip:chrome": "wxt zip -b chrome",
+    "check": "npm run typecheck && npm run lint && npm run format:check && npm test && npm run build && npm run lint:addon"
   },
   "dependencies": {
     "mediabunny": "^1.59.1",

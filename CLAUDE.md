@@ -69,7 +69,7 @@ Don't duplicate information across these files; link to the owning file instead.
 - **Backend / database:** none.
 
 ## Commands
-qa-checker runs these.
+`npm run check` runs all the checks below in one go.
 
 ```bash
 npm install            # install dependencies (runs `wxt prepare` via postinstall; run
@@ -86,20 +86,27 @@ npm run lint           # eslint .
 npm run format         # prettier --write .
 npm run format:check   # prettier --check .
 npm test               # vitest run
+npm run check          # typecheck, lint, format:check, test, build, lint:addon
 npm run lint:addon     # Mozilla's add-on linter on the build (run after `build`). 2 UNSAFE_VAR_ASSIGNMENT
                        # warnings for innerHTML are expected: they're in ReactDOM (<script> creation and
                        # dangerouslySetInnerHTML, neither of which we use). Anything else must be fixed.
 ```
 
-Before every commit: `lint`, `typecheck`, `format:check`, `test` and `build` must pass, plus
-`lint:addon` whenever the manifest or permissions change.
+Before every commit: `npm run check` must pass (and `npm run build:chrome` when the manifest or
+background changes).
 
 ## Workflow
-- **Agents:** the main session codes and decides. `design-advisor` (Opus) edits `DESIGN.md` only.
-  `code-reviewer` (Sonnet) is read-only. `qa-checker` (Haiku) runs checks only. The general versions
-  live in `~/.claude/agents/`.
-- **Feature flow:** plan → design-advisor (new visual patterns or `DESIGN.md` deviations only) →
-  implement → code-reviewer + qa-checker in parallel → fix → manual YouTube check → commit.
+- **Agents (lighter setup, owner decision 2026-09-24, to save tokens):** the main session codes,
+  decides and runs `npm run check` itself. Agents start from zero each time, so use them only where
+  they pay off:
+  - `code-reviewer` (Sonnet, read-only): substantive code only, meaning new features and tricky logic
+    (recording, lifecycle, races). Not for CSS tweaks, copy, docs or one-line fixes.
+  - `design-advisor` (Opus, edits `DESIGN.md` only): new visual patterns or deviations from
+    `DESIGN.md`. Small spec updates the main session can describe don't need a new run.
+  - `qa-checker` (Haiku, runs checks only): one full pass before a release, not after each change.
+  The general versions live in `~/.claude/agents/`.
+- **Feature flow:** plan → design-advisor (new visual patterns only) → implement → `npm run check` →
+  code-reviewer (substantive code only) → fix → manual YouTube check → commit.
 - **Manual YouTube check** after every feature that touches the page, in Firefox via `npm run dev`
   (refresh the YouTube tab after each change. A hook in `wxt.config.ts` makes every content-script
   change reload the whole extension, because WXT's quick MV3 reload left Firefox running the old
@@ -109,7 +116,7 @@ Before every commit: `lint`, `typecheck`, `format:check`, `test` and `build` mus
   - light and dark YouTube themes;
   - default, theater and fullscreen player modes;
   - Save video produces an MP4 of start→end with sound, at the selected quality and original size.
-- Don't spawn agents for small tasks. Reviewer and QA only report. Never two agents writing the same file.
+- Reviewer and QA only report. Never two agents writing the same file.
 - **Git:** commit straight to `main` at every verified milestone without being asked, with plain
   imperative commit messages. Push only when asked.
 
