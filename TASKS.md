@@ -26,9 +26,6 @@ MP4 with sound, at the selected quality and original size.
 - [ ] Verify an installed (non-temporary) build: Save video produces a working file
 
 ## Chrome (after the Firefox version works)
-- [ ] Add Chrome scripts (`dev:chrome`, `build:chrome`, `zip:chrome`) using WXT's `-b chrome`
-- [ ] Run the manual YouTube check in Chrome: clip button, panel, preview, Save video
-- [ ] Fix any Chrome differences found (manifest keys, shadow-root styles, event isolation)
 - [ ] README: add Chrome install and build steps
 - [ ] **(owner)** Decide how to ship on Chrome: the Chrome Web Store bans YouTube downloaders, and with
       links gone a store build without Save video could only preview. So the Chrome version most
@@ -38,6 +35,8 @@ MP4 with sound, at the selected quality and original size.
 - [ ] Submit the `zip:chrome` build to the Chrome Web Store
 
 ## Done
+- [x] Chrome: `dev:chrome`, `build:chrome`, `zip:chrome` scripts; Firefox-only manifest keys kept out
+      of the Chrome build; owner checked it in Chrome and everything works (2026-09-24)
 - [x] Extension icon: `[ ▶ ]` on a dark tile with a grey rim, pixel-snapped 16/32px variant; designed
       by design-advisor, owner approved (2026-09-24)
 - [x] **(owner)** Name: Clipper for YouTube; no toolbar popup, the clip button and panel are enough
