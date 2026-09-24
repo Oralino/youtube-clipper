@@ -17,14 +17,16 @@ export interface Mp4Conversion {
 }
 
 /**
- * Converts a recorded WebM (Firefox's MediaRecorder can't write MP4) to MP4 with the browser's own
- * encoders: H.264 video at the recording's size (no scaling), and AAC audio where the browser can
- * encode it, otherwise the recording's Opus copied as-is (Firefox has no AAC encoder).
+ * Converts a recorded WebM to MP4 with the browser's own encoders: H.264 video at the recording's size
+ * (no scaling), and AAC audio where the browser can encode it, otherwise the recording's Opus copied
+ * as-is (Firefox has no AAC encoder). Used for Firefox (whose MediaRecorder can't write MP4) and for
+ * Chrome when its MP4 recording fails. `preferSoftware` avoids a hardware H.264 encoder that fails.
  */
 export function convertToMp4(
   webm: Blob,
   videoBitrate: number,
   onProgress: (progress: number) => void,
+  { preferSoftware = false }: { preferSoftware?: boolean } = {},
 ): Mp4Conversion {
   let conversion: Conversion | null = null;
   let cancelled = false;
@@ -45,7 +47,12 @@ export function convertToMp4(
         // No width or height, so the video keeps the recording's size. `fit` locks the output to the
         // first frame's size: if YouTube's "Auto" quality changes resolution mid-clip, later frames are
         // fitted into it instead of breaking the encoder. It also rounds odd sizes to even for H.264.
-        video: { codec: "avc", bitrate: videoBitrate, fit: "contain" },
+        video: {
+          codec: "avc",
+          bitrate: videoBitrate,
+          fit: "contain",
+          hardwareAcceleration: preferSoftware ? "prefer-software" : "no-preference",
+        },
         audio: aac ? { codec: "aac", bitrate: AUDIO_BPS } : { codec: "opus" },
       });
       if (cancelled) throw new Error("cancelled");
