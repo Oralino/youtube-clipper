@@ -37,6 +37,7 @@ metrics or results. Only link public repos. **TODO (owner)** items need the owne
 | Copied (screen-reader announcement) | Link copied |
 | Copy failed (button label, 2s) | Couldn't copy |
 | Copy failed (manual field label) | Copy this link manually |
+| Error: unreadable time | Enter a time like 1:23. |
 | Error: end before start | End must be after start. |
 | Error: time outside video | Time is outside the video. |
 | Close button accessible name | Close |
