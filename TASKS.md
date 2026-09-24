@@ -35,6 +35,8 @@ MP4 with sound, at the selected quality and original size.
 - [ ] Submit the `zip:chrome` build to the Chrome Web Store
 
 ## Done
+- [x] File name field: the saved clip gets the typed name, or the automatic "<title> (<start>-<end>)"
+      name shown as its placeholder; reviewed by code-reviewer (2026-09-24)
 - [x] Chrome: `dev:chrome`, `build:chrome`, `zip:chrome` scripts; Firefox-only manifest keys kept out
       of the Chrome build; owner checked it in Chrome and everything works (2026-09-24)
 - [x] Extension icon: `[ ▶ ]` on a dark tile with a grey rim, pixel-snapped 16/32px variant; designed
