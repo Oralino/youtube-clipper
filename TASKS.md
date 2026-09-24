@@ -42,8 +42,8 @@ that link with the extension plays just start→end.
 
 ## Done
 - [x] Clip panel: in-player overlay (owner's choice), start/end with use current time and
-      validation, preview loop, copy link, copy embed link (plays in Discord; Error 153 in a browser is
-      expected), hidden during ads; reviewed by all three agents; owner tested copy and preview
+      validation, preview loop, copy link, copy embed link (plays in desktop Discord; Error 153 in a
+      browser or Discord mobile is expected), hidden during ads; reviewed by all three agents; owner tested copy and preview
       (2026-09-24)
 - [x] **(owner)** Decided: the fullscreen panel is always dark; build with the drafted copy in
       `CONTENT.md` (2026-09-24)

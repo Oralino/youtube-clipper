@@ -15,7 +15,7 @@ export const STRINGS = {
     copyLink: "Copy link",
     copyEmbedLink: "Copy embed link",
     embedNote:
-      "Plays inline in apps like Discord. It won't open in a browser, and some videos block embedding.",
+      "Plays inline in Discord on desktop. It won't open in a browser or in Discord's mobile app, and some videos block embedding.",
     copied: "Copied",
     copiedAnnouncement: "Link copied",
     copyFailed: "Couldn't copy",

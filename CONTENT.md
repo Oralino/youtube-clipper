@@ -33,7 +33,7 @@ metrics or results. Only link public repos. **TODO (owner)** items need the owne
 | Preview button (off / on) | Preview / Stop preview |
 | Copy link button | Copy link |
 | Copy embed link button | Copy embed link |
-| Embed note | Plays inline in apps like Discord. It won't open in a browser, and some videos block embedding. |
+| Embed note | Plays inline in Discord on desktop. It won't open in a browser or in Discord's mobile app, and some videos block embedding. |
 | Copied (button label, 2s) | Copied |
 | Copied (screen-reader announcement) | Link copied |
 | Copy failed (button label, 2s) | Couldn't copy |

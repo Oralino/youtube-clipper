@@ -11,7 +11,8 @@ clip and share YouTube moments. Personal project, solo.
 link is a normal YouTube watch URL with `t=START` plus an end-time parameter. When someone with the
 extension opens it, the extension plays START→END as a clip. Without the extension, YouTube ignores the
 extra parameter and plays from START. An optional embed link (`youtube.com/embed/ID?start=…&end=…`)
-covers friends without the extension where a site embeds it inline (tested in Discord, 2026-09-24).
+covers friends without the extension where a site embeds it inline (works in desktop Discord; Discord's
+mobile app opens it like a browser and fails, tested 2026-09-24).
 Opened directly in a browser it fails with YouTube's Error 153, because embeds must be requested by a
 page that sends a Referer; that's expected, not a bug. It also fails on videos that block embedding.
 
