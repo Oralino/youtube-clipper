@@ -20,6 +20,15 @@
   --clip-error: #ff4e45;
 }
 
+/* Shorts: a box over the player, above YouTube's Shorts overlay (z-index 1). It lets clicks through
+   to the video and YouTube's controls; only the panel itself takes them. */
+:host([data-surface="shorts"]) {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 2 !important;
+  pointer-events: none !important;
+}
+
 /* While an ad plays (see clipPanel.tsx). Beats the display: block above by specificity. */
 :host([data-ad]) {
   display: none !important;
@@ -44,6 +53,13 @@
   font-size: 14px;
   line-height: 20px;
   animation: clip-open 150ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* Shorts have no control bar, only a thin progress bar on the bottom edge and buttons at the top. */
+:host([data-surface="shorts"]) .panel {
+  bottom: 24px;
+  max-height: calc(100% - 88px);
+  pointer-events: auto;
 }
 
 :host([data-closing]) .panel {
@@ -109,6 +125,8 @@
 
 .time-row {
   display: flex;
+  /* In the narrowest players "Use current time" wraps under the field. */
+  flex-wrap: wrap;
   gap: 8px;
   align-items: center;
 }

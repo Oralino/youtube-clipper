@@ -1,6 +1,6 @@
 # DESIGN.md
 
-Visual source of truth, maintained by design-advisor. **Status: Approved by the owner (2026-09-24); accessibility-pass changes (Forced colours, Preview toggle, clip-length and error announcements) approved 2026-09-25.** Open TODO (owner) items below are tracked in `TASKS.md`.
+Visual source of truth, maintained by design-advisor. **Status: Approved by the owner (2026-09-24); accessibility-pass changes (Forced colours, Preview toggle, clip-length and error announcements) approved 2026-09-25. The Shorts sections (Layout, Shorts; Components, Shorts clip button) await owner approval.** Open TODO (owner) items below are tracked in `TASKS.md`.
 
 ## Constraints (decided)
 
@@ -29,7 +29,7 @@ A YouTube control, not an app. The panel looks like YouTube's own in-player menu
 - Visually the **first item of the right controls**, so it doesn't move the settings, theater and fullscreen buttons people are used to. Current player: first child of `.ytp-right-controls-left` (the pill with expand, autoplay, CC, settings), so it sits inside that group's dark translucent pill. Older players with a flat `.ytp-right-controls`: its first child.
 - Takes its size from YouTube's `.ytp-button` class rather than hard-coded px (about 48×40 today, 32×32 at the smallest widths), so it scales with the native buttons. `.ytp-button` clips overflow, so nothing may draw outside the button box.
 - No `data-priority`, so like settings it stays visible in narrow players when YouTube collapses prioritised buttons behind its expand button.
-- Shown on every `/watch` page, including live streams for now (live detection is unverified). Hidden elsewhere. **TODO (owner)**: decide on Shorts and live streams; hiding it on live stays part of that TODO.
+- Shown on every `/watch` page, including live streams (owner decision 2026-09-25: live keeps this button). On Shorts it lives in the action bar instead (see Shorts below). Hidden elsewhere.
 
 ### Clip panel
 An overlay inside the player in **every player mode** (default, theater and fullscreen), with one placement (owner decision, 2026-09-24).
@@ -41,11 +41,25 @@ An overlay inside the player in **every player mode** (default, theater and full
 
 Why an overlay: opening and closing it never moves the video or the title, it behaves the same in all three modes, and it appears the way YouTube's own in-player menus do.
 
-Internal layout: a single column (the panel never gets wide enough for more). Each time group stays on one row (field plus "Use current time"). The File name field is the last group in the fields block, `12px` below the End group (below End's error line when one shows). Keeping all the inputs together puts the actions in one stack below them, puts the field right under the times its placeholder is built from, and keeps everything that locks during saving in one block. Preview is full width, `12px` below the File name field. The Save video group comes last, `12px` below Preview; its button is full width. The two are separate groups because Save video is a different kind of action (slow, makes a file) and carries its own status and note. If a build leaves Save video out (Chrome store, see `TASKS.md`), the group is simply absent.
+Internal layout: a single column (the panel never gets wide enough for more). Each time group is one row (field plus "Use current time"; see the wrap rule below). The File name field is the last group in the fields block, `12px` below the End group (below End's error line when one shows). Keeping all the inputs together puts the actions in one stack below them, puts the field right under the times its placeholder is built from, and keeps everything that locks during saving in one block. Preview is full width, `12px` below the File name field. The Save video group comes last, `12px` below Preview; its button is full width. The two are separate groups because Save video is a different kind of action (slow, makes a file) and carries its own status and note. If a build leaves Save video out (Chrome store, see `TASKS.md`), the group is simply absent.
 - Padding `16px`. Row gap `12px`.
+- A time row stays on one line while it fits. In the narrowest players (the panel's inner width drops below the field plus the pill, about 252px) the pill wraps under the field: `.time-row { flex-wrap: wrap }`. This is static layout, so it never moves a control under the pointer.
 
 Focus order: Close → Start → Use current time (start) → End → Use current time (end) → File name → Preview → Save video (matches the visual order). When the panel opens, focus goes to Start. `Esc` closes the panel and returns focus to the clip button.
 *Main session:* keydown events inside the panel must not reach YouTube's shortcuts. Otherwise typing "1:23" seeks the video, because number keys jump to 10%, 20% and so on.
+
+### Shorts (owner decision 2026-09-25)
+Same panel component, same dark tokens, same internal layout, focus order and behaviour. Only the button and two placement numbers differ.
+- **Button:** in the Shorts action bar, directly after Share and before Remix (spec under Components, Shorts clip button). No button in the player.
+- **Panel placement:** over the video, like watch pages, anchored to the player's bottom-right, so it opens right next to the Clip button in the action bar. It covers the title/channel metadata while open (accepted, as it covers the video on watch pages). Beside the player was rejected: the free space there disappears in narrow windows, and it would be a second placement to maintain.
+  - The panel can't live inside `#shorts-player` (YouTube's overlay covers it). The host mounts in `#player-container` (the player's rect) at `z-index: 2`, above `ytd-reel-player-overlay-renderer` (`z-index: 1`), with `pointer-events: none` on that box and `pointer-events: auto` on `.panel`, so the video and YouTube's controls stay clickable around the panel.
+  - Numbers: `right: 12px; width: min(360px, calc(100% - 24px))` as on watch pages. `bottom: 24px` (Shorts has no control bar at the bottom, only the thin progress bar on the bottom edge, which must stay reachable for seeking) and `max-height: calc(100% - 88px)` (keeps the top ~64px free for YouTube's play/pause, volume and fullscreen buttons). Set with a host attribute: `:host([data-surface="shorts"]) .panel { bottom: 24px; max-height: calc(100% - 88px); }`. Verify in dev Firefox that the scrubber's hover area fits below 24px; if not, raise `bottom` to clear it.
+  - At a ~378px player the panel is 354px wide and fits without scrolling on a 672px-tall player. Shorter windows shrink the player; the panel then scrolls inside, as on watch pages.
+  - If YouTube's narrow layout moves the action bar onto the video (verify the width at which it does), the panel must not cover it: in that layout use `right: 72px; width: min(360px, calc(100% - 84px))`, so the Clip button stays visible and pressable.
+- **Focus:** opening moves focus to Start; `Esc`, Close and the button return focus to the Shorts Clip button. Scrolling to another Short fires navigation, which closes the panel (and stops saving, as on watch pages); focus is not moved then, because the action bar is being rebuilt.
+- **Keys:** the keydown rule above matters more here: Up/Down arrows move to the next Short, so arrows typed in the time or name fields must not reach YouTube.
+- **Ads:** Shorts ads are their own entries in the feed. Don't show the Clip button on an ad Short if it's detectable without YouTube internals (verify, for example the ad renderer or the "Sponsored" badge). If `#shorts-player` gets `.ad-showing`, use the same `data-ad` hiding as watch pages.
+- *Main session:* the Shorts `<video>` has `loop`, so a clip that ends at the video's end can be looped back to 0:00 before the pause. Treat that jump as the clip's end, not as "the video was skipped".
 
 ## Typography
 
@@ -183,6 +197,83 @@ Windows High Contrast replaces our colours, and backgrounds carry the button sha
 - Tooltip: YouTube's `.ytp-tooltip` doesn't attach to injected buttons, so we render our own that matches it: plain text, no background box, `#eee`, `13px / 15px`, weight 500, `text-shadow: 0 0 2px #000`, font `"YouTube Noto", Roboto, Arial, sans-serif`. Centred on the button, about 20px above its top edge, clamped inside the player, `z-index: 1003`. Shows on hover and on keyboard focus.
 - Active (panel open): `aria-expanded="true"`, and the icon swaps to a filled variant (YouTube's outline → filled convention, as on Like). Still `currentColor`, no underline, no red. Same 24×24 grid and 4–20 footprint: a rounded box with the triangle cut out, `fill-rule="evenodd"`, path `M6 4h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM10 8l6 4-6 4z`.
 - Disabled: not shown. Remove the button rather than showing a dead control (for example on a video that isn't ready yet).
+
+### Shorts clip button
+Looks like one of YouTube's own action-bar items (Like, Share, Remix): a 48px tonal circle with the icon, and the visible label "Clip" under it (wording from CONTENT.md). Lives in the page DOM, so every class has the `clip-ext-` prefix and every size is px.
+- Position: a new item directly after Share and before Remix, inside `reel-action-bar-view-model`. Spacing matches YouTube's items: `padding-bottom: 8px` on the item, and `margin-top: 0` (YouTube gives every child of the bar a 16px top margin and resets it only for its own items; verified 2026-09-25). Re-insert it whenever YouTube rebuilds the bar (next Short).
+- Markup (mirrors YouTube's `label > button + div`, so clicking the label text also presses the button):
+  ```html
+  <div class="clip-ext-shorts-item">
+    <label class="clip-ext-shorts-action">
+      <button type="button" class="clip-ext-shorts-button" aria-label="Clip" aria-expanded="false">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">…</svg>
+      </button>
+      <div class="clip-ext-shorts-label" aria-hidden="true">Clip</div>
+    </label>
+  </div>
+  ```
+  The accessible name equals the visible label (WCAG 2.5.3); the label div is `aria-hidden` so it isn't read twice. No `title`, no tooltip (the label is visible, as on YouTube's items).
+- Icon: the same filled `[ ▶ ]` paths as the player button, closed and open variants, swapped with `aria-expanded` (see Clip button).
+- Theme: follows YouTube's site theme with our own values: light by default, dark under `html[dark]` (YouTube's dark-theme attribute). YouTube's own properties are hashed per build, so we can't reuse them.
+
+  ```css
+  .clip-ext-shorts-item {
+    --clip-ext-shorts-bg: rgba(0, 0, 0, 0.05);
+    --clip-ext-shorts-bg-hover: rgba(0, 0, 0, 0.1);
+    --clip-ext-shorts-text: #0f0f0f;
+    padding-bottom: 8px; /* YouTube spaces bar items this way */
+  }
+  html[dark] .clip-ext-shorts-item {
+    --clip-ext-shorts-bg: rgba(255, 255, 255, 0.1);
+    --clip-ext-shorts-bg-hover: rgba(255, 255, 255, 0.2);
+    --clip-ext-shorts-text: #f1f1f1;
+  }
+  .clip-ext-shorts-action {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 48px;
+    cursor: pointer;
+  }
+  .clip-ext-shorts-button {
+    display: grid;
+    place-items: center;
+    box-sizing: border-box;
+    width: 48px;
+    height: 48px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: var(--clip-ext-shorts-bg);
+    color: var(--clip-ext-shorts-text);
+    cursor: pointer;
+  }
+  .clip-ext-shorts-button:hover {
+    background: var(--clip-ext-shorts-bg-hover);
+  }
+  .clip-ext-shorts-button:focus-visible {
+    outline: 2px solid var(--clip-ext-shorts-text);
+    outline-offset: 2px;
+  }
+  .clip-ext-shorts-label {
+    margin-top: 4px;
+    color: var(--clip-ext-shorts-text);
+    font-family: "Roboto", "Arial", sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 18px;
+    text-align: center;
+  }
+  @media (forced-colors: active) {
+    .clip-ext-shorts-button { border: 1px solid ButtonText; }
+  }
+  ```
+- The dark values match YouTube's Share button. The translucent backgrounds are fills, not text, so the no-`rgba()`-text rule holds.
+- Contrast (effective colours on the page): dark: label `#f1f1f1` on `#0f0f0f` 17.0, icon on the circle (≈`#272727`) 13.2, on hover (≈`#3f3f3f`) 9.3; light: label `#0f0f0f` on `#ffffff` 19.2, icon on ≈`#f2f2f2` 17.1, on hover ≈`#e6e6e6` 15.2. The focus ring uses the text colour (17.0 / 19.2 against the page), not our accent, because `#3ea6ff` is only 2.6:1 on YouTube's light page. The circle itself is faint against the page in both themes, exactly like YouTube's items; the icon and label carry the meaning.
+- Active (panel open): `aria-expanded="true"` and the filled icon. No colour change, no red, no pressed background.
+- Motion: none (hover is instant).
+- Disabled: not shown, as for the player button.
 
 ### Clip panel
 - Region named by its heading (`aria-labelledby`). Background `--clip-surface`, radius 12, padding 16. All wording (heading, labels, accessible names) comes from CONTENT.md.

@@ -96,7 +96,7 @@ export function createClipButton(
   };
 }
 
-function createIcon(open: boolean): SVGSVGElement {
+export function createIcon(open: boolean): SVGSVGElement {
   // Built with DOM calls: YouTube enforces Trusted Types, so innerHTML throws.
   const svg = document.createElementNS(SVG_NS, "svg");
   svg.setAttribute("viewBox", "0 0 24 24");
@@ -110,6 +110,11 @@ function createIcon(open: boolean): SVGSVGElement {
   path.setAttribute("fill-rule", "evenodd");
   svg.append(path);
   return svg;
+}
+
+/** Switches an icon from createIcon between its closed and open shapes, keeping the element. */
+export function setIconOpen(svg: SVGSVGElement, open: boolean): void {
+  svg.firstElementChild?.setAttribute("d", open ? ICON_PATHS.open : ICON_PATHS.closed);
 }
 
 function showTooltip(button: HTMLElement, tooltip: HTMLElement): void {

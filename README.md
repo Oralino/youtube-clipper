@@ -7,7 +7,7 @@ A Firefox extension that lets you clip part of a YouTube video and save it as an
 <img src="assets/screenshots/clip-panel.png" alt="The Create clip panel over a YouTube video: Start 0:10 and End 0:21 with Use current time buttons, an optional file name, and Preview and Save video buttons" width="446">
 
 ## Features
-- A **Clip** button in the YouTube player.
+- A **Clip** button in the YouTube player, and beside Shorts next to Share.
 - Set a start and end time, typed or taken from the current playback position.
 - Preview the clip before saving.
 - Save the clip as an MP4 at the quality and size you're watching, to share anywhere.

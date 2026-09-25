@@ -8,10 +8,12 @@ Development tracker. Owner-only items are marked **(owner)**. Detailed history i
       YouTube keeps its sound after a save
 
 ## Next
+- [ ] YouTube Shorts: Clip button in the action bar, panel over the Short (built, in review)
+- [ ] **(owner)** Approve the Shorts sections of `DESIGN.md`, then check Shorts in the dev Firefox
+      (button placement, next Short on scroll, panel over the Short, a save that ends at the end)
 - [ ] **(owner)** Choose a demo video you have the right to show (your own upload, Creative Commons or
       public domain)
 - [ ] README screenshot of the clip panel while saving **(owner approves)** (idle one added)
-- [ ] Decide on YouTube Shorts and live streams (TBD in `REQUIREMENTS.md`)
 
 ## Launch (1.0.0 submitted to addons.mozilla.org, waiting for review)
 - [ ] **(owner)** Add the addons.mozilla.org link to `README.md` once the listing is live

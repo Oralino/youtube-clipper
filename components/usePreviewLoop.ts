@@ -27,7 +27,7 @@ export default function usePreviewLoop(
   useEffect(() => {
     if (!active) return;
     // During an ad the video element plays the ad, so leave it alone.
-    const player = video.closest("#movie_player");
+    const player = video.closest(".html5-video-player");
     const inAd = () => player?.classList.contains("ad-showing") ?? false;
 
     if (!inAd() && range.current.start !== null) {

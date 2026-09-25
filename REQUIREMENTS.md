@@ -8,8 +8,9 @@ one-click way to do this. Users: people who want to clip and share YouTube momen
 solo, MIT-licensed.
 
 ## Features (1.0.0, all built)
-- A **Clip** button in the YouTube player on watch pages; its icon fills in while the panel is open.
-- A **clip panel** over the video (bottom-right, always dark, in every player mode):
+- A **Clip** button in the YouTube player on watch pages (live streams included), and in the action
+  bar beside Shorts (between Share and Remix); its icon fills in while the panel is open.
+- A **clip panel** over the video (bottom-right, always dark, in every player mode and on Shorts):
   - Start and End, typed (`83`, `1:23`, `1:02:03`) or from **Use current time**, with inline errors;
   - an optional **File name**; empty means the automatic `<title> (<start>-<end>)`;
   - **Preview**, which loops the range in the player;
@@ -19,6 +20,8 @@ solo, MIT-licensed.
 ## Acceptance criteria
 Checked by hand in Firefox (and Chrome for releases) on a live watch page:
 - the clip button appears, and still works after moving to another video without a page reload;
+- on Shorts: the button sits between Share and Remix, follows to the next Short on scroll, and the
+  panel opens over the Short with its fields and buttons usable;
 - default, theater and fullscreen player modes;
 - Save video produces an MP4 of exactly start→end, with sound, at the selected quality and original
   size (no scaling);
@@ -47,5 +50,8 @@ Clip links and embed links; re-hosting on Streamable or Medal (neither has an up
 is read-only, Medal's only records local gameplay); a backend, accounts or a hosted player page; a
 toolbar popup.
 
+- **Shorts and live streams (2026-09-25):** live streams keep the watch-page button as it is; Shorts
+  get the button in their action bar, between Share and Remix.
+
 ## Open decisions
-- **TBD:** support YouTube Shorts and live streams, or watch pages only (currently watch pages only).
+None.

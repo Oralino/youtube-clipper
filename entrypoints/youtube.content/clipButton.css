@@ -18,3 +18,72 @@
   white-space: nowrap;
   pointer-events: none;
 }
+
+/* Shorts: an item in the action bar that matches YouTube's own (DESIGN.md, Shorts clip button).
+   YouTube's colour variables are hashed per build, so the theme comes from html[dark] instead. */
+.clip-ext-shorts-item {
+  --clip-ext-shorts-bg: rgba(0, 0, 0, 0.05);
+  --clip-ext-shorts-bg-hover: rgba(0, 0, 0, 0.1);
+  --clip-ext-shorts-text: #0f0f0f;
+  /* YouTube spaces the bar's items this way. */
+  padding-bottom: 8px;
+}
+
+/* YouTube gives every child of the bar a 16px top margin and resets it only for its own items. */
+reel-action-bar-view-model > .clip-ext-shorts-item {
+  margin-top: 0;
+}
+
+html[dark] .clip-ext-shorts-item {
+  --clip-ext-shorts-bg: rgba(255, 255, 255, 0.1);
+  --clip-ext-shorts-bg-hover: rgba(255, 255, 255, 0.2);
+  --clip-ext-shorts-text: #f1f1f1;
+}
+
+.clip-ext-shorts-action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 48px;
+  cursor: pointer;
+}
+
+.clip-ext-shorts-button {
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  width: 48px;
+  height: 48px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--clip-ext-shorts-bg);
+  color: var(--clip-ext-shorts-text);
+  cursor: pointer;
+}
+
+.clip-ext-shorts-button:hover {
+  background: var(--clip-ext-shorts-bg-hover);
+}
+
+.clip-ext-shorts-button:focus-visible {
+  outline: 2px solid var(--clip-ext-shorts-text);
+  outline-offset: 2px;
+}
+
+.clip-ext-shorts-label {
+  margin-top: 4px;
+  color: var(--clip-ext-shorts-text);
+  font-family: "Roboto", "Arial", sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 18px;
+  text-align: center;
+}
+
+@media (forced-colors: active) {
+  .clip-ext-shorts-button {
+    border: 1px solid ButtonText;
+  }
+}

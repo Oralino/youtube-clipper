@@ -15,10 +15,11 @@ metrics or results. Only link public repos. **TODO (owner)** items need the owne
 
 ## UI copy
 
-### Clip button (player controls)
+### Clip button (player controls and Shorts action bar)
 | Element | Text |
 |---|---|
 | Button tooltip / accessible name | Clip |
+| Shorts action-bar button: visible label and accessible name | Clip |
 
 ### Clip panel
 | Element | Text |

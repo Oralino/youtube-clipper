@@ -166,7 +166,7 @@ export default function useClipRecorder(
     const capture = capturable.captureStream ?? capturable.mozCaptureStream;
     if (!type || !capture) return fail("unsupported");
 
-    const player = video.closest("#movie_player");
+    const player = video.closest(".html5-video-player");
     const inAd = () => player?.classList.contains("ad-showing") ?? false;
     if (inAd()) return fail("ad");
 
@@ -226,6 +226,8 @@ export default function useClipRecorder(
     let lastQuarter = 0;
     let lastSecond = 0;
     let lastTime = start;
+    // Shorts loop: a clip ending at the end of the video would jump back to 0 and fail as skipped.
+    const looped = video.loop;
 
     const onPause = () => {
       if (video.ended) return;
@@ -240,6 +242,7 @@ export default function useClipRecorder(
 
     finish.current = (outcome) => {
       finish.current = null;
+      video.loop = looped;
       clearTimeout(dataTimer);
       cancelAnimationFrame(frame);
       video.removeEventListener("pause", onPause);
@@ -288,6 +291,7 @@ export default function useClipRecorder(
       }
     };
 
+    video.loop = false;
     setStatus({ state: "saving", elapsed: 0, total });
     // A WebM retry continues the same save, so it isn't announced again.
     if (!avoidMp4) emit.current({ type: "started", total });

@@ -3,9 +3,18 @@ import type { ContentScriptContext } from "wxt/utils/content-script-context";
 import { createShadowRootUi } from "wxt/utils/content-script-ui/shadow-root";
 import ClipPanel from "../../components/ClipPanel.tsx";
 import panelCss from "../../components/clipPanel.css?inline";
+import type { VideoPage } from "../../lib/videoId.ts";
 
-// An overlay inside the player, in every player mode (the owner's choice, 2026-09-24).
-const PLAYER = "#movie_player";
+// Where the panel goes. Watch pages: an overlay inside the player, in every player mode (the owner's
+// choice, 2026-09-24). Shorts: the box around the player, because YouTube's Shorts overlay (title,
+// controls) sits above the player's own stacking context and would cover a panel inside it.
+const SURFACES = {
+  watch: { player: "#movie_player", anchor: "#movie_player" },
+  shorts: {
+    player: "#shorts-player",
+    anchor: "ytd-reel-video-renderer #player-container:has(#shorts-player)",
+  },
+} satisfies Record<VideoPage["kind"], { player: string; anchor: string }>;
 const CLOSE_MS = 100;
 // Kept from YouTube's player: its shortcuts (typing "5" in a field would seek to 50%), and its
 // click (play/pause), double-click (fullscreen) and wheel (volume) handlers.
@@ -27,7 +36,7 @@ export interface ClipPanelController {
   /** Whether keyboard focus is inside the panel. */
   readonly hasFocus: boolean;
   /** Opens the panel for the current video. Returns false if the page isn't ready for it. */
-  open(): boolean;
+  open(kind: VideoPage["kind"]): boolean;
   /**
    * Closes the panel. `immediate` skips the close animation: use it when the video changed, so a
    * quick reopen can't revive a panel bound to the old video.
@@ -48,12 +57,13 @@ export async function createClipPanel(
 ): Promise<ClipPanelController> {
   let isOpen = false;
   let video: HTMLVideoElement | null = null;
+  let anchor: Element | null = null;
   let closeTimer: ReturnType<typeof setTimeout> | undefined;
 
   const ui = await createShadowRootUi<Root>(ctx, {
     name: "clip-ext-panel",
     position: "inline",
-    anchor: PLAYER,
+    anchor: () => anchor,
     append: "last",
     css: panelCss,
     isolateEvents: ISOLATED_EVENTS,
@@ -70,7 +80,7 @@ export async function createClipPanel(
   // Hiding (not closing) keeps what was typed for when the ad ends.
   const adObserver = new MutationObserver(syncAd);
   function syncAd() {
-    const ad = host.parentElement?.classList.contains("ad-showing") ?? false;
+    const ad = video?.closest(".html5-video-player")?.classList.contains("ad-showing") ?? false;
     if (ad && !host.hasAttribute("data-ad") && document.activeElement === host) onFocusLost();
     host.toggleAttribute("data-ad", ad);
   }
@@ -93,23 +103,28 @@ export async function createClipPanel(
       // Focus inside a shadow root shows on the page as focus on its host.
       return host.isConnected && document.activeElement === host;
     },
-    open() {
+    open(kind) {
       if (isOpen) return true;
-      // Reopened while the close animation runs: keep the panel as it is.
-      if (closeTimer !== undefined) {
+      // Reopened while the close animation runs: keep the panel as it is. Only for the same kind of
+      // page; navigation closes immediately, so a different kind here would be a new video.
+      if (closeTimer !== undefined && host.dataset.surface === kind) {
         clearTimeout(closeTimer);
         closeTimer = undefined;
         delete host.dataset.closing;
         isOpen = true;
         return true;
       }
-      video = document.querySelector<HTMLVideoElement>(`${PLAYER} video`);
-      if (!video) return false;
+      if (closeTimer !== undefined) remove();
+      const surface = SURFACES[kind];
+      video = document.querySelector<HTMLVideoElement>(`${surface.player} video`);
+      anchor = document.querySelector(surface.anchor);
+      if (!video || !anchor) return false;
 
+      host.dataset.surface = kind;
       ui.mount();
       syncAd();
-      if (host.parentElement)
-        adObserver.observe(host.parentElement, { attributeFilter: ["class"] });
+      const player = video.closest(".html5-video-player");
+      if (player) adObserver.observe(player, { attributeFilter: ["class"] });
       isOpen = true;
       return true;
     },
