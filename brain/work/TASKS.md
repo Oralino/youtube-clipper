@@ -2,8 +2,8 @@
 Development tracker. Owner-only items are marked **(owner)**. Detailed history is in git.
 
 ## Current
-- [ ] **(owner)** Upload 1.1.0 to addons.mozilla.org (`.output/youtube-clipper-1.1.0-firefox.zip` and
-      `…-sources.zip`)
+- [ ] **(owner)** Upload 1.1.1 to addons.mozilla.org (`.output/youtube-clipper-1.1.1-firefox.zip` and
+      `…-sources.zip`); 1.0.0 is still in review
 
 ## Next
 None planned.
@@ -19,6 +19,7 @@ None planned.
 None open.
 
 ## Done (milestones)
+- [x] 1.1.1: save-time note under Save video; GitHub release (2026-09-25)
 - [x] Save-time note under Save video: saving plays the clip, so it takes the clip's length
       (owner request and approval, 2026-09-25)
 - [x] 1.1.0: YouTube Shorts and the accessibility pass; GitHub release with the Chrome zip and the
