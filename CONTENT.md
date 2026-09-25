@@ -24,6 +24,7 @@ metrics or results. Only link public repos. **TODO (owner)** items need the owne
 | Element | Text |
 |---|---|
 | Heading | Create clip |
+| Clip-length readout, screen-reader prefix (hidden, read before the time) | Clip length |
 | Start field label | Start |
 | End field label | End |
 | Use-current-time button | Use current time |

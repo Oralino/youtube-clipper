@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
-import { checkClipForm, type FieldError } from "../lib/clipForm.ts";
+import { checkClipForm, type ClipFormResult, type FieldError } from "../lib/clipForm.ts";
 import { defaultClipName, MAX_NAME_LENGTH, videoTitleFrom } from "../lib/recording.ts";
 import { STRINGS } from "../lib/strings.ts";
 import { formatTime } from "../lib/time.ts";
@@ -57,9 +57,35 @@ export default function ClipPanel({ video, onClose }: ClipPanelProps) {
     saver.clearFailure();
   }
 
-  function fillFromVideo(field: "start" | "end") {
-    setTime(field, formatTime(video.currentTime));
+  // An error appears once focus has moved on, so it's also announced or it would go unheard.
+  function leaveField(field: "start" | "end") {
     setTouched((current) => ({ ...current, [field]: true }));
+    announceError(field, checkClipForm(startText, endText, duration));
+  }
+
+  function fillFromVideo(field: "start" | "end") {
+    const text = formatTime(video.currentTime);
+    setTime(field, text);
+    setTouched((current) => ({ ...current, [field]: true }));
+    announceError(
+      field,
+      checkClipForm(
+        field === "start" ? text : startText,
+        field === "end" ? text : endText,
+        duration,
+      ),
+    );
+  }
+
+  /** The field's own error, or else the "End must be after start" a new Start puts on End. */
+  function announceError(field: "start" | "end", errors: ClipFormResult) {
+    const own = field === "start" ? errors.startError : errors.endError;
+    const knockOn =
+      field === "start" && touched.end && errors.endError === "end-before-start"
+        ? errors.endError
+        : null;
+    const error = own ?? knockOn;
+    if (error) announce(ERROR_TEXT[error]);
   }
 
   function togglePreview() {
@@ -102,7 +128,12 @@ export default function ClipPanel({ video, onClose }: ClipPanelProps) {
         <h2 id="clip-panel-heading" className="title">
           {STRINGS.panel.heading}
         </h2>
-        {range && <span className="length">{formatTime(range.end - range.start)}</span>}
+        {range && (
+          <span className="length">
+            <span className="visually-hidden">{STRINGS.panel.clipLength} </span>
+            {formatTime(range.end - range.start)}
+          </span>
+        )}
         <button
           type="button"
           className="icon-button"
@@ -122,7 +153,7 @@ export default function ClipPanel({ video, onClose }: ClipPanelProps) {
           inputRef={startRef}
           locked={saving}
           onChange={(text) => setTime("start", text)}
-          onBlur={() => setTouched((current) => ({ ...current, start: true }))}
+          onBlur={() => leaveField("start")}
           onUseCurrent={() => fillFromVideo("start")}
         />
         <TimeField
@@ -133,7 +164,7 @@ export default function ClipPanel({ video, onClose }: ClipPanelProps) {
           useCurrentName={STRINGS.panel.useCurrentTimeForEnd}
           locked={saving}
           onChange={(text) => setTime("end", text)}
-          onBlur={() => setTouched((current) => ({ ...current, end: true }))}
+          onBlur={() => leaveField("end")}
           onUseCurrent={() => fillFromVideo("end")}
         />
         <div>
@@ -158,7 +189,8 @@ export default function ClipPanel({ video, onClose }: ClipPanelProps) {
         <button
           type="button"
           className="tonal"
-          aria-pressed={previewing}
+          // Not aria-pressed: the label already changes with the state (DESIGN.md).
+          data-active={previewing || undefined}
           aria-disabled={!range || saving}
           onClick={togglePreview}
         >

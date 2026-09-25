@@ -158,6 +158,17 @@ Shared states for every button and input:
 - **Hover:** changes the background token instantly (see Motion).
 - **Disabled:** loses its fill and changes to secondary text. It is never faded with opacity. `cursor: default`. Uses `aria-disabled` or `disabled`. One disabled look for every button, tonal or primary: `--clip-surface` background, 1px `--clip-tonal-hover` border, `--clip-text-secondary` text.
 
+### Forced colours
+Windows High Contrast replaces our colours, and backgrounds carry the button shapes, the pressed and disabled states and the progress fill. A small `@media (forced-colors: active)` block restores them with system colours only; sizes don't change (`box-sizing: border-box`).
+- Buttons (tonal, primary, close): `1px solid ButtonText` border. Hover has no forced-colours look (accepted).
+- Disabled: `GrayText` text, icon and border.
+- Pressed Preview: `Highlight` background, `HighlightText` text and icon. That is the system's own selected/pressed look, it reads as a filled state at a glance, and it can't be confused with the focus outline the way a thicker border could.
+- Invalid time field: 2px border (padding 1px less, so the text doesn't move); the error message carries the meaning.
+- Locked fields: `GrayText` border.
+- Progress: track `1px solid CanvasText` on `Canvas`, fill `CanvasText`.
+- Focus: the outline stays; forced colours keep outlines. On the pressed Preview (which opts out below) it uses `CanvasText`, since the accent isn't a system colour.
+- `forced-color-adjust: none` only on the pressed Preview and the progress fill, as a guard so their system-colour backgrounds aren't overridden.
+
 ### Icons
 - UI icons (panel) are simple line icons drawn for the project: 24×24 grid, `fill="none"`, `stroke="currentColor"`, stroke width 2, round caps and joins, `aria-hidden="true"`. They take the text colour of their control, including pressed and disabled.
 - Sizes: `20px` in pill buttons (8px gap to the label, centred with the label), `16px` in notes (1px top offset so it centres on the 18px line), `24px` in the close icon button.
@@ -175,14 +186,14 @@ Shared states for every button and input:
 
 ### Clip panel
 - Region named by its heading (`aria-labelledby`). Background `--clip-surface`, radius 12, padding 16. All wording (heading, labels, accessible names) comes from CONTENT.md.
-- Header: the heading (panel title style), then the duration readout "0:22" in secondary text, then a close icon button (36px circle, transparent, hover `--clip-tonal`, 24px close icon in `--clip-text`, accessible name from CONTENT.md).
+- Header: the heading (panel title style), then the duration readout "0:22" in secondary text (with a visually hidden prefix so screen readers hear "Clip length 0:22"; wording in CONTENT.md, no visual change), then a close icon button (36px circle, transparent, hover `--clip-tonal`, 24px close icon in `--clip-text`, accessible name from CONTENT.md).
 
 ### Time input + "Use current time"
 - Label above the field ("Start" or "End", field label style). The field is `104px` wide and 36px high, with `--clip-field` background, 1px `--clip-border`, radius 8 and padding `0 12px`. It accepts `m:ss` or `h:mm:ss`. Placeholder "0:00" in `--clip-text-secondary`.
 - To its right, 8px gap: a tonal pill "Use current time". Its accessible name starts with the visible label and adds the field (WCAG 2.5.3); wording in CONTENT.md.
 - Hover: field border changes to `--clip-text`. Focus-visible: the accent outline.
 - Locked (while saving): `readonly`, still focusable and readable. `--clip-surface` background, 1px `--clip-tonal-hover` border, text stays `--clip-text`, no hover change. "Use current time" uses the shared disabled style with `aria-disabled`. Styled with `.time-input:read-only`. It never needs to combine with Error, because saving needs a valid range.
-- Error (unparseable, end ≤ start, or past the video length): 2px `--clip-error` border (use `box-shadow: inset 0 0 0 1px` on top of the 1px border so the layout doesn't shift), `aria-invalid="true"`, and a 12px error message below in `--clip-error` linked by `aria-describedby`. Example: "End must be after start." Wording goes in CONTENT.md. The message takes 4px + 18px. Because the panel is anchored to the bottom, it pushes the content above it up (accepted: errors show only after the field is left, so the shift never happens under the user's typing). No space is reserved.
+- Error (unparseable, end ≤ start, or past the video length): 2px `--clip-error` border (use `box-shadow: inset 0 0 0 1px` on top of the 1px border so the layout doesn't shift), `aria-invalid="true"`, and a 12px error message below in `--clip-error` linked by `aria-describedby`. Example: "End must be after start." Wording goes in CONTENT.md. The message takes 4px + 18px. Because the panel is anchored to the bottom, it pushes the content above it up (accepted: errors show only after the field is left, so the shift never happens under the user's typing). No space is reserved. When an error appears on leaving the field or after "Use current time", it is also announced once through the panel's polite status region (focus has already moved, so it would otherwise go unheard). Leaving or filling Start also announces the "End must be after start" it puts on End, if End has been left before. Never while typing.
 - Disabled: not used (see Locked).
 
 ### File name field
@@ -195,9 +206,10 @@ Shared states for every button and input:
 - Locked while Saving and Converting, like the time fields. It keeps its value when the times change and clears when the panel closes.
 
 ### Preview toggle
-- Stays **tonal**: it's the check before the main action, so it sits one step below Save video. Loop icon plus "Preview", `aria-pressed`.
-- Pressed (looping): `--clip-accent-subtle` background, `--clip-accent` text and icon, label "Stop preview".
-- Hover (unpressed): `--clip-tonal-hover`.
+- Stays **tonal**: it's the check before the main action, so it sits one step below Save video. Loop icon plus "Preview".
+- A plain button, **not** `aria-pressed`: its label states the action and changes with the state, so the name alone tells the state (a changing name plus "pressed" reads badly, and a fixed name would break WCAG 2.5.3).
+- Pressed (looping): `data-active` on the button, `--clip-accent-subtle` background, `--clip-accent` text and icon, label "Stop preview".
+- Hover (unpressed): `--clip-tonal-hover`. No hover change while pressed.
 - Disabled (range invalid, or while saving): the shared disabled style. Starting a save ends a running preview.
 
 ### Save video

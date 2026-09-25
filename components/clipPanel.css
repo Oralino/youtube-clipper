@@ -182,7 +182,7 @@
   background: var(--clip-primary-bg-hover);
 }
 
-.tonal:hover:not([aria-disabled="true"], [aria-pressed="true"]) {
+.tonal:hover:not([aria-disabled="true"], [data-active]) {
   background: var(--clip-tonal-hover);
 }
 
@@ -206,7 +206,7 @@
   width: 100%;
 }
 
-.tonal[aria-pressed="true"] {
+.tonal[data-active] {
   background: var(--clip-accent-subtle);
   color: var(--clip-accent);
 }
@@ -312,5 +312,49 @@ button:focus-visible,
 @media (prefers-reduced-motion: reduce) {
   .panel {
     animation: none;
+  }
+}
+
+/* Windows High Contrast and similar: backgrounds are replaced, so boundaries and states need
+   borders or system colours (DESIGN.md, Forced colours). */
+@media (forced-colors: active) {
+  .tonal,
+  .primary,
+  .icon-button {
+    border: 1px solid ButtonText;
+  }
+
+  .tonal[aria-disabled="true"],
+  .primary[aria-disabled="true"] {
+    border-color: GrayText;
+    color: GrayText;
+  }
+
+  .tonal[data-active] {
+    forced-color-adjust: none;
+    background: Highlight;
+    color: HighlightText;
+    /* Its focus ring would otherwise keep the accent, which isn't a system colour. */
+    outline-color: CanvasText;
+  }
+
+  .time-input[aria-invalid="true"] {
+    border-width: 2px;
+    padding: 0 11px;
+  }
+
+  .time-input:read-only,
+  .name-input:read-only {
+    border-color: GrayText;
+  }
+
+  .progress {
+    border: 1px solid CanvasText;
+    background: Canvas;
+  }
+
+  .progress-fill {
+    forced-color-adjust: none;
+    background: CanvasText;
   }
 }

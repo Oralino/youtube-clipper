@@ -5,6 +5,7 @@ export const STRINGS = {
   },
   panel: {
     heading: "Create clip",
+    clipLength: "Clip length",
     start: "Start",
     end: "End",
     useCurrentTime: "Use current time",

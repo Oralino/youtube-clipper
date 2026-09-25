@@ -6,9 +6,12 @@ Development tracker. Owner-only items are marked **(owner)**. Detailed history i
       Firefox the audio is Opus (no AAC encoder), which older iPhones may not play
 - [ ] **(owner)** Check Stop saving (while recording and while converting) saves nothing, and that
       YouTube keeps its sound after a save
+- [ ] **(owner)** Check the accessibility pass in the dev Firefox: with a screen reader (NVDA), leaving
+      a bad Start/End or using "Use current time" reads the error, and the header reads "Clip length";
+      with Windows High Contrast on, buttons have outlines, Stop preview is highlighted and the
+      progress bar shows (also in Chrome)
 
 ## Next
-- [ ] Accessibility pass: keyboard-only use, focus order, contrast, reduced motion
 - [ ] **(owner)** Choose a demo video you have the right to show (your own upload, Creative Commons or
       public domain)
 - [ ] README screenshot of the clip panel while saving **(owner approves)** (idle one added)
@@ -25,6 +28,9 @@ Development tracker. Owner-only items are marked **(owner)**. Detailed history i
 None open.
 
 ## Done (milestones)
+- [x] Accessibility pass: contrast, focus order, keyboard and reduced motion checked against
+      `DESIGN.md`; Preview is a plain button (no `aria-pressed`), forced-colours styles, field errors
+      announced, clip length named for screen readers (2026-09-25)
 - [x] 1.0.1: Chrome falls back to WebM + software MP4 conversion when its hardware H.264 encoder
       fails (reported by a friend on Chrome 154; confirmed fixed) (2026-09-24)
 - [x] 1.0.0: public repo and GitHub release (Chrome zip, unsigned Firefox test build); submitted to
