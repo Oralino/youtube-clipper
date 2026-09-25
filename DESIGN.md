@@ -1,6 +1,6 @@
 # DESIGN.md
 
-Visual source of truth, maintained by design-advisor. **Status: Approved by the owner (2026-09-24); accessibility-pass changes (Forced colours, Preview toggle, clip-length and error announcements) approved 2026-09-25. The Shorts sections (Layout, Shorts; Components, Shorts clip button) await owner approval.** Open TODO (owner) items below are tracked in `TASKS.md`.
+Visual source of truth, maintained by design-advisor. **Status: Approved by the owner (2026-09-24); accessibility-pass changes (Forced colours, Preview toggle, clip-length and error announcements) approved 2026-09-25. The Shorts sections (Layout, Shorts; Components, Shorts clip button) approved 2026-09-25.** Open TODO (owner) items below are tracked in `TASKS.md`.
 
 ## Constraints (decided)
 

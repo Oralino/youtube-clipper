@@ -8,9 +8,6 @@ Development tracker. Owner-only items are marked **(owner)**. Detailed history i
       YouTube keeps its sound after a save
 
 ## Next
-- [ ] YouTube Shorts: Clip button in the action bar, panel over the Short (built, in review)
-- [ ] **(owner)** Approve the Shorts sections of `DESIGN.md`, then check Shorts in the dev Firefox
-      (button placement, next Short on scroll, panel over the Short, a save that ends at the end)
 - [ ] **(owner)** Choose a demo video you have the right to show (your own upload, Creative Commons or
       public domain)
 - [ ] README screenshot of the clip panel while saving **(owner approves)** (idle one added)
@@ -26,6 +23,9 @@ Development tracker. Owner-only items are marked **(owner)**. Detailed history i
 None open.
 
 ## Done (milestones)
+- [x] YouTube Shorts: Clip button in the action bar between Share and Remix, panel over the Short;
+      live streams keep the player button; design approved and checked by the owner in the dev
+      Firefox (2026-09-25)
 - [x] Accessibility pass: contrast, focus order, keyboard and reduced motion checked against
       `DESIGN.md`; Preview is a plain button (no `aria-pressed`), forced-colours styles, field errors
       announced, clip length named for screen readers; checked by the owner in the dev Firefox
