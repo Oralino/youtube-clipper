@@ -372,7 +372,6 @@ For **Clipper for YouTube** (decided 2026-09-24). There is no toolbar button, so
 - Acceptance check (main session, owner approves): view the 16 and 32 PNGs at 100% on `#ffffff` and on `#1c1b22`. The black gaps between the arms and the triangle must be visible at 16, and the triangle must read as a play symbol, not a blob. The 48 and 96 PNGs are antialiased, not pixel-snapped, which is fine at those sizes.
 
 ### Screenshots (README and AMO)
-- Two shots: clip panel idle and clip panel while saving (both always dark). 1280×800, browser content only, with no bookmarks bar and no other tabs visible.
+- One shot, the clip panel idle (always dark); the owner decided a second one while saving isn't needed (2026-09-25). 1280×800, browser content only, with no bookmarks bar and no other tabs visible.
 - Use a clean Firefox profile, signed out of YouTube. No avatar, history, subscriptions, notifications or personalised recommendations visible. Crop or blur recommendations if needed.
-- **TODO (owner)**: choose the demo video. It should be one you have the right to show (your own upload, Creative Commons or public domain).
 - The owner approves every screenshot before it is committed.

@@ -2,15 +2,10 @@
 Development tracker. Owner-only items are marked **(owner)**. Detailed history is in git.
 
 ## Current
-- [ ] **(owner)** Check a saved MP4 plays on your phone and in Discord (plays with sound on PC). From
-      Firefox the audio is Opus (no AAC encoder), which older iPhones may not play
-- [ ] **(owner)** Check Stop saving (while recording and while converting) saves nothing, and that
-      YouTube keeps its sound after a save
+- [ ] Release 1.1.0 (Shorts, accessibility pass) to GitHub and addons.mozilla.org
 
 ## Next
-- [ ] **(owner)** Choose a demo video you have the right to show (your own upload, Creative Commons or
-      public domain)
-- [ ] README screenshot of the clip panel while saving **(owner approves)** (idle one added)
+None planned.
 
 ## Launch (1.0.0 submitted to addons.mozilla.org, waiting for review)
 - [ ] **(owner)** Add the addons.mozilla.org link to `README.md` once the listing is live
@@ -23,6 +18,8 @@ Development tracker. Owner-only items are marked **(owner)**. Detailed history i
 None open.
 
 ## Done (milestones)
+- [x] Owner checks: a saved MP4 plays on a phone and in Discord; Stop saving leaves no file and
+      YouTube keeps its sound. The idle README screenshot is enough (2026-09-25)
 - [x] YouTube Shorts: Clip button in the action bar between Share and Remix, panel over the Short;
       live streams keep the player button; design approved and checked by the owner in the dev
       Firefox (2026-09-25)

@@ -50,6 +50,8 @@ Clip links and embed links; re-hosting on Streamable or Medal (neither has an up
 is read-only, Medal's only records local gameplay); a backend, accounts or a hosted player page; a
 toolbar popup.
 
+- **Releases while AMO review is pending (2026-09-25):** keep shipping new versions to GitHub and
+  addons.mozilla.org without waiting for the earlier version's approval.
 - **Shorts and live streams (2026-09-25):** live streams keep the watch-page button as it is; Shorts
   get the button in their action bar, between Share and Remix.
 
