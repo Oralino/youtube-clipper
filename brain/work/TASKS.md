@@ -2,7 +2,8 @@
 Development tracker. Owner-only items are marked **(owner)**. Detailed history is in git.
 
 ## Current
-- [ ] Release 1.1.0 (Shorts, accessibility pass) to GitHub and addons.mozilla.org
+- [ ] **(owner)** Upload 1.1.0 to addons.mozilla.org (`.output/youtube-clipper-1.1.0-firefox.zip` and
+      `…-sources.zip`)
 
 ## Next
 None planned.
@@ -18,6 +19,8 @@ None planned.
 None open.
 
 ## Done (milestones)
+- [x] 1.1.0: YouTube Shorts and the accessibility pass; GitHub release with the Chrome zip and the
+      unsigned Firefox test build (2026-09-25)
 - [x] Owner checks: a saved MP4 plays on a phone and in Discord; Stop saving leaves no file and
       YouTube keeps its sound. The idle README screenshot is enough (2026-09-25)
 - [x] YouTube Shorts: Clip button in the action bar between Share and Remix, panel over the Short;
