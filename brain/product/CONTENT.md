@@ -45,6 +45,8 @@ metrics or results. Only link public repos. **TODO (owner)** items need the owne
 | Button while saving | Stop saving |
 | Progress line | Saving {elapsed} / {length} |
 | Saving note | Let it play to the end. Pausing, skipping or closing this panel stops saving. |
+| Save-time note (first line of the idle note, valid range) | Saving plays the clip, so it takes {length}. |
+| Save-time note (no valid range yet) | Saving takes as long as the clip. |
 | Quality note | Saves at the player's quality. For a steady result, pick one in Settings instead of Auto. |
 | Converting line (Firefox, after recording) | Converting to MP4 {percent}% |
 | Converting note | Converting to MP4. Closing this panel stops it. |

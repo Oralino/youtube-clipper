@@ -7,15 +7,17 @@ interface SaveVideoProps {
   status: SaveStatus;
   /** False until the start and end form a valid range. */
   available: boolean;
+  /** The clip's length in seconds, or null until the range is valid. */
+  length: number | null;
   onSave: () => void;
   onStop: () => void;
 }
 
-export default function SaveVideo({ status, available, onSave, onStop }: SaveVideoProps) {
+export default function SaveVideo({ status, available, length, onSave, onStop }: SaveVideoProps) {
   // Converting to MP4 after recording counts as saving: the same Stop button and locked fields.
   const saving = status.state === "saving" || status.state === "converting";
   const inactive = !available && !saving;
-  const noteId = saving ? "clip-save-saving-note" : "clip-save-quality-note";
+  const noteId = saving ? "clip-save-saving-note" : "clip-save-idle-note";
   const describedBy = status.state === "failed" ? `clip-save-error ${noteId}` : noteId;
 
   const button = saving
@@ -36,12 +38,8 @@ export default function SaveVideo({ status, available, onSave, onStop }: SaveVid
             fraction: status.progress,
           }
         : null;
-  const note =
-    status.state === "converting"
-      ? STRINGS.save.convertingNote
-      : saving
-        ? STRINGS.save.savingNote
-        : STRINGS.save.qualityNote;
+  const savingNote =
+    status.state === "converting" ? STRINGS.save.convertingNote : STRINGS.save.savingNote;
 
   function handleClick() {
     if (saving) onStop();
@@ -76,7 +74,19 @@ export default function SaveVideo({ status, available, onSave, onStop }: SaveVid
       </button>
       <p id={noteId} className="note">
         <Icon name="info" size={16} />
-        {note}
+        {saving ? (
+          savingNote
+        ) : (
+          <span>
+            {/* Saving records the clip as it plays, so it takes as long as the clip. */}
+            <span className="note-line">
+              {length === null
+                ? STRINGS.save.timeNoteNoRange
+                : STRINGS.save.timeNote(formatTime(length))}
+            </span>
+            <span className="note-line">{STRINGS.save.qualityNote}</span>
+          </span>
+        )}
       </p>
     </div>
   );

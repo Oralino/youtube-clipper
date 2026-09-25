@@ -201,6 +201,7 @@ export default function ClipPanel({ video, onClose }: ClipPanelProps) {
       <SaveVideo
         status={saver.status}
         available={range !== null}
+        length={range ? range.end - range.start : null}
         onSave={startSaving}
         onStop={saver.stop}
       />

@@ -248,6 +248,11 @@
   line-height: 18px;
 }
 
+.note-line {
+  display: block;
+  font-variant-numeric: tabular-nums;
+}
+
 .note .icon {
   margin-top: 1px;
 }
@@ -257,8 +262,8 @@
 }
 
 .save > .note {
-  /* Two lines tall at minimum, so the button doesn't move when the note changes length. */
-  min-height: 36px;
+  /* Three lines tall at minimum, so the button doesn't move when the note changes length. */
+  min-height: 54px;
   margin-top: 8px;
 }
 

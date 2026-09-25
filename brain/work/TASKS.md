@@ -19,6 +19,8 @@ None planned.
 None open.
 
 ## Done (milestones)
+- [x] Save-time note under Save video: saving plays the clip, so it takes the clip's length
+      (owner request and approval, 2026-09-25)
 - [x] 1.1.0: YouTube Shorts and the accessibility pass; GitHub release with the Chrome zip and the
       unsigned Firefox test build (2026-09-25)
 - [x] Owner checks: a saved MP4 plays on a phone and in Discord; Stop saving leaves no file and

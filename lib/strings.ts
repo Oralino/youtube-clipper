@@ -24,6 +24,8 @@ export const STRINGS = {
     stop: "Stop saving",
     progress: (elapsed: string, length: string) => `Saving ${elapsed} / ${length}`,
     savingNote: "Let it play to the end. Pausing, skipping or closing this panel stops saving.",
+    timeNote: (length: string) => `Saving plays the clip, so it takes ${length}.`,
+    timeNoteNoRange: "Saving takes as long as the clip.",
     qualityNote:
       "Saves at the player's quality. For a steady result, pick one in Settings instead of Auto.",
     converting: (percent: number) => `Converting to MP4 ${percent}%`,
