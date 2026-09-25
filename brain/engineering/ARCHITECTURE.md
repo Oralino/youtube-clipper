@@ -15,6 +15,7 @@ entrypoints/
 components/            React panel: ClipPanel, TimeField, SaveVideo, Icon, useClipRecorder, usePreviewLoop
 lib/                   pure, unit-tested logic: time, clipForm, recording (format, bitrate, file names), videoId, strings
 media/                 browser-only media work: convertToMp4, convertInBackground, conversionMessages
+brain/                 project docs: product/, design/, engineering/, work/ (see CLAUDE.md)
 assets/icon/           icon SVG sources (icon.svg for 48–128px, pixel-snapped icon-small.svg for 16–32px)
 assets/screenshots/    README screenshots
 public/icon/           icon PNGs rendered from the SVGs

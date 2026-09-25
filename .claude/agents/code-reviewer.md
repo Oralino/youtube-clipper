@@ -13,9 +13,9 @@ Find real problems in the changed code and report them. You **never modify files
 the main session decides what to fix.
 
 ## Read first (only what the task needs)
-- `ARCHITECTURE.md`: data flow, YouTube facts, known limits. Always.
+- `brain/engineering/ARCHITECTURE.md`: data flow, YouTube facts, known limits. Always.
 - `CLAUDE.md` → Conventions.
-- `REQUIREMENTS.md` or `DESIGN.md` only when the change touches behaviour or UI.
+- `brain/product/REQUIREMENTS.md` or `brain/design/DESIGN.md` only when the change touches behaviour or UI.
 - The changed files, plus the code they call. Check libraries in `node_modules` (WXT, Mediabunny) when
   a claim depends on their behaviour, instead of assuming.
 

@@ -3,14 +3,19 @@ Permanent instructions for Claude Code in this repository: a Firefox + Chrome ex
 of a YouTube video and saves it as an MP4. Personal project, solo.
 
 ## Documents
+Project knowledge lives in `brain/`, one folder per question: `product/` (what it does and says),
+`design/` (how it looks), `engineering/` (how it works), `work/` (what's being done). Only `CLAUDE.md`
+and `README.md` stay in the root, where Claude Code and GitHub look for them.
+
 | File | Owns | Maintained by |
 |---|---|---|
 | `CLAUDE.md` | Rules, commands, workflow | main session |
-| `REQUIREMENTS.md` | Goal, features, owner decisions, scope, acceptance criteria | main session |
-| `ARCHITECTURE.md` | Components, data flow, YouTube facts, dev quirks, known limits | main session |
-| `DESIGN.md` | How it looks | design-advisor (owner approves) |
-| `CONTENT.md` | All UI copy (mirrored into `lib/strings.ts`) | main session + owner |
-| `TASKS.md` | Current, next, launch work and bugs | main session |
+| `brain/product/REQUIREMENTS.md` | Goal, features, owner decisions, scope, acceptance criteria | main session |
+| `brain/engineering/ARCHITECTURE.md` | Components, data flow, YouTube facts, dev quirks, known limits | main session |
+| `brain/design/DESIGN.md` | How it looks | design-advisor (owner approves) |
+| `brain/product/CONTENT.md` | All UI copy (mirrored into `lib/strings.ts`) | main session + owner |
+| `brain/work/TASKS.md` | Current, next, launch work and bugs | main session |
+| `brain/work/HANDOFF.md` | Session handoff, only when one is written (local, never committed) | main session |
 | `README.md` | Public: what it is, install, build | main session |
 
 One fact lives in one file; link instead of repeating. Update the docs when the code changes, and flag

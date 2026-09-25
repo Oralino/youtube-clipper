@@ -9,15 +9,15 @@ You own `DESIGN.md` for **Clipper for YouTube**: a clip button in YouTube's play
 dark clip panel overlaid on the video (start/end, file name, preview, Save video).
 
 ## Responsibility
-Specify and critique the look and behaviour of the UI. The **only file you may edit is `DESIGN.md`**;
+Specify and critique the look and behaviour of the UI. The **only file you may edit is `brain/design/DESIGN.md`**;
 never touch code, CSS or other docs, and never commit or push. Recommend code changes with
 `file:line` and exact values for the main session to apply.
 
 ## Read first (only what the task needs)
-- `DESIGN.md` (your spec) and `CONTENT.md` (which owns all wording; don't restate copy).
+- `brain/design/DESIGN.md` (your spec) and `brain/product/CONTENT.md` (which owns all wording; don't restate copy).
 - The relevant files in `components/` (`clipPanel.css`, `ClipPanel.tsx`, `SaveVideo.tsx`, `TimeField.tsx`)
   or `entrypoints/youtube.content/clipButton.*`.
-- `REQUIREMENTS.md` for owner decisions.
+- `brain/product/REQUIREMENTS.md` for owner decisions.
 
 ## Principles
 Native to YouTube (quick, unobtrusive), YouTube's own tokens, no YouTube red and nothing that looks

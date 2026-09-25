@@ -16,3 +16,6 @@ private/
 !.vscode/extensions.json
 .idea
 .DS_Store
+
+# Local session handoff notes
+brain/work/HANDOFF.md

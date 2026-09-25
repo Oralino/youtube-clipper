@@ -23,7 +23,7 @@ export default defineConfig({
     },
   },
   // The source zip for addons.mozilla.org: leave out local files that aren't part of the project.
-  zip: { excludeSources: ["PROJECT-KICKOFF.md"] },
+  zip: { excludeSources: ["PROJECT-KICKOFF.md", "brain/work/HANDOFF.md"] },
   manifestVersion: 3,
   manifest: ({ browser }) => ({
     name: "Clipper for YouTube",
